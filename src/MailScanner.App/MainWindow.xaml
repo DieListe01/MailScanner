@@ -143,48 +143,74 @@
                             <ColumnDefinition Width="360" />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Margin="0,0,28,0">
-                            <WrapPanel VerticalAlignment="Center">
-                                <TextBlock Text="MailScanner"
-                                           FontFamily="Bahnschrift"
-                                           FontSize="44"
-                                           FontWeight="SemiBold"
-                                           Foreground="#F7FBFF" />
-                                <Border Margin="14,12,0,0"
-                                        Padding="12,6"
-                                        CornerRadius="14"
-                                        Background="#2D639A">
-                                    <TextBlock Text="{Binding CurrentVersionSummary}"
-                                               Foreground="#F4FAFF"
-                                               FontWeight="SemiBold" />
-                                </Border>
-                            </WrapPanel>
-                            <TextBlock Margin="0,14,0,0"
-                                       MaxWidth="660"
-                                       FontSize="18"
-                                       LineHeight="30"
-                                       TextWrapping="Wrap"
-                                       Foreground="#D7E7F9"
-                                       Text="Dokumente aus privaten Postfaechern strukturiert sammeln, priorisieren, pruefen und sicher ins lokale DMS uebernehmen." />
+                        <Grid Margin="0,0,28,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                            <WrapPanel Margin="0,22,0,0">
-                                <Border Style="{StaticResource HeroChipStyle}" Background="#20486F">
-                                    <TextBlock Text="{Binding UpdateStatusSummary}" Foreground="#DDEBFB" />
-                                </Border>
-                            </WrapPanel>
+                            <StackPanel>
+                                <DockPanel LastChildFill="False">
+                                    <TextBlock DockPanel.Dock="Left"
+                                               Text="MailScanner"
+                                               FontFamily="Bahnschrift"
+                                               FontSize="44"
+                                               FontWeight="SemiBold"
+                                               Foreground="#F7FBFF" />
+                                    <Border DockPanel.Dock="Left"
+                                            Margin="14,12,0,0"
+                                            Padding="11,6"
+                                            CornerRadius="14"
+                                            Background="#2A5B90"
+                                            BorderBrush="#4B7BAB"
+                                            BorderThickness="1">
+                                        <TextBlock Text="{Binding CurrentVersionSummary}"
+                                                   Foreground="#F4FAFF"
+                                                   FontWeight="SemiBold" />
+                                    </Border>
+                                </DockPanel>
 
-                            <WrapPanel Margin="0,18,0,0">
-                                <Border Style="{StaticResource HeroChipStyle}" Background="#244F80">
+                                <TextBlock Margin="0,14,0,0"
+                                           MaxWidth="620"
+                                           FontSize="18"
+                                           LineHeight="31"
+                                           TextWrapping="Wrap"
+                                           Foreground="#D7E7F9"
+                                           Text="Dokumente aus privaten Postfaechern strukturiert sammeln, priorisieren, pruefen und sicher ins lokale DMS uebernehmen." />
+                            </StackPanel>
+
+                            <Border Grid.Row="1"
+                                    Margin="0,22,140,0"
+                                    Padding="16,12"
+                                    CornerRadius="18"
+                                    Background="#1A456E"
+                                    BorderBrush="#35648F"
+                                    BorderThickness="1">
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left"
+                                               Text="Release-Status"
+                                               FontWeight="SemiBold"
+                                               Foreground="#F2F8FF" />
+                                    <TextBlock Margin="16,0,0,0"
+                                               Text="{Binding UpdateStatusSummary}"
+                                               Foreground="#D6E6F8"
+                                               TextWrapping="Wrap" />
+                                </DockPanel>
+                            </Border>
+
+                            <WrapPanel Grid.Row="2" Margin="0,18,0,0">
+                                <Border Style="{StaticResource HeroChipStyle}" Background="#224A74">
                                     <TextBlock Text="Vorschau vor dem Download" Foreground="#EFF6FF" />
                                 </Border>
-                                <Border Style="{StaticResource HeroChipStyle}" Background="#1C476F">
+                                <Border Style="{StaticResource HeroChipStyle}" Background="#1B4369">
                                     <TextBlock Text="SQLite + Dateisystem" Foreground="#E7F2FF" />
                                 </Border>
-                                <Border Style="{StaticResource HeroChipStyle}" Background="#386FAE">
+                                <Border Style="{StaticResource HeroChipStyle}" Background="#315F95">
                                     <TextBlock Text="Kompletter Verlauf scanbar" Foreground="#F6FBFF" />
                                 </Border>
                             </WrapPanel>
-                        </StackPanel>
+                        </Grid>
 
                         <Border Grid.Column="1"
                                 Padding="24"
@@ -211,10 +237,10 @@
                                            FontWeight="SemiBold"
                                            Foreground="#F5FAFF" />
                                 <TextBlock Grid.Row="1"
-                                            Margin="0,6,0,0"
-                                            Text="Alles Wichtige direkt erreichbar, ohne grosse Kacheln oder unruhige Flächen."
-                                            Foreground="#C2D8F1"
-                                            TextWrapping="Wrap" />
+                                           Margin="0,6,0,0"
+                                           Text="Die wichtigsten Aktionen kompakt in einem Bereich."
+                                           Foreground="#C2D8F1"
+                                           TextWrapping="Wrap" />
 
                                 <Border Grid.Row="2"
                                         Margin="0,18,0,0"
@@ -245,15 +271,29 @@
                                     </Grid>
                                 </Border>
 
-                                <Border Grid.Row="3"
-                                        Margin="0,18,0,0"
-                                        Padding="13,11"
-                                        CornerRadius="16"
-                                        Background="#1D456D"
-                                        BorderBrush="#366A98"
-                                        BorderThickness="1">
-                                    <TextBlock Text="Schneller Vollscan, Priorisierung und Update-Check beim Start." Foreground="#D6E6F7" TextWrapping="Wrap" />
-                                </Border>
+                                <Grid Grid.Row="3" Margin="0,18,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Margin="0,0,8,0"
+                                            Padding="12,10"
+                                            CornerRadius="16"
+                                            Background="#1D456D"
+                                            BorderBrush="#366A98"
+                                            BorderThickness="1">
+                                        <TextBlock Text="Vollscan" Foreground="#D6E6F7" FontWeight="SemiBold" />
+                                    </Border>
+                                    <Border Grid.Column="1"
+                                            Margin="8,0,0,0"
+                                            Padding="12,10"
+                                            CornerRadius="16"
+                                            Background="#1D456D"
+                                            BorderBrush="#366A98"
+                                            BorderThickness="1">
+                                        <TextBlock Text="Live-Updatecheck" Foreground="#D6E6F7" FontWeight="SemiBold" />
+                                    </Border>
+                                </Grid>
                             </Grid>
                         </Border>
                     </Grid>
@@ -323,18 +363,18 @@
                     <Grid Margin="0,0,0,18">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="290" />
+                            <ColumnDefinition Width="330" />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel>
+                        <StackPanel Margin="0,0,20,0">
                             <TextBlock Text="Gefundene Dokumente vor dem Download"
                                        FontSize="28"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextBrush}" />
-                            <TextBlock Margin="0,7,0,0"
-                                       Text="{Binding StatusMessage}"
-                                       Foreground="#4A6785"
-                                       TextWrapping="Wrap" />
+                            <TextBlock Margin="0,8,0,0"
+                                        Text="{Binding StatusMessage}"
+                                        Foreground="#4A6785"
+                                        TextWrapping="Wrap" />
 
                             <WrapPanel Margin="0,14,0,0">
                                 <Border Style="{StaticResource InfoChipStyle}">
@@ -348,10 +388,20 @@
                                 </Border>
                             </WrapPanel>
 
-                            <TextBlock Margin="0,2,0,0"
-                                       Text="{Binding LastConnectionTestSummary}"
-                                       Foreground="{StaticResource MutedBrush}"
-                                       TextWrapping="Wrap" />
+                            <Border Margin="0,12,0,0"
+                                    Padding="14,12"
+                                    CornerRadius="18"
+                                    Background="#F6FAFF"
+                                    BorderBrush="#DBE6F3"
+                                    BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="Status" FontWeight="SemiBold" Foreground="#35597E" />
+                                    <TextBlock Margin="0,6,0,0"
+                                               Text="{Binding LastConnectionTestSummary}"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
 
                             <Border Margin="0,14,0,0"
                                     Padding="16"
@@ -383,16 +433,16 @@
 
                         <Border Grid.Column="1"
                                 HorizontalAlignment="Right"
-                                Padding="16"
-                                CornerRadius="20"
-                                Background="#F5F9FF"
+                                Padding="18"
+                                CornerRadius="22"
+                                Background="#F3F8FF"
                                 BorderBrush="{StaticResource StrokeBrush}"
                                 BorderThickness="1">
-                            <StackPanel Width="230">
-                                <TextBlock Text="Suche" Foreground="{StaticResource MutedBrush}" FontWeight="SemiBold" />
-                                <TextBlock Margin="0,4,0,0" Text="Filtert Konto, Betreff, Anhang oder Message-ID." Foreground="#7A90AA" FontSize="12" TextWrapping="Wrap" />
+                            <StackPanel Width="260">
+                                <TextBlock Text="Suche und Filter" Foreground="#3A5F84" FontWeight="SemiBold" FontSize="14" />
+                                <TextBlock Margin="0,5,0,0" Text="Filtert Konto, Betreff, Anhang oder Message-ID." Foreground="#7A90AA" FontSize="12" TextWrapping="Wrap" />
                                 <TextBox x:Name="SearchBox"
-                                         Margin="0,12,0,0"
+                                         Margin="0,14,0,0"
                                          Height="40"
                                          Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
@@ -415,7 +465,7 @@
                                   RowHeaderWidth="0"
                                   SelectionMode="Extended"
                                   SelectionUnit="FullRow"
-                                  AlternatingRowBackground="#F3F8FF"
+                                  AlternatingRowBackground="#F2F7FE"
                                   Background="#F8FBFF"
                                   BorderThickness="0"
                                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
@@ -426,19 +476,19 @@
                                     <Setter Property="Background" Value="#E3EEFB" />
                                     <Setter Property="Foreground" Value="#17304B" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
-                                    <Setter Property="Padding" Value="12,10" />
+                                    <Setter Property="Padding" Value="12,11" />
                                     <Setter Property="BorderBrush" Value="#D5E3F2" />
                                     <Setter Property="BorderThickness" Value="0,0,0,1" />
                                 </Style>
                                 <Style TargetType="DataGridCell">
-                                    <Setter Property="Padding" Value="10,8" />
+                                    <Setter Property="Padding" Value="9,8" />
                                     <Setter Property="BorderThickness" Value="0" />
                                     <Setter Property="VerticalContentAlignment" Value="Center" />
                                 </Style>
                                 <Style TargetType="DataGridRow">
                                     <Setter Property="Background" Value="#F8FBFF" />
                                     <Setter Property="Foreground" Value="#17304B" />
-                                    <Setter Property="Height" Value="46" />
+                                    <Setter Property="Height" Value="44" />
                                     <Style.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="#EEF5FF" />
@@ -474,7 +524,7 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTextColumn Width="1.45*" MinWidth="170" Header="Treffergrund" Binding="{Binding MatchReason}" />
+                                <DataGridTextColumn Width="1.15*" MinWidth="150" Header="Treffergrund" Binding="{Binding MatchReasonCompact}" />
                                 <DataGridTemplateColumn Width="0.9*" MinWidth="110" Header="Kategorie">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>

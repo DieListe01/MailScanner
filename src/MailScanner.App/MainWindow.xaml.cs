@@ -357,7 +357,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             var cachedCandidates = await documentCandidateStore.SearchAsync(SearchText);
             ReplaceCandidates(cachedCandidates);
-            StatusMessage = $"Import fehlgeschlagen: {ex.Message}";
+            StatusMessage = $"Scan derzeit nicht moeglich. Bitte Konten, Verbindung und Suchbereich pruefen. Details: {SimplifyErrorMessage(ex.Message)}";
         }
         finally
         {
@@ -498,6 +498,18 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             LatestReleaseVisibility = Visibility.Collapsed;
             UpdateStatusSummary = $"Release-Pruefung derzeit nicht verfuegbar: {ex.Message}";
         }
+    }
+
+    private static string SimplifyErrorMessage(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return "Unbekannter Fehler.";
+        }
+
+        return message.Contains("keine Daten des angeforderten Typs", StringComparison.OrdinalIgnoreCase)
+            ? "Der Mailserver hat auf die Anfrage unerwartet geantwortet."
+            : message;
     }
 
     private void OnOpenLatestReleaseClicked(object sender, RoutedEventArgs e)

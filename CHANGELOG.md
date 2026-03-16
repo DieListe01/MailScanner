@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4
+
+- Hero, Statusbereich und Suchmodul ruhiger und hochwertiger neu ausbalanciert
+- Aktionspanel und Dokumenttabelle weiter gestrafft und optisch veredelt
+- Treffergruende kompakter dargestellt und technische Fehlermeldungen benutzerfreundlicher formuliert
+
 ## 0.1.3
 
 - Hero-Bereich, globale Styles und Update-Dialog zusammengezogen und sauber in die Release aufgenommen

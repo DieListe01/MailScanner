@@ -34,6 +34,7 @@ public sealed class CandidateListItem
     public int PriorityScore { get; }
     public string PriorityLabel => PriorityScore >= 120 ? "Sehr hoch" : PriorityScore >= 80 ? "Hoch" : PriorityScore >= 45 ? "Mittel" : "Niedrig";
     public string MatchReason { get; }
+    public string MatchReasonCompact => MatchReason.Replace("Kategorie ", string.Empty).Replace("Keyword im ", "Keyword ");
     public string CategoryBadgeBackground => Candidate.SuggestedCategory switch
     {
         DocumentCategory.Invoice => "#D8EAFE",
