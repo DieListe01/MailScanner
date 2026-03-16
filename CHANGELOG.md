@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+- In-App-Updatefenster mit Release-Notizen und direktem Installer-Download hinzugefuegt
+- Automatische Update-Erkennung startet jetzt den Update-Dialog direkt bei neuer Release
+- GitHub-Release-Assets werden gezielt nach dem Windows-Installer durchsucht
+
 ## 0.1.0
 
 - Vollscan fuer komplette Postfachverlaeufe und Anzeige des Rueckblicks in Tagen ergaenzt
