@@ -1,3 +1,4 @@
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -7,6 +8,7 @@ namespace MailScanner.App.Services;
 
 public sealed class GitHubReleaseUpdateService
 {
+    private const string InstallerPrefix = "MailScanner-Setup-";
     private readonly HttpClient httpClient;
     private readonly string latestReleaseApiUrl;
 
@@ -41,7 +43,24 @@ public sealed class GitHubReleaseUpdateService
             isUpdateAvailable,
             release.TagName ?? "unbekannt",
             release.HtmlUrl ?? string.Empty,
-            release.Name ?? release.TagName ?? "GitHub Release");
+            release.Name ?? release.TagName ?? "GitHub Release",
+            release.Body ?? string.Empty,
+            GetPreferredInstallerAsset(release.Assets));
+    }
+
+    public async Task<string> DownloadInstallerAsync(ReleaseAssetInfo asset, string targetDirectory, CancellationToken cancellationToken = default)
+    {
+        Directory.CreateDirectory(targetDirectory);
+        var filePath = Path.Combine(targetDirectory, asset.FileName);
+
+        using var response = await httpClient.GetAsync(asset.DownloadUrl, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        await using var source = await response.Content.ReadAsStreamAsync(cancellationToken);
+        await using var target = File.Create(filePath);
+        await source.CopyToAsync(target, cancellationToken);
+
+        return filePath;
     }
 
     private static Version? NormalizeVersion(string? versionText)
@@ -55,9 +74,37 @@ public sealed class GitHubReleaseUpdateService
         return Version.TryParse(normalized, out var version) ? version : null;
     }
 
-    public sealed record ReleaseUpdateInfo(bool IsUpdateAvailable, string LatestVersion, string ReleaseUrl, string ReleaseTitle)
+    private static ReleaseAssetInfo? GetPreferredInstallerAsset(IReadOnlyCollection<GitHubReleaseAssetDto>? assets)
     {
-        public static ReleaseUpdateInfo Unavailable() => new(false, string.Empty, string.Empty, string.Empty);
+        if (assets is null || assets.Count == 0)
+        {
+            return null;
+        }
+
+        var installer = assets
+            .Where(asset => !string.IsNullOrWhiteSpace(asset.Name)
+                && !string.IsNullOrWhiteSpace(asset.BrowserDownloadUrl)
+                && asset.Name.StartsWith(InstallerPrefix, StringComparison.OrdinalIgnoreCase)
+                && asset.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(asset => asset.Name)
+            .FirstOrDefault();
+
+        return installer is null
+            ? null
+            : new ReleaseAssetInfo(installer.Name!, installer.BrowserDownloadUrl!);
+    }
+
+    public sealed record ReleaseAssetInfo(string FileName, string DownloadUrl);
+
+    public sealed record ReleaseUpdateInfo(
+        bool IsUpdateAvailable,
+        string LatestVersion,
+        string ReleaseUrl,
+        string ReleaseTitle,
+        string ReleaseNotes,
+        ReleaseAssetInfo? InstallerAsset)
+    {
+        public static ReleaseUpdateInfo Unavailable() => new(false, string.Empty, string.Empty, string.Empty, string.Empty, null);
     }
 
     private sealed class GitHubReleaseDto
@@ -71,10 +118,25 @@ public sealed class GitHubReleaseUpdateService
         [JsonPropertyName("name")]
         public string? Name { get; set; }
 
+        [JsonPropertyName("body")]
+        public string? Body { get; set; }
+
         [JsonPropertyName("draft")]
         public bool Draft { get; set; }
 
         [JsonPropertyName("prerelease")]
         public bool PreRelease { get; set; }
+
+        [JsonPropertyName("assets")]
+        public GitHubReleaseAssetDto[]? Assets { get; set; }
+    }
+
+    private sealed class GitHubReleaseAssetDto
+    {
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+
+        [JsonPropertyName("browser_download_url")]
+        public string? BrowserDownloadUrl { get; set; }
     }
 }

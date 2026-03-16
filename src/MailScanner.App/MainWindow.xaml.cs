@@ -27,6 +27,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private string excludedFoldersSummary = "Ausgeschlossene Ordner: keine";
     private string invoiceMatchSummary = "0 Rechnungs-Treffer";
     private string lastConnectionTestSummary = string.Empty;
+    private GitHubReleaseUpdateService.ReleaseUpdateInfo latestReleaseInfo = GitHubReleaseUpdateService.ReleaseUpdateInfo.Unavailable();
     private string latestReleaseUrl = string.Empty;
     private Visibility latestReleaseVisibility = Visibility.Collapsed;
     private string attachmentMailSummary = "0 Mails mit Anhang";
@@ -475,25 +476,38 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         try
         {
             var release = await releaseUpdateService.GetLatestReleaseAsync(appVersionService.GetCurrentVersion());
+            latestReleaseInfo = release;
 
             if (release.IsUpdateAvailable && !string.IsNullOrWhiteSpace(release.ReleaseUrl))
             {
                 latestReleaseUrl = release.ReleaseUrl;
                 LatestReleaseVisibility = Visibility.Visible;
-                UpdateStatusSummary = $"Neue GitHub-Release verfuegbar: {release.LatestVersion}";
+                UpdateStatusSummary = release.InstallerAsset is null
+                    ? $"Neue GitHub-Release verfuegbar: {release.LatestVersion}"
+                    : $"Neue Version {release.LatestVersion} inkl. Installer verfuegbar";
+
+                await Dispatcher.InvokeAsync(() => ShowUpdateDialog(release));
                 return;
             }
 
+            LatestReleaseVisibility = Visibility.Collapsed;
             UpdateStatusSummary = "GitHub-Release aktuell.";
         }
         catch (Exception ex)
         {
+            LatestReleaseVisibility = Visibility.Collapsed;
             UpdateStatusSummary = $"Release-Pruefung derzeit nicht verfuegbar: {ex.Message}";
         }
     }
 
     private void OnOpenLatestReleaseClicked(object sender, RoutedEventArgs e)
     {
+        if (latestReleaseInfo.IsUpdateAvailable)
+        {
+            ShowUpdateDialog(latestReleaseInfo);
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(latestReleaseUrl))
         {
             return;
@@ -504,6 +518,16 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             FileName = latestReleaseUrl,
             UseShellExecute = true
         });
+    }
+
+    private void ShowUpdateDialog(GitHubReleaseUpdateService.ReleaseUpdateInfo release)
+    {
+        var window = new UpdateReleaseWindow(releaseUpdateService, release, appVersionService.GetCurrentVersion())
+        {
+            Owner = this
+        };
+
+        window.ShowDialog();
     }
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)

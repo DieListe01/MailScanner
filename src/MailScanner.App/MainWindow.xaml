@@ -168,7 +168,7 @@
                                 <Button x:Name="TestConnectionButton" Style="{StaticResource ActionButtonStyle}" Click="OnTestConnectionsClicked" Background="#2D659F" BorderBrush="#6392C2" Content="Verbindung" />
                                 <Button x:Name="RefreshButton" Style="{StaticResource ActionButtonStyle}" Click="OnRefreshClicked" Background="#185D93" BorderBrush="#4F8CBF" Content="Postfaecher pruefen" />
                                 <Button x:Name="DownloadButton" Style="{StaticResource ActionButtonStyle}" Margin="0,10,0,0" Click="OnDownloadSelectionClicked" Background="#5A90CC" BorderBrush="#90B5DD" Content="Auswahl speichern" />
-                                <Button Style="{StaticResource ActionButtonStyle}" Margin="10,10,0,0" Click="OnOpenLatestReleaseClicked" Background="#6E9FD6" BorderBrush="#A8C5E7" Content="Release oeffnen" Visibility="{Binding LatestReleaseVisibility}" />
+                                <Button Style="{StaticResource ActionButtonStyle}" Margin="10,10,0,0" Click="OnOpenLatestReleaseClicked" Background="#6E9FD6" BorderBrush="#A8C5E7" Content="Update" Visibility="{Binding LatestReleaseVisibility}" />
                             </WrapPanel>
                         </StackPanel>
                     </Border>
