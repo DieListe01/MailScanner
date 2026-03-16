@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2
+
+- Startseite visuell veredelt mit ruhigerem Hero-Bereich und hochwertigerem Aktionspanel
+- Aktionsbuttons rechts oben neu gestaltet und harmonischer in das Dashboard integriert
+- Karten, Abstaende und Typografie weiter verfeinert fuer einen edleren Gesamteindruck
+
 ## 0.1.1
 
 - In-App-Updatefenster mit Release-Notizen und direktem Installer-Download hinzugefuegt

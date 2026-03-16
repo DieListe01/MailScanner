@@ -5,88 +5,109 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="MailScanner"
-        Height="780"
-        Width="1280"
-        MinHeight="720"
-        MinWidth="1100"
-        Background="#DDE8F7">
+        Height="810"
+        Width="1320"
+        MinHeight="740"
+        MinWidth="1180"
+        Background="#EAF2FD">
     <Window.Resources>
-        <SolidColorBrush x:Key="PanelBrush" Color="#F9FBFF" />
+        <SolidColorBrush x:Key="PanelBrush" Color="#FBFDFF" />
         <SolidColorBrush x:Key="TextBrush" Color="#15314F" />
-        <SolidColorBrush x:Key="MutedBrush" Color="#5F7693" />
+        <SolidColorBrush x:Key="MutedBrush" Color="#607A98" />
+        <SolidColorBrush x:Key="StrokeBrush" Color="#D4E0EE" />
         <LinearGradientBrush x:Key="ShellBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Offset="0" Color="#E7F0FB" />
-            <GradientStop Offset="1" Color="#D7E4F6" />
+            <GradientStop Offset="0" Color="#F4F8FE" />
+            <GradientStop Offset="0.45" Color="#E5EFFB" />
+            <GradientStop Offset="1" Color="#D9E7FA" />
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="HeroBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Offset="0" Color="#173A61" />
-            <GradientStop Offset="0.55" Color="#245388" />
-            <GradientStop Offset="1" Color="#143252" />
+            <GradientStop Offset="0" Color="#14385C" />
+            <GradientStop Offset="0.55" Color="#245A92" />
+            <GradientStop Offset="1" Color="#173B60" />
         </LinearGradientBrush>
-        <DropShadowEffect x:Key="PanelShadow" BlurRadius="24" ShadowDepth="8" Color="#3D5D82" Opacity="0.16" />
-        <DropShadowEffect x:Key="SoftButtonShadow" BlurRadius="10" ShadowDepth="4" Color="#183F69" Opacity="0.28" />
+        <LinearGradientBrush x:Key="InvoiceBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Offset="0" Color="#3F75B4" />
+            <GradientStop Offset="1" Color="#2A5C97" />
+        </LinearGradientBrush>
+        <DropShadowEffect x:Key="PanelShadow" BlurRadius="30" ShadowDepth="12" Color="#2E527A" Opacity="0.14" />
+        <DropShadowEffect x:Key="HeroShadow" BlurRadius="40" ShadowDepth="16" Color="#203B59" Opacity="0.16" />
+        <DropShadowEffect x:Key="ButtonShadow" BlurRadius="16" ShadowDepth="6" Color="#16385C" Opacity="0.18" />
+
         <Style x:Key="MetricCardStyle" TargetType="Border">
-            <Setter Property="CornerRadius" Value="24" />
-            <Setter Property="Padding" Value="20" />
-            <Setter Property="Background" Value="#F9FBFF" />
+            <Setter Property="CornerRadius" Value="22" />
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Background" Value="{StaticResource PanelBrush}" />
             <Setter Property="Effect" Value="{StaticResource PanelShadow}" />
         </Style>
-        <Style x:Key="ActionButtonStyle" TargetType="Button">
-            <Setter Property="Height" Value="38" />
-            <Setter Property="MinWidth" Value="138" />
-            <Setter Property="Margin" Value="0,0,10,0" />
-            <Setter Property="Padding" Value="18,0" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="#F5FAFF" />
-            <Setter Property="Background" Value="#3B6FA7" />
-            <Setter Property="BorderBrush" Value="#7098C3" />
+
+        <Style x:Key="HeroChipStyle" TargetType="Border">
+            <Setter Property="Margin" Value="0,0,12,12" />
+            <Setter Property="Padding" Value="15,8" />
+            <Setter Property="CornerRadius" Value="15" />
+            <Setter Property="Background" Value="#234A75" />
+            <Setter Property="BorderBrush" Value="#335E89" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Effect" Value="{StaticResource SoftButtonShadow}" />
+        </Style>
+
+        <Style x:Key="InfoChipStyle" TargetType="Border">
+            <Setter Property="Margin" Value="0,0,10,10" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Background" Value="#EEF5FF" />
+            <Setter Property="BorderBrush" Value="#D9E7F6" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="44" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="18,0" />
+            <Setter Property="FontSize" Value="13.5" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#F6FAFF" />
+            <Setter Property="Background" Value="#2A649B" />
+            <Setter Property="BorderBrush" Value="#5E8DBA" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Effect" Value="{StaticResource ButtonShadow}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="ButtonBorder"
+                        <Border x:Name="ButtonRoot"
                                 CornerRadius="14"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}">
                             <Grid>
                                 <Border Margin="1"
-                                        CornerRadius="13"
+                                        Height="10"
                                         VerticalAlignment="Top"
-                                        Height="16"
-                                        Opacity="0.35">
-                                    <Border.Background>
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                            <GradientStop Offset="0" Color="#FFFFFFFF" />
-                                            <GradientStop Offset="1" Color="#00FFFFFF" />
-                                        </LinearGradientBrush>
-                                    </Border.Background>
-                                </Border>
-                                <ContentPresenter HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center" />
+                                        CornerRadius="13"
+                                        Opacity="0.08"
+                                        Background="#FFFFFF" />
+                                <Border Margin="1"
+                                        CornerRadius="13"
+                                        BorderBrush="#14FFFFFF"
+                                        BorderThickness="1" />
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ButtonBorder" Property="RenderTransformOrigin" Value="0.5,0.5" />
-                                <Setter TargetName="ButtonBorder" Property="RenderTransform">
-                                    <Setter.Value>
-                                        <ScaleTransform ScaleX="1.02" ScaleY="1.02" />
-                                    </Setter.Value>
-                                </Setter>
+                                <Setter TargetName="ButtonRoot" Property="Opacity" Value="0.97" />
+                                <Setter TargetName="ButtonRoot" Property="BorderBrush" Value="#86ADD3" />
+                                <Setter TargetName="ButtonRoot" Property="Background" Value="#3170AC" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="ButtonBorder" Property="RenderTransformOrigin" Value="0.5,0.5" />
-                                <Setter TargetName="ButtonBorder" Property="RenderTransform">
+                                <Setter TargetName="ButtonRoot" Property="RenderTransformOrigin" Value="0.5,0.5" />
+                                <Setter TargetName="ButtonRoot" Property="RenderTransform">
                                     <Setter.Value>
-                                        <TranslateTransform Y="1.5" />
+                                        <TranslateTransform Y="1" />
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Opacity" Value="0.55" />
+                                <Setter TargetName="ButtonRoot" Property="Opacity" Value="0.55" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -94,6 +115,7 @@
             </Setter>
         </Style>
     </Window.Resources>
+
     <Grid>
         <Grid.Background>
             <StaticResource ResourceKey="ShellBrush" />
@@ -106,117 +128,192 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Border Padding="30" CornerRadius="30" Background="{StaticResource HeroBrush}" Effect="{StaticResource PanelShadow}">
+            <Border Padding="36" CornerRadius="36" Background="{StaticResource HeroBrush}" Effect="{StaticResource HeroShadow}">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="420" />
-                    </Grid.ColumnDefinitions>
+                    <Canvas IsHitTestVisible="False">
+                        <Ellipse Width="320" Height="320" Fill="#10FFFFFF" Canvas.Left="650" Canvas.Top="-160" />
+                        <Ellipse Width="240" Height="240" Fill="#10000000" Canvas.Left="860" Canvas.Top="34" />
+                        <Ellipse Width="360" Height="360" Fill="#0F000000" Canvas.Left="-130" Canvas.Top="90" />
+                        <Rectangle Width="520" Height="240" RadiusX="120" RadiusY="120" Fill="#0BFFFFFF" Canvas.Left="280" Canvas.Top="-40" />
+                    </Canvas>
 
-                    <StackPanel>
-                        <TextBlock Text="MailScanner"
-                                    FontFamily="Bahnschrift"
-                                    FontSize="40"
-                                    FontWeight="SemiBold"
-                                    Foreground="#F5FAFF" />
-                        <TextBlock Margin="0,10,0,0"
-                                    Text="Dokumente aus privaten Postfaechern strukturiert sammeln, pruefen und sicher ins lokale DMS uebernehmen."
-                                    TextWrapping="Wrap"
-                                    MaxWidth="620"
-                                    FontSize="16"
-                                    Foreground="#D9E8FA" />
-                        <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
-                            <Border Padding="12,6" CornerRadius="12" Background="#2A5E95">
-                                <TextBlock Text="{Binding CurrentVersionSummary}" Foreground="#F4F9FF" />
-                            </Border>
-                            <Border Margin="10,0,0,0" Padding="12,6" CornerRadius="12" Background="#20496F">
-                                <TextBlock Text="{Binding UpdateStatusSummary}" Foreground="#DDEBFB" />
-                            </Border>
-                        </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="360" />
+                        </Grid.ColumnDefinitions>
 
-                        <StackPanel Margin="0,24,0,0" Orientation="Horizontal">
-                            <Border Margin="0,0,12,0" Padding="14,8" CornerRadius="14" Background="#2B5D94">
-                                <TextBlock Text="Vorschau vor dem Download" Foreground="#F2F7FD" />
-                            </Border>
-                            <Border Margin="0,0,12,0" Padding="14,8" CornerRadius="14" Background="#1F4C7A">
-                                <TextBlock Text="SQLite + Dateisystem" Foreground="#EAF3FF" />
-                            </Border>
-                            <Border Padding="14,8" CornerRadius="14" Background="#3C79B6">
-                                <TextBlock Text="Kompletter Verlauf scanbar" Foreground="#F7FBFF" />
-                            </Border>
-                        </StackPanel>
-                    </StackPanel>
+                        <StackPanel Margin="0,0,28,0">
+                            <WrapPanel VerticalAlignment="Center">
+                                <TextBlock Text="MailScanner"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="44"
+                                           FontWeight="SemiBold"
+                                           Foreground="#F7FBFF" />
+                                <Border Margin="14,12,0,0"
+                                        Padding="12,6"
+                                        CornerRadius="14"
+                                        Background="#2D639A">
+                                    <TextBlock Text="{Binding CurrentVersionSummary}"
+                                               Foreground="#F4FAFF"
+                                               FontWeight="SemiBold" />
+                                </Border>
+                            </WrapPanel>
+                            <TextBlock Margin="0,14,0,0"
+                                       MaxWidth="660"
+                                       FontSize="18"
+                                       LineHeight="30"
+                                       TextWrapping="Wrap"
+                                       Foreground="#D7E7F9"
+                                       Text="Dokumente aus privaten Postfaechern strukturiert sammeln, priorisieren, pruefen und sicher ins lokale DMS uebernehmen." />
 
-                    <Border Grid.Column="1"
-                            Padding="22"
-                            CornerRadius="24"
-                            Margin="26,0,0,0"
-                            Background="#1B436D"
-                            BorderBrush="#4D7FB2"
-                            BorderThickness="1">
-                        <StackPanel>
-                            <TextBlock Text="Aktionen"
-                                       FontSize="16"
-                                       FontWeight="SemiBold"
-                                       Foreground="#F4F9FF" />
-                            <TextBlock Margin="0,4,0,14"
-                                       Text="Kompakt, schneller und mit Vollscan-Option."
-                                       Foreground="#BCD4EF"
-                                       TextWrapping="Wrap" />
-                            <WrapPanel ItemHeight="38">
-                                <Button x:Name="SettingsButton" Style="{StaticResource ActionButtonStyle}" Click="OnOpenSettingsClicked" Background="#4B82BE" BorderBrush="#81A9D4" Content="Konten" />
-                                <Button x:Name="TestConnectionButton" Style="{StaticResource ActionButtonStyle}" Click="OnTestConnectionsClicked" Background="#2D659F" BorderBrush="#6392C2" Content="Verbindung" />
-                                <Button x:Name="RefreshButton" Style="{StaticResource ActionButtonStyle}" Click="OnRefreshClicked" Background="#185D93" BorderBrush="#4F8CBF" Content="Postfaecher pruefen" />
-                                <Button x:Name="DownloadButton" Style="{StaticResource ActionButtonStyle}" Margin="0,10,0,0" Click="OnDownloadSelectionClicked" Background="#5A90CC" BorderBrush="#90B5DD" Content="Auswahl speichern" />
-                                <Button Style="{StaticResource ActionButtonStyle}" Margin="10,10,0,0" Click="OnOpenLatestReleaseClicked" Background="#6E9FD6" BorderBrush="#A8C5E7" Content="Update" Visibility="{Binding LatestReleaseVisibility}" />
+                            <WrapPanel Margin="0,22,0,0">
+                                <Border Style="{StaticResource HeroChipStyle}" Background="#20486F">
+                                    <TextBlock Text="{Binding UpdateStatusSummary}" Foreground="#DDEBFB" />
+                                </Border>
+                            </WrapPanel>
+
+                            <WrapPanel Margin="0,18,0,0">
+                                <Border Style="{StaticResource HeroChipStyle}" Background="#244F80">
+                                    <TextBlock Text="Vorschau vor dem Download" Foreground="#EFF6FF" />
+                                </Border>
+                                <Border Style="{StaticResource HeroChipStyle}" Background="#1C476F">
+                                    <TextBlock Text="SQLite + Dateisystem" Foreground="#E7F2FF" />
+                                </Border>
+                                <Border Style="{StaticResource HeroChipStyle}" Background="#386FAE">
+                                    <TextBlock Text="Kompletter Verlauf scanbar" Foreground="#F6FBFF" />
+                                </Border>
                             </WrapPanel>
                         </StackPanel>
-                    </Border>
+
+                        <Border Grid.Column="1"
+                                Padding="24"
+                                CornerRadius="28"
+                                Background="#163B61"
+                                BorderBrush="#527DA8"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Offset="0" Color="#183F67" />
+                                        <GradientStop Offset="1" Color="#15375A" />
+                                    </LinearGradientBrush>
+                                </Grid.Background>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Aktionen"
+                                           FontSize="19"
+                                           FontWeight="SemiBold"
+                                           Foreground="#F5FAFF" />
+                                <TextBlock Grid.Row="1"
+                                            Margin="0,6,0,0"
+                                            Text="Alles Wichtige direkt erreichbar, ohne grosse Kacheln oder unruhige Flächen."
+                                            Foreground="#C2D8F1"
+                                            TextWrapping="Wrap" />
+
+                                <Border Grid.Row="2"
+                                        Margin="0,18,0,0"
+                                        Padding="14"
+                                        CornerRadius="22"
+                                        Background="#1E4A74"
+                                        BorderBrush="#3F6B95"
+                                        BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="12" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="10" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="10" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <Button x:Name="SettingsButton" Grid.Row="0" Grid.Column="0" Style="{StaticResource ActionButtonStyle}" Click="OnOpenSettingsClicked" Background="#3974B0" BorderBrush="#75A3CF" Content="Konten" />
+                                        <Button x:Name="TestConnectionButton" Grid.Row="0" Grid.Column="2" Style="{StaticResource ActionButtonStyle}" Click="OnTestConnectionsClicked" Background="#2C659A" BorderBrush="#6691BF" Content="Verbindung" />
+                                        <Button x:Name="RefreshButton" Grid.Row="2" Grid.Column="0" Style="{StaticResource ActionButtonStyle}" Click="OnRefreshClicked" Background="#275D90" BorderBrush="#5C88B3" Content="Postfaecher pruefen" />
+                                        <Button x:Name="DownloadButton" Grid.Row="2" Grid.Column="2" Style="{StaticResource ActionButtonStyle}" Click="OnDownloadSelectionClicked" Background="#487AB0" BorderBrush="#83A8CD" Content="Auswahl speichern" />
+                                        <Button Grid.Row="4" Grid.ColumnSpan="3" Style="{StaticResource ActionButtonStyle}" Click="OnOpenLatestReleaseClicked" Background="#638FBF" BorderBrush="#9FBAD8" Content="Update" Visibility="{Binding LatestReleaseVisibility}" />
+                                    </Grid>
+                                </Border>
+
+                                <Border Grid.Row="3"
+                                        Margin="0,18,0,0"
+                                        Padding="13,11"
+                                        CornerRadius="16"
+                                        Background="#1D456D"
+                                        BorderBrush="#366A98"
+                                        BorderThickness="1">
+                                    <TextBlock Text="Schneller Vollscan, Priorisierung und Update-Check beim Start." Foreground="#D6E6F7" TextWrapping="Wrap" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
                 </Grid>
             </Border>
 
-            <Grid Grid.Row="1" Margin="0,22,0,22">
+            <Grid Grid.Row="1" Margin="0,20,0,20">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2.1*" />
-                    <ColumnDefinition Width="2.1*" />
-                    <ColumnDefinition Width="2.1*" />
-                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <Border Margin="0,0,16,0" Style="{StaticResource MetricCardStyle}">
-                    <StackPanel>
-                        <TextBlock Text="Konten" FontSize="13" Foreground="{StaticResource MutedBrush}" />
-                        <TextBlock Text="{Binding AccountCountSummary}" Margin="0,6,0,0" FontFamily="Bahnschrift" FontSize="30" Foreground="{StaticResource TextBrush}" />
-                        <TextBlock Margin="0,4,0,0" Text="IMAP-Zugaenge zentral verwalten" Foreground="{StaticResource MutedBrush}" />
-                    </StackPanel>
+                    <Grid>
+                        <Border Height="6" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="#7FA6D5" CornerRadius="22,22,6,6" />
+                        <StackPanel Margin="0,12,0,0">
+                            <TextBlock Text="Konten" FontSize="12" Foreground="{StaticResource MutedBrush}" />
+                            <TextBlock Text="{Binding AccountCountSummary}" Margin="0,6,0,0" FontFamily="Bahnschrift" FontSize="22" Foreground="{StaticResource TextBrush}" />
+                            <TextBlock Margin="0,3,0,0" Text="IMAP-Zugaenge zentral verwalten" FontSize="11" Foreground="{StaticResource MutedBrush}" />
+                        </StackPanel>
+                    </Grid>
                 </Border>
 
                 <Border Grid.Column="1" Margin="0,0,16,0" Style="{StaticResource MetricCardStyle}">
-                    <StackPanel>
-                        <TextBlock Text="Anhang-Mails" FontSize="13" Foreground="{StaticResource MutedBrush}" />
-                        <TextBlock Text="{Binding AttachmentMailSummary}" Margin="0,6,0,0" FontFamily="Bahnschrift" FontSize="30" Foreground="{StaticResource TextBrush}" />
-                        <TextBlock Margin="0,4,0,0" Text="Alle Mails mit Anhaengen im Scan" Foreground="{StaticResource MutedBrush}" />
-                    </StackPanel>
+                    <Grid>
+                        <Border Height="6" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="#92B5DB" CornerRadius="22,22,6,6" />
+                        <StackPanel Margin="0,12,0,0">
+                            <TextBlock Text="Anhang-Mails" FontSize="12" Foreground="{StaticResource MutedBrush}" />
+                            <TextBlock Text="{Binding AttachmentMailSummary}" Margin="0,6,0,0" FontFamily="Bahnschrift" FontSize="22" Foreground="{StaticResource TextBrush}" />
+                            <TextBlock Margin="0,3,0,0" Text="Alle Mails mit Anhaengen im Scan" FontSize="11" Foreground="{StaticResource MutedBrush}" />
+                        </StackPanel>
+                    </Grid>
                 </Border>
 
                 <Border Grid.Column="2" Margin="0,0,16,0" Style="{StaticResource MetricCardStyle}">
-                    <StackPanel>
-                        <TextBlock Text="PDF-Kandidaten" FontSize="13" Foreground="{StaticResource MutedBrush}" />
-                        <TextBlock Text="{Binding PdfCandidateSummary}" Margin="0,6,0,0" FontFamily="Bahnschrift" FontSize="30" Foreground="{StaticResource TextBrush}" />
-                        <TextBlock Margin="0,4,0,0" Text="Nur PDF-Anhaenge landen im Review" Foreground="{StaticResource MutedBrush}" />
-                    </StackPanel>
+                    <Grid>
+                        <Border Height="6" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="#7DB5D6" CornerRadius="22,22,6,6" />
+                        <StackPanel Margin="0,12,0,0">
+                            <TextBlock Text="PDF-Kandidaten" FontSize="12" Foreground="{StaticResource MutedBrush}" />
+                            <TextBlock Text="{Binding PdfCandidateSummary}" Margin="0,6,0,0" FontFamily="Bahnschrift" FontSize="22" Foreground="{StaticResource TextBrush}" />
+                            <TextBlock Margin="0,3,0,0" Text="Nur PDF-Anhaenge landen im Review" FontSize="11" Foreground="{StaticResource MutedBrush}" />
+                        </StackPanel>
+                    </Grid>
                 </Border>
 
-                <Border Grid.Column="3" Padding="20" CornerRadius="24" Background="#4478B6" Effect="{StaticResource PanelShadow}">
-                    <StackPanel>
-                        <TextBlock Text="Rechnungs-Treffer" FontSize="13" Foreground="#DDEBFC" />
-                        <TextBlock Text="{Binding InvoiceMatchSummary}" Margin="0,6,0,0" FontFamily="Bahnschrift" FontSize="28" Foreground="#FFFFFF" />
-                        <TextBlock Margin="0,4,0,0" Text="Keywords wie invoice, rechnung, beleg" Foreground="#EAF3FF" />
-                    </StackPanel>
+                <Border Grid.Column="3" Style="{StaticResource MetricCardStyle}" Background="{StaticResource InvoiceBrush}">
+                    <Grid>
+                        <Border Height="6" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="#AFCBEB" CornerRadius="22,22,6,6" Opacity="0.65" />
+                        <StackPanel Margin="0,12,0,0">
+                            <TextBlock Text="Rechnungs-Treffer" FontSize="12" Foreground="#D9E8FA" />
+                            <TextBlock Text="{Binding InvoiceMatchSummary}" Margin="0,6,0,0" FontFamily="Bahnschrift" FontSize="22" Foreground="#FFFFFF" />
+                            <TextBlock Margin="0,3,0,0" Text="Keywords wie invoice, rechnung, beleg" FontSize="11" Foreground="#E8F2FE" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
                 </Border>
             </Grid>
 
-            <Border Grid.Row="2" Padding="24" CornerRadius="30" Background="{StaticResource PanelBrush}" Effect="{StaticResource PanelShadow}">
+            <Border Grid.Row="2" Padding="26" CornerRadius="32" Background="{StaticResource PanelBrush}" Effect="{StaticResource PanelShadow}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -226,147 +323,179 @@
                     <Grid Margin="0,0,0,18">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="300" />
+                            <ColumnDefinition Width="290" />
                         </Grid.ColumnDefinitions>
 
                         <StackPanel>
                             <TextBlock Text="Gefundene Dokumente vor dem Download"
-                                        FontSize="26"
-                                        FontWeight="SemiBold"
-                                        Foreground="{StaticResource TextBrush}" />
-                            <TextBlock Margin="0,6,0,0"
-                                        Text="{Binding StatusMessage}"
-                                        Foreground="#46617C"
-                                        TextWrapping="Wrap" />
-                            <TextBlock Margin="0,4,0,0"
-                                        Text="{Binding LookbackScopeSummary}"
-                                        Foreground="{StaticResource MutedBrush}"
-                                        TextWrapping="Wrap" />
-                            <TextBlock Margin="0,4,0,0"
-                                        Text="{Binding OldestMailSummary}"
-                                        Foreground="{StaticResource MutedBrush}"
-                                        TextWrapping="Wrap" />
-                            <TextBlock Margin="0,4,0,0"
-                                        Text="{Binding ExcludedFoldersSummary}"
-                                        Foreground="{StaticResource MutedBrush}"
-                                        TextWrapping="Wrap" />
-                            <TextBlock Margin="0,4,0,0"
-                                        Text="{Binding LastConnectionTestSummary}"
-                                        Foreground="{StaticResource MutedBrush}"
-                                        TextWrapping="Wrap" />
-                            <Border Margin="0,12,0,0"
-                                    Padding="14"
-                                    Background="#E9F2FF"
-                                    CornerRadius="16"
+                                       FontSize="28"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextBrush}" />
+                            <TextBlock Margin="0,7,0,0"
+                                       Text="{Binding StatusMessage}"
+                                       Foreground="#4A6785"
+                                       TextWrapping="Wrap" />
+
+                            <WrapPanel Margin="0,14,0,0">
+                                <Border Style="{StaticResource InfoChipStyle}">
+                                    <TextBlock Text="{Binding LookbackScopeSummary}" Foreground="#3D648B" />
+                                </Border>
+                                <Border Style="{StaticResource InfoChipStyle}">
+                                    <TextBlock Text="{Binding OldestMailSummary}" Foreground="#3D648B" />
+                                </Border>
+                                <Border Style="{StaticResource InfoChipStyle}">
+                                    <TextBlock Text="{Binding ExcludedFoldersSummary}" Foreground="#3D648B" />
+                                </Border>
+                            </WrapPanel>
+
+                            <TextBlock Margin="0,2,0,0"
+                                       Text="{Binding LastConnectionTestSummary}"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       TextWrapping="Wrap" />
+
+                            <Border Margin="0,14,0,0"
+                                    Padding="16"
+                                    Background="#EAF3FF"
+                                    CornerRadius="18"
+                                    BorderBrush="#D2E2F5"
+                                    BorderThickness="1"
                                     Visibility="{Binding BusyVisibility}">
                                 <StackPanel>
                                     <TextBlock Text="{Binding BusyMessage}"
-                                                FontWeight="SemiBold"
-                                                Foreground="#27517C" />
+                                               FontWeight="SemiBold"
+                                               Foreground="#224F7A" />
                                     <TextBlock Margin="0,6,0,0"
-                                                Text="{Binding ScanProgressSummary}"
-                                                Foreground="#4F7091"
-                                                TextWrapping="Wrap" />
+                                               Text="{Binding ScanProgressSummary}"
+                                               Foreground="#4B7195"
+                                               TextWrapping="Wrap" />
                                     <TextBlock Margin="0,4,0,0"
-                                                Text="{Binding CurrentScanTarget}"
-                                                Foreground="#4F7091"
-                                                TextWrapping="Wrap" />
-                                    <ProgressBar Margin="0,10,0,0"
-                                                  Height="12"
-                                                  IsIndeterminate="True"
-                                                  Foreground="#4D82BA"
-                                                  Background="#C9DDF5" />
+                                               Text="{Binding CurrentScanTarget}"
+                                               Foreground="#4B7195"
+                                               TextWrapping="Wrap" />
+                                    <ProgressBar Margin="0,12,0,0"
+                                                 Height="10"
+                                                 IsIndeterminate="True"
+                                                 Foreground="#4A82BD"
+                                                 Background="#C8DCF3" />
                                 </StackPanel>
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                            <TextBlock Margin="0,0,0,6" Text="Suche" Foreground="{StaticResource MutedBrush}" />
-                            <TextBox x:Name="SearchBox" Height="36" Width="240"
-                                       Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
+                        <Border Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Padding="16"
+                                CornerRadius="20"
+                                Background="#F5F9FF"
+                                BorderBrush="{StaticResource StrokeBrush}"
+                                BorderThickness="1">
+                            <StackPanel Width="230">
+                                <TextBlock Text="Suche" Foreground="{StaticResource MutedBrush}" FontWeight="SemiBold" />
+                                <TextBlock Margin="0,4,0,0" Text="Filtert Konto, Betreff, Anhang oder Message-ID." Foreground="#7A90AA" FontSize="12" TextWrapping="Wrap" />
+                                <TextBox x:Name="SearchBox"
+                                         Margin="0,12,0,0"
+                                         Height="40"
+                                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </Border>
                     </Grid>
 
-                    <DataGrid Grid.Row="1"
-                              x:Name="CandidatesGrid"
-                              AutoGenerateColumns="False"
-                              CanUserAddRows="False"
-                              CanUserDeleteRows="False"
-                              GridLinesVisibility="Horizontal"
-                              HeadersVisibility="Column"
-                              RowHeaderWidth="0"
-                              SelectionMode="Extended"
-                              SelectionUnit="FullRow"
-                              Background="#F9FBFF"
-                              BorderThickness="0"
-                              ItemsSource="{Binding Candidates}">
-                        <DataGrid.Resources>
-                            <Style TargetType="DataGridColumnHeader">
-                                <Setter Property="Background" Value="#DCE9F8" />
-                                <Setter Property="Foreground" Value="#17304B" />
-                                <Setter Property="FontWeight" Value="SemiBold" />
-                                <Setter Property="Padding" Value="10,8" />
-                            </Style>
-                            <Style TargetType="DataGridRow">
-                                <Setter Property="Background" Value="#F9FBFF" />
-                                <Setter Property="Foreground" Value="#17304B" />
-                                <Setter Property="Height" Value="38" />
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#EDF5FF" />
-                                    </Trigger>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="#D9E9FB" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGrid.Resources>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Width="110" Header="Konto" Binding="{Binding AccountName}" />
-                            <DataGridTextColumn Width="190" Header="Absender" Binding="{Binding Sender}" />
-                            <DataGridTextColumn Width="270" Header="Betreff" Binding="{Binding Subject}" />
-                            <DataGridTextColumn Width="135" Header="Empfangen" Binding="{Binding ReceivedAtDisplay}" />
-                            <DataGridTextColumn Width="210" Header="Anhang" Binding="{Binding AttachmentName}" />
-                            <DataGridTextColumn Width="90" Header="Groesse" Binding="{Binding AttachmentSizeDisplay}" />
-                            <DataGridTemplateColumn Width="92" Header="Score">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border Padding="10,4" CornerRadius="12" Background="{Binding PriorityBadgeBackground}">
-                                            <TextBlock HorizontalAlignment="Center" Text="{Binding PriorityScore}" Foreground="{Binding PriorityBadgeForeground}" FontWeight="SemiBold" />
-                                        </Border>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="100" Header="Prioritaet">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border Padding="10,4" CornerRadius="12" Background="{Binding PriorityBadgeBackground}">
-                                            <TextBlock HorizontalAlignment="Center" Text="{Binding PriorityLabel}" Foreground="{Binding PriorityBadgeForeground}" FontWeight="SemiBold" />
-                                        </Border>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Width="180" Header="Treffergrund" Binding="{Binding MatchReason}" />
-                            <DataGridTemplateColumn Width="110" Header="Kategorie">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border Padding="10,4" CornerRadius="12" Background="{Binding CategoryBadgeBackground}">
-                                            <TextBlock HorizontalAlignment="Center" Text="{Binding CategoryLabel}" Foreground="{Binding CategoryBadgeForeground}" FontWeight="SemiBold" />
-                                        </Border>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="96" Header="Status">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border Padding="10,4" CornerRadius="12" Background="{Binding StatusBadgeBackground}">
-                                            <TextBlock HorizontalAlignment="Center" Text="{Binding StatusLabel}" Foreground="{Binding StatusBadgeForeground}" FontWeight="SemiBold" />
-                                        </Border>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <Border Grid.Row="1"
+                            CornerRadius="24"
+                            Background="#F6FAFF"
+                            BorderBrush="{StaticResource StrokeBrush}"
+                            BorderThickness="1"
+                            Padding="10">
+                        <DataGrid Grid.Row="1"
+                                  x:Name="CandidatesGrid"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  GridLinesVisibility="None"
+                                  HeadersVisibility="Column"
+                                  RowHeaderWidth="0"
+                                  SelectionMode="Extended"
+                                  SelectionUnit="FullRow"
+                                  AlternatingRowBackground="#F3F8FF"
+                                  Background="#F8FBFF"
+                                  BorderThickness="0"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                  ItemsSource="{Binding Candidates}">
+                            <DataGrid.Resources>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#E3EEFB" />
+                                    <Setter Property="Foreground" Value="#17304B" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                    <Setter Property="Padding" Value="12,10" />
+                                    <Setter Property="BorderBrush" Value="#D5E3F2" />
+                                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                </Style>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Padding" Value="10,8" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                </Style>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="Background" Value="#F8FBFF" />
+                                    <Setter Property="Foreground" Value="#17304B" />
+                                    <Setter Property="Height" Value="46" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#EEF5FF" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#DDECFB" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.Resources>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="1.0*" MinWidth="110" Header="Konto" Binding="{Binding AccountName}" />
+                                <DataGridTextColumn Width="1.45*" MinWidth="180" Header="Absender" Binding="{Binding Sender}" />
+                                <DataGridTextColumn Width="2.2*" MinWidth="250" Header="Betreff" Binding="{Binding Subject}" />
+                                <DataGridTextColumn Width="1.0*" MinWidth="120" Header="Empfangen" Binding="{Binding ReceivedAtDisplay}" />
+                                <DataGridTextColumn Width="1.75*" MinWidth="210" Header="Anhang" Binding="{Binding AttachmentName}" />
+                                <DataGridTextColumn Width="0.75*" MinWidth="84" Header="Groesse" Binding="{Binding AttachmentSizeDisplay}" />
+                                <DataGridTemplateColumn Width="0.7*" MinWidth="90" Header="Score">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="10,5" CornerRadius="13" Background="{Binding PriorityBadgeBackground}">
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding PriorityScore}" Foreground="{Binding PriorityBadgeForeground}" FontWeight="SemiBold" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Width="0.92*" MinWidth="110" Header="Prioritaet">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="10,5" CornerRadius="13" Background="{Binding PriorityBadgeBackground}">
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding PriorityLabel}" Foreground="{Binding PriorityBadgeForeground}" FontWeight="SemiBold" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Width="1.45*" MinWidth="170" Header="Treffergrund" Binding="{Binding MatchReason}" />
+                                <DataGridTemplateColumn Width="0.9*" MinWidth="110" Header="Kategorie">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="10,5" CornerRadius="13" Background="{Binding CategoryBadgeBackground}">
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding CategoryLabel}" Foreground="{Binding CategoryBadgeForeground}" FontWeight="SemiBold" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Width="0.82*" MinWidth="100" Header="Status">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="10,5" CornerRadius="13" Background="{Binding StatusBadgeBackground}">
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding StatusLabel}" Foreground="{Binding StatusBadgeForeground}" FontWeight="SemiBold" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
                 </Grid>
             </Border>
         </Grid>
