@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version wie 0.1.0 oder v0.1.0
+        required: true
+        default: 0.1.0
+  release:
+    types: [published]
+
+jobs:
+  build-and-package:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Resolve version
+        id: version
+        shell: pwsh
+        run: |
+          $version = if ("${{ github.event_name }}" -eq "release") { "${{ github.event.release.tag_name }}" } else { "${{ inputs.version }}" }
+          $version = $version.TrimStart('v','V')
+          "value=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Restore
+        run: dotnet restore MailScanner.slnx
+
+      - name: Publish app
+        shell: pwsh
+        run: |
+          dotnet publish "src/MailScanner.App/MailScanner.App.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -p:Version=${{ steps.version.outputs.value }} -o publish
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          iscc "installer/MailScanner.iss" /DAppVersion=${{ steps.version.outputs.value }} /DPublishDir="$pwd\publish" /DOutputDir="$pwd\artifacts\installer"
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MailScanner-${{ steps.version.outputs.value }}
+          path: |
+            publish/**
+            artifacts/installer/**
+
+      - name: Upload release assets
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/installer/*.exe

@@ -1,0 +1,275 @@
+<Window x:Class="MailScanner.App.AccountSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Mailkonten verwalten"
+        Height="760"
+        Width="1120"
+        MinHeight="700"
+        MinWidth="980"
+        WindowStartupLocation="CenterOwner"
+        Background="#F7F4EC">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Padding="24" CornerRadius="24" Background="#1F3442">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="Konten-Setup"
+                               FontFamily="Bahnschrift"
+                               FontSize="32"
+                               FontWeight="SemiBold"
+                               Foreground="#FFF8F0" />
+                    <TextBlock Margin="0,8,0,0"
+                               Text="Hier verwaltest du IMAP-Konten, Zugangsdaten und den Ordner fuer den Mailscan."
+                               FontSize="15"
+                               Foreground="#D1DEE5" />
+                </StackPanel>
+
+                <Border Grid.Column="1"
+                        Padding="12,10"
+                        CornerRadius="16"
+                        Background="#2B4A5D">
+                    <TextBlock Text="Aenderungen werden in appsettings.json gespeichert"
+                               Foreground="#E9F1F4"
+                               FontSize="12" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="0,20,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Padding="18" CornerRadius="22" Background="#FFFDF9">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Text="Mailkonten"
+                                   FontSize="22"
+                                   FontWeight="SemiBold"
+                                   Foreground="#203340" />
+                        <TextBlock Margin="0,4,0,0"
+                                   Text="Konto auswaehlen oder neu anlegen"
+                                   Foreground="#6E7B86" />
+                    </StackPanel>
+
+                    <ListBox Grid.Row="1"
+                             Margin="0,16,0,16"
+                             BorderThickness="0"
+                             ItemsSource="{Binding Accounts}"
+                             SelectedItem="{Binding SelectedAccount}"
+                             DisplayMemberPath="DisplayName" />
+
+                    <StackPanel Grid.Row="2">
+                        <Button Height="42" Margin="0,0,0,10" Click="OnAddAccountClicked" Content="Neues Konto" />
+                        <Button Height="42" Click="OnRemoveAccountClicked" Content="Ausgewaehltes Konto entfernen" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2" Padding="24" CornerRadius="22" Background="#FFFDF9">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Text="Kontodetails"
+                                       FontSize="22"
+                                       FontWeight="SemiBold"
+                                       Foreground="#203340" />
+                            <TextBlock Margin="0,4,0,0"
+                                       Text="Adresse, Login und IMAP-Zielordner"
+                                       Foreground="#6E7B86" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Width="170" Height="42" Margin="0,0,12,0" Click="OnTestSelectedClicked" Content="Ausgewaehltes testen" />
+                            <Button Width="170" Height="42" Click="OnTestAllClicked" Content="Alle Konten testen" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Grid.Row="1"
+                            Margin="0,20,0,0"
+                            Padding="14,12"
+                            Background="#F3EBDC"
+                            CornerRadius="14"
+                            VerticalAlignment="Top">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="220" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel>
+                                <TextBlock Text="Rueckblick beim Erstscan" Foreground="#7B5A38" />
+                                <TextBox Margin="0,8,0,0"
+                                         Width="140"
+                                         Text="{Binding InitialLookbackDays, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Column="1"
+                                       Margin="12,26,0,0"
+                                       Text="Tage"
+                                       Foreground="#8A6843" />
+
+                            <TextBlock Grid.Column="2"
+                                       Margin="16,0,0,0"
+                                       VerticalAlignment="Center"
+                                       Text="0 = kompletter Verlauf, sonst nur die letzten X Tage beim ersten Scan ohne gespeicherten Stand."
+                                       TextWrapping="Wrap"
+                                       Foreground="#8A6843" />
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1"
+                            Margin="0,96,0,0"
+                            Padding="14,12"
+                            Background="#EEF4FF"
+                            CornerRadius="14"
+                            VerticalAlignment="Top">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="260" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel>
+                                <TextBlock Text="Ordner ausschliessen" Foreground="#2B4A78" />
+                                <TextBox Margin="0,8,0,0"
+                                         MinHeight="74"
+                                         AcceptsReturn="True"
+                                         TextWrapping="Wrap"
+                                         VerticalScrollBarVisibility="Auto"
+                                         Text="{Binding ExcludedFolderPatternsText, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Column="1"
+                                       Margin="16,0,0,0"
+                                       VerticalAlignment="Center"
+                                       Text="Je Zeile ein Begriff, z. B. Spam, Trash, Gesendet oder Sent. Ordner mit passendem Namen werden beim Scan uebersprungen."
+                                       TextWrapping="Wrap"
+                                       Foreground="#486487" />
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1"
+                                  Margin="0,208,0,0"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Mailanbieter" />
+                            <ComboBox Grid.Row="1"
+                                      Margin="0,8,12,14"
+                                      ItemsSource="{Binding ProviderNames}"
+                                      SelectedItem="{Binding SelectedAccount.ProviderName, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectionChanged="OnProviderSelectionChanged" />
+
+                            <TextBlock Grid.Column="1" Text="Hinweis" />
+                            <Border Grid.Column="1" Grid.Row="1" Margin="12,8,0,14" Padding="12,10" Background="#FFF7EC" CornerRadius="12">
+                                <TextBlock Text="{Binding SelectedProviderHint}" TextWrapping="Wrap" Foreground="#7B5A38" />
+                            </Border>
+
+                            <TextBlock Grid.Row="2" Text="Anzeigename" />
+                            <TextBox Grid.Row="3" Margin="0,8,12,14" Text="{Binding SelectedAccount.DisplayName, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Grid.Column="1" Grid.Row="2" Text="E-Mail-Adresse" />
+                            <TextBox Grid.Column="1" Grid.Row="3" Margin="12,8,0,14" Text="{Binding SelectedAccount.EmailAddress, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Grid.Row="4" Text="Benutzername" />
+                            <TextBox Grid.Row="5" Margin="0,8,12,14" Text="{Binding SelectedAccount.UserName, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Grid.Column="1" Grid.Row="4" Text="Passwort / App-Passwort" />
+                            <PasswordBox x:Name="PasswordInput" Grid.Column="1" Grid.Row="5" Margin="12,8,0,14" PasswordChanged="OnPasswordChanged" />
+
+                            <TextBlock Grid.Row="6" Text="IMAP-Host" />
+                             <StackPanel Grid.Row="7" Margin="0,8,12,14">
+                                 <TextBox Text="{Binding SelectedAccount.ImapHost, UpdateSourceTrigger=PropertyChanged}" />
+                                 <TextBlock Margin="0,10,0,4" Text="Ordnername" />
+                                 <TextBox Text="{Binding SelectedAccount.FolderName, UpdateSourceTrigger=PropertyChanged}" />
+                                 <TextBlock Margin="0,10,0,4" Text="Ordner nur fuer dieses Konto ausschliessen" />
+                                 <TextBox MinHeight="74"
+                                          AcceptsReturn="True"
+                                          TextWrapping="Wrap"
+                                          VerticalScrollBarVisibility="Auto"
+                                          Text="{Binding SelectedAccount.ExcludedFolderPatternsText, UpdateSourceTrigger=PropertyChanged}" />
+                             </StackPanel>
+
+                            <TextBlock Grid.Column="1" Grid.Row="6" Text="Port / SSL" />
+                            <StackPanel Grid.Column="1" Grid.Row="7" Margin="12,8,0,14">
+                                <TextBox Text="{Binding SelectedAccount.ImapPort, UpdateSourceTrigger=PropertyChanged}" />
+                                <CheckBox Margin="0,12,0,0" IsChecked="{Binding SelectedAccount.UseSsl}" Content="SSL verwenden" />
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Padding="18" CornerRadius="20" Background="#FFFDF9">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left">
+                    <TextBlock Text="{Binding StatusMessage}" FontSize="14" Foreground="#203340" />
+                    <TextBox Margin="0,8,0,0"
+                             Width="620"
+                             MinHeight="64"
+                             MaxHeight="140"
+                             IsReadOnly="True"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Auto"
+                             Text="{Binding TestResultSummary}" />
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Width="130" Height="42" Margin="0,0,12,0" Click="OnSaveClicked" Content="Speichern" />
+                    <Button Width="130" Height="42" Click="OnCloseClicked" Content="Schliessen" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

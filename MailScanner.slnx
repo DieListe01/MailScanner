@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MailScanner.App/MailScanner.App.csproj" />
+    <Project Path="src/MailScanner.Core/MailScanner.Core.csproj" />
+    <Project Path="src/MailScanner.Data/MailScanner.Data.csproj" />
+    <Project Path="src/MailScanner.Infrastructure/MailScanner.Infrastructure.csproj" />
+  </Folder>
+</Solution>
