@@ -59,7 +59,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         InitializeComponent();
         DataContext = this;
         Loaded += OnLoaded;
-        CurrentVersionSummary = $"Version {appVersionService.GetCurrentVersion()}";
+        CurrentVersionSummary = $"v{appVersionService.GetCurrentVersion()}";
         RefreshExcludedFolderSummary();
         RefreshLookbackSummary();
         RefreshAccountSummary();

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3
+
+- Hero-Bereich, globale Styles und Update-Dialog zusammengezogen und sauber in die Release aufgenommen
+- Premium-Optik fuer die Dashboard-Oberflaeche weiter verfeinert und konsistenter gemacht
+
 ## 0.1.2
 
 - Startseite visuell veredelt mit ruhigerem Hero-Bereich und hochwertigerem Aktionspanel
