@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using WinForms = System.Windows.Forms;
 using MailScanner.App.Models;
 using MailScanner.App.Services;
 using MailScanner.Core.Configuration;
@@ -226,6 +227,32 @@ public partial class AccountSettingsWindow : Window, INotifyPropertyChanged
         }
 
         ApplyProviderPreset(SelectedAccount, SelectedAccount.ProviderName, overwriteUserEntries: false);
+    }
+
+    private void OnBrowseDatabaseClicked(object sender, RoutedEventArgs e)
+    {
+        using var dialog = new WinForms.FolderBrowserDialog();
+        if (!string.IsNullOrWhiteSpace(DatabasePath))
+        {
+            dialog.SelectedPath = DatabasePath;
+        }
+        if (dialog.ShowDialog() == WinForms.DialogResult.OK)
+        {
+            DatabasePath = dialog.SelectedPath;
+        }
+    }
+
+    private void OnBrowseDocumentClicked(object sender, RoutedEventArgs e)
+    {
+        using var dialog = new WinForms.FolderBrowserDialog();
+        if (!string.IsNullOrWhiteSpace(DocumentRootPath))
+        {
+            dialog.SelectedPath = DocumentRootPath;
+        }
+        if (dialog.ShowDialog() == WinForms.DialogResult.OK)
+        {
+            DocumentRootPath = dialog.SelectedPath;
+        }
     }
 
     private async Task SaveAsync()

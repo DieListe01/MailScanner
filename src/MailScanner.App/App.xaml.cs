@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MailScanner.App;
 
-public partial class App : Application
+public partial class App : System.Windows.Application
 {
     private MailScannerDbContext? dbContext;
     private IAppSettingsProvider? settingsStore;
@@ -33,11 +33,11 @@ public partial class App : Application
             Directory.CreateDirectory(Path.GetDirectoryName(settings.Storage.DatabasePath) ?? AppContext.BaseDirectory);
             Directory.CreateDirectory(settings.Storage.DocumentRootPath);
 
-            var dbOptions = new Microsoft.EntityFrameworkCore.DbContextOptionsBuilder<MailScannerDbContext>()
+            var dbOptions = new Microsoft.EntityFrameworkCore.DbContextOptionsBuilder<MailScanner.Data.MailScannerDbContext>()
                 .UseSqlite($"Data Source={settings.Storage.DatabasePath}")
                 .Options;
 
-            dbContext = new MailScannerDbContext(dbOptions);
+            dbContext = new MailScanner.Data.MailScannerDbContext(dbOptions);
             await DatabaseInitializer.InitializeAsync(dbContext);
 
             IAppSettingsProvider settingsProvider = settingsStore;
@@ -63,11 +63,11 @@ public partial class App : Application
         }
         catch (Exception ex)
         {
-            MessageBox.Show(
+            System.Windows.MessageBox.Show(
                 $"MailScanner konnte nicht gestartet werden.\n\nDetails: {ex.Message}",
                 "Startfehler",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Error);
             Shutdown(-1);
         }
     }

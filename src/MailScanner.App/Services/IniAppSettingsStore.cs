@@ -1,21 +1,14 @@
 using System.IO;
-using System.Text.Json;
 using MailScanner.Core.Configuration;
 using MailScanner.Core.Services;
 
 namespace MailScanner.App.Services;
 
 /// <summary>
-/// Settings provider that stores the entire AppSettings as a JSON string in an INI file.
+/// Settings provider that stores DatabasePath and DocumentRootPath in an INI file.
 /// </summary>
 public sealed class IniAppSettingsStore(string settingsFilePath) : IAppSettingsProvider
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new()
-    {
-        WriteIndented = false, // compact JSON to avoid newlines
-        PropertyNamingPolicy = null
-    };
-
     private AppSettings currentSettings = LoadFromDisk(settingsFilePath);
 
     public AppSettings GetCurrentSettings()
@@ -33,8 +26,7 @@ public sealed class IniAppSettingsStore(string settingsFilePath) : IAppSettingsP
             Directory.CreateDirectory(directory);
         }
 
-        var json = JsonSerializer.Serialize(currentSettings, SerializerOptions);
-        var iniContent = $"[App]{System.Environment.NewLine}Settings={json}{System.Environment.NewLine}";
+        var iniContent = $"[Settings]{System.Environment.NewLine}DatabasePath={settings.Storage.DatabasePath}{System.Environment.NewLine}DocumentRootPath={settings.Storage.DocumentRootPath}{System.Environment.NewLine}";
 
         await using var stream = File.Create(settingsFilePath);
         await stream.WriteAsync(System.Text.Encoding.UTF8.GetBytes(iniContent), cancellationToken);
@@ -50,27 +42,35 @@ public sealed class IniAppSettingsStore(string settingsFilePath) : IAppSettingsP
         try
         {
             var content = File.ReadAllText(settingsFilePath);
-            // Find the line that starts with Settings=
-            var lines = content.Split(new[] { '\r', '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
-            string? jsonValue = null;
-            foreach (var line in lines)
+            string databasePath = null;
+            string documentRootPath = null;
+            foreach (var line in content.Split(new[] { '\r', '\n' }, System.StringSplitOptions.RemoveEmptyEntries))
             {
                 var trimmed = line.Trim();
-                if (trimmed.StartsWith("Settings=", System.StringComparison.OrdinalIgnoreCase))
+                if (trimmed.StartsWith("DatabasePath=", System.StringComparison.OrdinalIgnoreCase))
                 {
-                    jsonValue = trimmed.Substring("Settings=".Length).Trim();
-                    break;
+                    databasePath = trimmed.Substring("DatabasePath=".Length).Trim();
+                }
+                else if (trimmed.StartsWith("DocumentRootPath=", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    documentRootPath = trimmed.Substring("DocumentRootPath=".Length).Trim();
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(jsonValue))
+            var settings = new AppSettings
             {
-                var settings = JsonSerializer.Deserialize<AppSettings>(jsonValue, SerializerOptions);
-                if (settings != null)
+                Storage = new StorageSettings
                 {
-                    return Normalize(settings);
-                }
-            }
+                    DatabasePath = string.IsNullOrWhiteSpace(databasePath)
+                        ? Path.Combine(AppDataPaths.GetUserDataDirectory(), "storage", "mailscanner.db")
+                        : databasePath,
+                    DocumentRootPath = string.IsNullOrWhiteSpace(documentRootPath)
+                        ? Path.Combine(AppDataPaths.GetUserDataDirectory(), "storage", "documents")
+                        : documentRootPath
+                },
+                MailImport = new MailImportSettings()
+            };
+            return Normalize(settings);
         }
         catch
         {
@@ -82,8 +82,30 @@ public sealed class IniAppSettingsStore(string settingsFilePath) : IAppSettingsP
 
     private static AppSettings Clone(AppSettings settings)
     {
-        var json = JsonSerializer.Serialize(settings, SerializerOptions);
-        return JsonSerializer.Deserialize<AppSettings>(json, SerializerOptions) ?? new AppSettings();
+        var storageRoot = Path.Combine(AppDataPaths.GetUserDataDirectory(), "storage");
+
+        return new AppSettings
+        {
+            Storage = new StorageSettings
+            {
+                DatabasePath = string.IsNullOrWhiteSpace(settings.Storage.DatabasePath)
+                    ? Path.Combine(storageRoot, "mailscanner.db")
+                    : settings.Storage.DatabasePath,
+                DocumentRootPath = string.IsNullOrWhiteSpace(settings.Storage.DocumentRootPath)
+                    ? Path.Combine(storageRoot, "documents")
+                    : settings.Storage.DocumentRootPath
+            },
+            MailImport = new MailImportSettings
+            {
+                InitialLookbackDays = settings.MailImport.InitialLookbackDays,
+                ExcludedFolderPatterns = settings.MailImport.ExcludedFolderPatterns
+                    .Where(folder => !string.IsNullOrWhiteSpace(folder))
+                    .Select(folder => folder.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray(),
+                Accounts = settings.MailImport.Accounts
+            }
+        };
     }
 
     private static AppSettings Normalize(AppSettings settings)

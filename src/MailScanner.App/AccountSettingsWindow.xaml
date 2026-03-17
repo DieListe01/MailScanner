@@ -217,25 +217,27 @@
                                   HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
                             <!-- Database and Document paths -->
-                            <Border Style="{StaticResource SectionCardStyle}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="270" />
-                                        <ColumnDefinition Width="20" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel>
-                                        <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Datenbank-Pfad" />
-                                        <TextBox Margin="0,8,0,0"
-                                                 Text="{Binding DatabasePath, UpdateSourceTrigger=PropertyChanged}" />
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="2"
-                                               VerticalAlignment="Center"
-                                               Text="Vollständiger Pfad zur SQLite-Datenbankdatei (mailscanner.db). Beispiel: Z:\MailScanner\storage\mailscanner.db"
-                                               Foreground="#6C8096"
-                                               TextWrapping="Wrap" />
-                                </Grid>
-                            </Border>
+        <Border Style="{StaticResource SectionCardStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="270" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Datenbank-Pfad" />
+                    <DockPanel Margin="0,8,0,0" LastChildFill="True">
+                        <TextBox Text="{Binding DatabasePath, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Width="28" Height="24" Margin="4,0,0,0" Content="…" Click="OnBrowseDatabaseClicked" />
+                    </DockPanel>
+                </StackPanel>
+                <TextBlock Grid.Column="2"
+                           VerticalAlignment="Center"
+                           Text="Vollständiger Pfad zur SQLite-Datenbankdatei (mailscanner.db). Beispiel: Z:\MailScanner\storage\mailscanner.db"
+                           Foreground="#6C8096"
+                           TextWrapping="Wrap" />
+            </Grid>
+        </Border>
 
                             <Border Margin="0,16,0,0" Style="{StaticResource SectionCardStyle}">
                                 <Grid>
