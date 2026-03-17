@@ -13,7 +13,7 @@ namespace MailScanner.App;
 public partial class App : Application
 {
     private MailScannerDbContext? dbContext;
-    private JsonAppSettingsStore? settingsStore;
+    private IAppSettingsProvider? settingsStore;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -27,13 +27,13 @@ public partial class App : Application
         {
             AppDataPaths.EnsureUserSettingsFileSeeded();
             var settingsFilePath = AppDataPaths.GetUserSettingsFilePath();
-            settingsStore = new JsonAppSettingsStore(settingsFilePath);
+            settingsStore = new IniAppSettingsStore(settingsFilePath);
             var settings = settingsStore.GetCurrentSettings();
 
             Directory.CreateDirectory(Path.GetDirectoryName(settings.Storage.DatabasePath) ?? AppContext.BaseDirectory);
             Directory.CreateDirectory(settings.Storage.DocumentRootPath);
 
-            var dbOptions = new DbContextOptionsBuilder<MailScannerDbContext>()
+            var dbOptions = new Microsoft.EntityFrameworkCore.DbContextOptionsBuilder<MailScannerDbContext>()
                 .UseSqlite($"Data Source={settings.Storage.DatabasePath}")
                 .Options;
 

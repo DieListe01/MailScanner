@@ -15,12 +15,12 @@ public static class AppDataPaths
 
     public static string GetUserSettingsFilePath()
     {
-        return Path.Combine(GetUserDataDirectory(), "appsettings.json");
+        return Path.Combine(GetUserDataDirectory(), "settings.ini");
     }
 
     public static string GetBundledSettingsFilePath()
     {
-        return Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+        return Path.Combine(AppContext.BaseDirectory, "settings.ini");
     }
 
     public static void EnsureUserSettingsFileSeeded()
