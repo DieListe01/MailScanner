@@ -271,11 +271,18 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
-        var cachedCandidates = await documentCandidateStore.SearchAsync(SearchText);
-        ReplaceCandidates(cachedCandidates);
-        StatusMessage = Candidates.Count == 0
-            ? "Bereit. Konten koennen jetzt verwaltet und getestet werden."
-            : $"{Candidates.Count} lokale Dokumentkandidaten geladen.";
+        try
+        {
+            var cachedCandidates = await documentCandidateStore.SearchAsync(SearchText);
+            ReplaceCandidates(cachedCandidates);
+            StatusMessage = Candidates.Count == 0
+                ? "Bereit. Konten koennen jetzt verwaltet und getestet werden."
+                : $"{Candidates.Count} lokale Dokumentkandidaten geladen.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Lokale Daten konnten nicht geladen werden: {SimplifyErrorMessage(ex.Message)}";
+        }
 
         _ = CheckForUpdatesAsync();
     }
@@ -509,10 +516,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                 LatestReleaseButtonText = $"Update auf {release.LatestVersion}";
                 LatestVersionSummary = $"Neu verfuegbar: {release.LatestVersion}";
                 UpdateStatusSummary = release.InstallerAsset is null
-                    ? $"Neue GitHub-Release verfuegbar: {release.LatestVersion}"
-                    : $"Neue Version {release.LatestVersion} inkl. Installer verfuegbar";
-
-                await Dispatcher.InvokeAsync(() => ShowUpdateDialog(release));
+                    ? $"Neue GitHub-Release verfuegbar. Per Klick oeffnest du die Release-Seite."
+                    : $"Neue Version mit Installer verfuegbar. Per Klick kannst du das Update laden.";
                 return;
             }
 

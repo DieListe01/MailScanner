@@ -17,11 +17,13 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Resource Include="Assets\MailScanner.ico" />
   </ItemGroup>
 
   <PropertyGroup>
     <AssemblyName>MailScanner</AssemblyName>
     <Title>MailScanner</Title>
+    <ApplicationIcon>Assets\MailScanner.ico</ApplicationIcon>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>

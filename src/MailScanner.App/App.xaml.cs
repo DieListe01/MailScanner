@@ -15,10 +15,16 @@ public partial class App : Application
     private MailScannerDbContext? dbContext;
     private JsonAppSettingsStore? settingsStore;
 
-    protected override async void OnStartup(StartupEventArgs e)
+    protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        _ = StartAsync();
+    }
 
+    private async Task StartAsync()
+    {
+        try
+        {
         var settingsFilePath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
         settingsStore = new JsonAppSettingsStore(settingsFilePath);
         var settings = settingsStore.GetCurrentSettings();
@@ -53,6 +59,16 @@ public partial class App : Application
             releaseUpdateService);
         MainWindow = mainWindow;
         mainWindow.Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                $"MailScanner konnte nicht gestartet werden.\n\nDetails: {ex.Message}",
+                "Startfehler",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            Shutdown(-1);
+        }
     }
 
     protected override void OnExit(ExitEventArgs e)
