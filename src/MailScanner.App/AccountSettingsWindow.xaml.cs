@@ -22,6 +22,8 @@ public partial class AccountSettingsWindow : Window, INotifyPropertyChanged
     private string testResultSummary = string.Empty;
     private string excludedFolderPatternsText = string.Empty;
     private int initialLookbackDays;
+    private string databasePath = string.Empty;
+    private string documentRootPath = string.Empty;
 
     public ObservableCollection<EditableMailAccount> Accounts { get; } = [];
     public IReadOnlyList<string> ProviderNames { get; } = MailProviderCatalog.All.Select(x => x.Name).ToArray();
@@ -103,6 +105,26 @@ public partial class AccountSettingsWindow : Window, INotifyPropertyChanged
         }
     }
 
+    public string DatabasePath
+    {
+        get => databasePath;
+        set
+        {
+            databasePath = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string DocumentRootPath
+    {
+        get => documentRootPath;
+        set
+        {
+            documentRootPath = value;
+            OnPropertyChanged();
+        }
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public AccountSettingsWindow(IAppSettingsProvider settingsProvider, IMailConnectionTestService mailConnectionTestService)
@@ -116,6 +138,8 @@ public partial class AccountSettingsWindow : Window, INotifyPropertyChanged
         SettingsStorageSummary = AppDataPaths.GetUserSettingsFilePath();
         InitialLookbackDays = currentSettings.MailImport.InitialLookbackDays;
         ExcludedFolderPatternsText = string.Join(Environment.NewLine, currentSettings.MailImport.ExcludedFolderPatterns);
+        databasePath = currentSettings.Storage.DatabasePath;
+        documentRootPath = currentSettings.Storage.DocumentRootPath;
 
         foreach (var account in currentSettings.MailImport.Accounts)
         {
@@ -208,7 +232,11 @@ public partial class AccountSettingsWindow : Window, INotifyPropertyChanged
     {
         var updatedSettings = new AppSettings
         {
-            Storage = currentSettings.Storage,
+            Storage = new StorageSettings
+            {
+                DatabasePath = DatabasePath,
+                DocumentRootPath = DocumentRootPath
+            },
             MailImport = new MailImportSettings
             {
                 InitialLookbackDays = InitialLookbackDays,

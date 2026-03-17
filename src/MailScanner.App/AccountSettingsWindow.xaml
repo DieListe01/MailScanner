@@ -182,7 +182,7 @@
                 </Grid>
             </Border>
 
-            <Border Grid.Column="2" Style="{StaticResource SectionCardStyle}">
+        <Border Grid.Column="2" Style="{StaticResource SectionCardStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -216,6 +216,47 @@
                                   VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
+                            <!-- Database and Document paths -->
+                            <Border Style="{StaticResource SectionCardStyle}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="270" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Datenbank-Pfad" />
+                                        <TextBox Margin="0,8,0,0"
+                                                 Text="{Binding DatabasePath, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="2"
+                                               VerticalAlignment="Center"
+                                               Text="Vollständiger Pfad zur SQLite-Datenbankdatei (mailscanner.db). Beispiel: Z:\MailScanner\storage\mailscanner.db"
+                                               Foreground="#6C8096"
+                                               TextWrapping="Wrap" />
+                                </Grid>
+                            </Border>
+
+                            <Border Margin="0,16,0,0" Style="{StaticResource SectionCardStyle}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="270" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Dokumenten-Ordner" />
+                                        <TextBox Margin="0,8,0,0"
+                                                 Text="{Binding DocumentRootPath, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="2"
+                                               VerticalAlignment="Center"
+                                               Text="Ordner wo gescannte PDF-Anhänge gespeichert werden. Beispiel: Z:\MailScanner\documents"
+                                               Foreground="#6C8096"
+                                               TextWrapping="Wrap" />
+                                </Grid>
+                            </Border>
+
                             <Border Style="{StaticResource SectionCardStyle}" Background="#F7FAFE">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -392,27 +433,5 @@
                 </Grid>
             </Border>
         </Grid>
-
-        <Border Grid.Row="2" Style="{StaticResource SectionCardStyle}" Padding="18">
-            <DockPanel LastChildFill="True">
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Width="140" Height="42" Margin="0,0,12,0" Click="OnSaveClicked" Content="Speichern" />
-                    <Button Width="140" Height="42" Style="{StaticResource SecondaryButtonStyle}" Click="OnCloseClicked" Content="Schliessen" />
-                </StackPanel>
-
-                <StackPanel Margin="0,0,20,0">
-                    <TextBlock Text="{Binding StatusMessage}" FontSize="14" FontWeight="SemiBold" Foreground="#203A57" />
-                    <TextBox Margin="0,10,0,0"
-                             MinHeight="78"
-                             MaxHeight="160"
-                             IsReadOnly="True"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             VerticalScrollBarVisibility="Auto"
-                             HorizontalScrollBarVisibility="Auto"
-                             Text="{Binding TestResultSummary}" />
-                </StackPanel>
-            </DockPanel>
-        </Border>
     </Grid>
 </Window>
