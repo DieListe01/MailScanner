@@ -91,7 +91,7 @@ public partial class UpdateReleaseWindow : Window, INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Update fehlgeschlagen: {ex.Message}";
+            StatusMessage = $"Update fehlgeschlagen: {ex.Message} Bitte alternativ die Release-Seite oeffnen.";
         }
     }
 

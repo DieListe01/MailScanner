@@ -9,21 +9,24 @@ namespace MailScanner.App.Services;
 public sealed class GitHubReleaseUpdateService
 {
     private const string InstallerPrefix = "MailScanner-Setup-";
-    private readonly HttpClient httpClient;
+    private static readonly TimeSpan ReleaseCheckTimeout = TimeSpan.FromSeconds(8);
+    private static readonly TimeSpan InstallerDownloadTimeout = TimeSpan.FromMinutes(5);
+    private readonly HttpClient releaseApiClient;
+    private readonly HttpClient installerDownloadClient;
     private readonly string latestReleaseApiUrl;
 
     public GitHubReleaseUpdateService(string owner, string repository)
     {
         latestReleaseApiUrl = $"https://api.github.com/repos/{owner}/{repository}/releases/latest";
-        httpClient = new HttpClient();
-        httpClient.Timeout = TimeSpan.FromSeconds(8);
-        httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("MailScanner", "1.0"));
-        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+        releaseApiClient = CreateClient(ReleaseCheckTimeout);
+        releaseApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+
+        installerDownloadClient = CreateClient(InstallerDownloadTimeout);
     }
 
     public async Task<ReleaseUpdateInfo> GetLatestReleaseAsync(string currentVersion, CancellationToken cancellationToken = default)
     {
-        using var response = await httpClient.GetAsync(latestReleaseApiUrl, cancellationToken);
+        using var response = await releaseApiClient.GetAsync(latestReleaseApiUrl, cancellationToken);
         response.EnsureSuccessStatusCode();
 
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
@@ -54,7 +57,10 @@ public sealed class GitHubReleaseUpdateService
         Directory.CreateDirectory(targetDirectory);
         var filePath = Path.Combine(targetDirectory, asset.FileName);
 
-        using var response = await httpClient.GetAsync(asset.DownloadUrl, cancellationToken);
+        using var response = await installerDownloadClient.GetAsync(
+            asset.DownloadUrl,
+            HttpCompletionOption.ResponseHeadersRead,
+            cancellationToken);
         response.EnsureSuccessStatusCode();
 
         await using var source = await response.Content.ReadAsStreamAsync(cancellationToken);
@@ -73,6 +79,14 @@ public sealed class GitHubReleaseUpdateService
 
         var normalized = versionText.Trim().TrimStart('v', 'V');
         return Version.TryParse(normalized, out var version) ? version : null;
+    }
+
+    private static HttpClient CreateClient(TimeSpan timeout)
+    {
+        var client = new HttpClient();
+        client.Timeout = timeout;
+        client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("MailScanner", "1.0"));
+        return client;
     }
 
     private static ReleaseAssetInfo? GetPreferredInstallerAsset(IReadOnlyCollection<GitHubReleaseAssetDto>? assets)
