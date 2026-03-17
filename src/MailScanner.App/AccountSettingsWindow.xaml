@@ -5,12 +5,64 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Mailkonten verwalten"
-        Height="760"
-        Width="1120"
-        MinHeight="700"
-        MinWidth="980"
+        Height="820"
+        Width="1260"
+        MinHeight="760"
+        MinWidth="1120"
         WindowStartupLocation="CenterOwner"
-        Background="#F7F4EC">
+        Background="#EEF3FB">
+    <Window.Resources>
+        <Style x:Key="SectionCardStyle" TargetType="Border">
+            <Setter Property="Padding" Value="18" />
+            <Setter Property="CornerRadius" Value="24" />
+            <Setter Property="Background" Value="#FBFDFF" />
+            <Setter Property="BorderBrush" Value="#D8E4F2" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#486581" />
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#F1F6FD" />
+            <Setter Property="Foreground" Value="#254A72" />
+            <Setter Property="BorderBrush" Value="#C7D9EC" />
+        </Style>
+
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0,0,0,10" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Root"
+                                Padding="14,12"
+                                CornerRadius="16"
+                                Background="#F4F8FD"
+                                BorderBrush="#D7E4F1"
+                                BorderThickness="1">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="BorderBrush" Value="#A9C5E4" />
+                                <Setter TargetName="Root" Property="Background" Value="#F7FBFF" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#DDEBFA" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="#7FA7D1" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -18,44 +70,55 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Border Padding="24" CornerRadius="24" Background="#1F3442">
+        <Border Padding="26" CornerRadius="30" Background="#20384D">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="340" />
                 </Grid.ColumnDefinitions>
 
                 <StackPanel>
                     <TextBlock Text="Konten-Setup"
                                FontFamily="Bahnschrift"
-                               FontSize="32"
+                               FontSize="34"
                                FontWeight="SemiBold"
                                Foreground="#FFF8F0" />
-                    <TextBlock Margin="0,8,0,0"
-                               Text="Hier verwaltest du IMAP-Konten, Zugangsdaten und den Ordner fuer den Mailscan."
+                    <TextBlock Margin="0,10,0,0"
+                               MaxWidth="620"
+                               Text="Verwalte IMAP-Konten, Anmeldedaten, Scanbereich und Ordnerregeln in einer zentralen Konfiguration."
                                FontSize="15"
-                               Foreground="#D1DEE5" />
+                               Foreground="#D3E3EF"
+                               TextWrapping="Wrap" />
                 </StackPanel>
 
                 <Border Grid.Column="1"
-                        Padding="12,10"
-                        CornerRadius="16"
-                        Background="#2B4A5D">
-                    <TextBlock Text="Aenderungen werden in appsettings.json gespeichert"
-                               Foreground="#E9F1F4"
-                               FontSize="12" />
+                        Padding="16,14"
+                        CornerRadius="18"
+                        Background="#2D536F"
+                        BorderBrush="#4B7391"
+                        BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Gespeichert im Benutzerprofil"
+                                   FontWeight="SemiBold"
+                                   Foreground="#F5FAFF" />
+                        <TextBlock Margin="0,6,0,0"
+                                   Text="{Binding SettingsStorageSummary}"
+                                   Foreground="#D7E8F5"
+                                   FontSize="12"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
                 </Border>
             </Grid>
         </Border>
 
         <Grid Grid.Row="1" Margin="0,20,0,20">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="280" />
+                <ColumnDefinition Width="330" />
                 <ColumnDefinition Width="20" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" Padding="18" CornerRadius="22" Background="#FFFDF9">
+            <Border Grid.Column="0" Style="{StaticResource SectionCardStyle}" Background="#F9FBFF">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -65,29 +128,61 @@
 
                     <StackPanel>
                         <TextBlock Text="Mailkonten"
-                                   FontSize="22"
+                                   FontSize="24"
                                    FontWeight="SemiBold"
-                                   Foreground="#203340" />
-                        <TextBlock Margin="0,4,0,0"
-                                   Text="Konto auswaehlen oder neu anlegen"
-                                   Foreground="#6E7B86" />
+                                   Foreground="#203A57" />
+                        <TextBlock Margin="0,5,0,0"
+                                   Text="Waehle ein Konto oder lege ein neues Profil an."
+                                   Foreground="#6D86A0"
+                                   TextWrapping="Wrap" />
                     </StackPanel>
 
                     <ListBox Grid.Row="1"
-                             Margin="0,16,0,16"
+                             Margin="0,18,0,18"
                              BorderThickness="0"
+                             Background="Transparent"
                              ItemsSource="{Binding Accounts}"
-                             SelectedItem="{Binding SelectedAccount}"
-                             DisplayMemberPath="DisplayName" />
+                             SelectedItem="{Binding SelectedAccount}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding DisplayName}"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#21415F" />
+                                        <TextBlock Margin="0,4,0,0"
+                                                   Text="{Binding EmailAddress}"
+                                                   Foreground="#7890A7"
+                                                   FontSize="12" />
+                                    </StackPanel>
+                                    <Border Grid.Column="1"
+                                            Padding="9,4"
+                                            CornerRadius="999"
+                                            Background="#E9F2FD"
+                                            BorderBrush="#C8DAEE"
+                                            BorderThickness="1">
+                                        <TextBlock Text="{Binding ProviderName}"
+                                                   Foreground="#335B83"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold" />
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
 
                     <StackPanel Grid.Row="2">
                         <Button Height="42" Margin="0,0,0,10" Click="OnAddAccountClicked" Content="Neues Konto" />
-                        <Button Height="42" Click="OnRemoveAccountClicked" Content="Ausgewaehltes Konto entfernen" />
+                        <Button Height="42" Click="OnRemoveAccountClicked" Style="{StaticResource SecondaryButtonStyle}" Content="Ausgewaehltes Konto entfernen" />
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <Border Grid.Column="2" Padding="24" CornerRadius="22" Background="#FFFDF9">
+            <Border Grid.Column="2" Style="{StaticResource SectionCardStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -102,172 +197,220 @@
 
                         <StackPanel>
                             <TextBlock Text="Kontodetails"
-                                       FontSize="22"
+                                       FontSize="24"
                                        FontWeight="SemiBold"
-                                       Foreground="#203340" />
-                            <TextBlock Margin="0,4,0,0"
-                                       Text="Adresse, Login und IMAP-Zielordner"
-                                       Foreground="#6E7B86" />
+                                       Foreground="#203A57" />
+                            <TextBlock Margin="0,5,0,0"
+                                       Text="Adresse, Zugangsdaten, Scanordner und Provider-Vorgaben."
+                                       Foreground="#6D86A0" />
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <Button Width="170" Height="42" Margin="0,0,12,0" Click="OnTestSelectedClicked" Content="Ausgewaehltes testen" />
-                            <Button Width="170" Height="42" Click="OnTestAllClicked" Content="Alle Konten testen" />
+                            <Button Width="176" Height="42" Margin="0,0,12,0" Click="OnTestSelectedClicked" Content="Ausgewaehltes testen" />
+                            <Button Width="160" Height="42" Style="{StaticResource SecondaryButtonStyle}" Click="OnTestAllClicked" Content="Alle testen" />
                         </StackPanel>
                     </Grid>
 
-                    <Border Grid.Row="1"
-                            Margin="0,20,0,0"
-                            Padding="14,12"
-                            Background="#F3EBDC"
-                            CornerRadius="14"
-                            VerticalAlignment="Top">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="220" />
-                                <ColumnDefinition Width="180" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel>
-                                <TextBlock Text="Rueckblick beim Erstscan" Foreground="#7B5A38" />
-                                <TextBox Margin="0,8,0,0"
-                                         Width="140"
-                                         Text="{Binding InitialLookbackDays, UpdateSourceTrigger=PropertyChanged}" />
-                            </StackPanel>
-
-                            <TextBlock Grid.Column="1"
-                                       Margin="12,26,0,0"
-                                       Text="Tage"
-                                       Foreground="#8A6843" />
-
-                            <TextBlock Grid.Column="2"
-                                       Margin="16,0,0,0"
-                                       VerticalAlignment="Center"
-                                       Text="0 = kompletter Verlauf, sonst nur die letzten X Tage beim ersten Scan ohne gespeicherten Stand."
-                                       TextWrapping="Wrap"
-                                       Foreground="#8A6843" />
-                        </Grid>
-                    </Border>
-
-                    <Border Grid.Row="1"
-                            Margin="0,96,0,0"
-                            Padding="14,12"
-                            Background="#EEF4FF"
-                            CornerRadius="14"
-                            VerticalAlignment="Top">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel>
-                                <TextBlock Text="Ordner ausschliessen" Foreground="#2B4A78" />
-                                <TextBox Margin="0,8,0,0"
-                                         MinHeight="74"
-                                         AcceptsReturn="True"
-                                         TextWrapping="Wrap"
-                                         VerticalScrollBarVisibility="Auto"
-                                         Text="{Binding ExcludedFolderPatternsText, UpdateSourceTrigger=PropertyChanged}" />
-                            </StackPanel>
-
-                            <TextBlock Grid.Column="1"
-                                       Margin="16,0,0,0"
-                                       VerticalAlignment="Center"
-                                       Text="Je Zeile ein Begriff, z. B. Spam, Trash, Gesendet oder Sent. Ordner mit passendem Namen werden beim Scan uebersprungen."
-                                       TextWrapping="Wrap"
-                                       Foreground="#486487" />
-                        </Grid>
-                    </Border>
-
                     <ScrollViewer Grid.Row="1"
-                                  Margin="0,208,0,0"
+                                  Margin="0,22,0,0"
                                   VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Text="Mailanbieter" />
-                            <ComboBox Grid.Row="1"
-                                      Margin="0,8,12,14"
-                                      ItemsSource="{Binding ProviderNames}"
-                                      SelectedItem="{Binding SelectedAccount.ProviderName, UpdateSourceTrigger=PropertyChanged}"
-                                      SelectionChanged="OnProviderSelectionChanged" />
-
-                            <TextBlock Grid.Column="1" Text="Hinweis" />
-                            <Border Grid.Column="1" Grid.Row="1" Margin="12,8,0,14" Padding="12,10" Background="#FFF7EC" CornerRadius="12">
-                                <TextBlock Text="{Binding SelectedProviderHint}" TextWrapping="Wrap" Foreground="#7B5A38" />
+                        <StackPanel>
+                            <Border Style="{StaticResource SectionCardStyle}" Background="#F7FAFE">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="270" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Rueckblick beim Erstscan" />
+                                        <TextBox Margin="0,8,0,0"
+                                                 Width="150"
+                                                 Text="{Binding InitialLookbackDays, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="2"
+                                               VerticalAlignment="Center"
+                                               Text="0 bedeutet kompletter Verlauf. Sonst werden beim ersten Scan nur die letzten X Tage geladen, solange noch kein gespeicherter Stand vorhanden ist."
+                                               Foreground="#6C8096"
+                                               TextWrapping="Wrap" />
+                                </Grid>
                             </Border>
 
-                            <TextBlock Grid.Row="2" Text="Anzeigename" />
-                            <TextBox Grid.Row="3" Margin="0,8,12,14" Text="{Binding SelectedAccount.DisplayName, UpdateSourceTrigger=PropertyChanged}" />
+                            <Border Margin="0,16,0,0" Style="{StaticResource SectionCardStyle}" Background="#F5F9FF">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="360" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Globale Ordner ausschliessen" />
+                                        <TextBox Margin="0,8,0,0"
+                                                 MinHeight="106"
+                                                 AcceptsReturn="True"
+                                                 TextWrapping="Wrap"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 Text="{Binding ExcludedFolderPatternsText, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                    <Border Grid.Column="2"
+                                            Padding="16"
+                                            CornerRadius="16"
+                                            Background="#EAF3FF"
+                                            BorderBrush="#D4E3F4"
+                                            BorderThickness="1">
+                                        <StackPanel>
+                                            <TextBlock Text="Regel" Style="{StaticResource FieldLabelStyle}" />
+                                            <TextBlock Margin="0,8,0,0"
+                                                       Text="Je Zeile ein Ordnerbegriff wie Spam, Trash, Sent oder Gesendet. Ordner mit passendem Namen werden beim Scan ausgelassen."
+                                                       Foreground="#55708E"
+                                                       TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </Border>
 
-                            <TextBlock Grid.Column="1" Grid.Row="2" Text="E-Mail-Adresse" />
-                            <TextBox Grid.Column="1" Grid.Row="3" Margin="12,8,0,14" Text="{Binding SelectedAccount.EmailAddress, UpdateSourceTrigger=PropertyChanged}" />
+                            <Border Margin="0,16,0,0" Style="{StaticResource SectionCardStyle}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="320" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Mailanbieter" />
+                                        <ComboBox Margin="0,8,0,0"
+                                                  ItemsSource="{Binding ProviderNames}"
+                                                  SelectedItem="{Binding SelectedAccount.ProviderName, UpdateSourceTrigger=PropertyChanged}"
+                                                  SelectionChanged="OnProviderSelectionChanged" />
+                                    </StackPanel>
+                                    <Border Grid.Column="2"
+                                            Padding="16"
+                                            CornerRadius="16"
+                                            Background="#FFF7EC"
+                                            BorderBrush="#F0DEC1"
+                                            BorderThickness="1">
+                                        <StackPanel>
+                                            <TextBlock Text="Provider-Hinweis" Style="{StaticResource FieldLabelStyle}" Foreground="#8A653E" />
+                                            <TextBlock Margin="0,8,0,0"
+                                                       Text="{Binding SelectedProviderHint}"
+                                                       Foreground="#8A653E"
+                                                       TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </Border>
 
-                            <TextBlock Grid.Row="4" Text="Benutzername" />
-                            <TextBox Grid.Row="5" Margin="0,8,12,14" Text="{Binding SelectedAccount.UserName, UpdateSourceTrigger=PropertyChanged}" />
+                            <Grid Margin="0,16,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="16" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="1" Grid.Row="4" Text="Passwort / App-Passwort" />
-                            <PasswordBox x:Name="PasswordInput" Grid.Column="1" Grid.Row="5" Margin="12,8,0,14" PasswordChanged="OnPasswordChanged" />
+                                <Border Grid.Column="0" Style="{StaticResource SectionCardStyle}">
+                                    <StackPanel>
+                                        <TextBlock Text="Identitaet" FontSize="18" FontWeight="SemiBold" Foreground="#203A57" />
+                                        <Grid Margin="0,16,0,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Anzeigename" />
+                                            <TextBox Grid.Row="1" Margin="0,8,0,14" Text="{Binding SelectedAccount.DisplayName, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock Grid.Row="2" Style="{StaticResource FieldLabelStyle}" Text="E-Mail-Adresse" />
+                                            <TextBox Grid.Row="3" Margin="0,8,0,14" Text="{Binding SelectedAccount.EmailAddress, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock Grid.Row="4" Style="{StaticResource FieldLabelStyle}" Text="Benutzername" />
+                                            <TextBox Grid.Row="5" Margin="0,8,0,0" Text="{Binding SelectedAccount.UserName, UpdateSourceTrigger=PropertyChanged}" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
 
-                            <TextBlock Grid.Row="6" Text="IMAP-Host" />
-                             <StackPanel Grid.Row="7" Margin="0,8,12,14">
-                                 <TextBox Text="{Binding SelectedAccount.ImapHost, UpdateSourceTrigger=PropertyChanged}" />
-                                 <TextBlock Margin="0,10,0,4" Text="Ordnername" />
-                                 <TextBox Text="{Binding SelectedAccount.FolderName, UpdateSourceTrigger=PropertyChanged}" />
-                                 <TextBlock Margin="0,10,0,4" Text="Ordner nur fuer dieses Konto ausschliessen" />
-                                 <TextBox MinHeight="74"
-                                          AcceptsReturn="True"
-                                          TextWrapping="Wrap"
-                                          VerticalScrollBarVisibility="Auto"
-                                          Text="{Binding SelectedAccount.ExcludedFolderPatternsText, UpdateSourceTrigger=PropertyChanged}" />
-                             </StackPanel>
+                                <Border Grid.Column="2" Style="{StaticResource SectionCardStyle}">
+                                    <StackPanel>
+                                        <TextBlock Text="Server und Login" FontSize="18" FontWeight="SemiBold" Foreground="#203A57" />
+                                        <Grid Margin="0,16,0,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Passwort / App-Passwort" />
+                                            <PasswordBox x:Name="PasswordInput" Grid.Row="1" Margin="0,8,0,14" PasswordChanged="OnPasswordChanged" />
+                                            <TextBlock Grid.Row="2" Style="{StaticResource FieldLabelStyle}" Text="IMAP-Host" />
+                                            <TextBox Grid.Row="3" Margin="0,8,0,14" Text="{Binding SelectedAccount.ImapHost, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock Grid.Row="4" Style="{StaticResource FieldLabelStyle}" Text="Port" />
+                                            <TextBox Grid.Row="5" Margin="0,8,0,14" Text="{Binding SelectedAccount.ImapPort, UpdateSourceTrigger=PropertyChanged}" />
+                                            <CheckBox Grid.Row="6" Margin="0,0,0,0" IsChecked="{Binding SelectedAccount.UseSsl}" Content="SSL verwenden" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
 
-                            <TextBlock Grid.Column="1" Grid.Row="6" Text="Port / SSL" />
-                            <StackPanel Grid.Column="1" Grid.Row="7" Margin="12,8,0,14">
-                                <TextBox Text="{Binding SelectedAccount.ImapPort, UpdateSourceTrigger=PropertyChanged}" />
-                                <CheckBox Margin="0,12,0,0" IsChecked="{Binding SelectedAccount.UseSsl}" Content="SSL verwenden" />
-                            </StackPanel>
-                        </Grid>
+                            <Grid Margin="0,16,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="320" />
+                                    <ColumnDefinition Width="16" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Style="{StaticResource SectionCardStyle}">
+                                    <StackPanel>
+                                        <TextBlock Text="Scan-Zielordner" FontSize="18" FontWeight="SemiBold" Foreground="#203A57" />
+                                        <TextBlock Margin="0,5,0,0" Text="Welcher IMAP-Ordner soll durchsucht werden?" Foreground="#6D86A0" />
+                                        <TextBox Margin="0,16,0,0" Text="{Binding SelectedAccount.FolderName, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="2" Style="{StaticResource SectionCardStyle}" Background="#F7FAFE">
+                                    <StackPanel>
+                                        <TextBlock Text="Konto-spezifische Ausschluesse" FontSize="18" FontWeight="SemiBold" Foreground="#203A57" />
+                                        <TextBlock Margin="0,5,0,0"
+                                                   Text="Diese Regeln gelten nur fuer das ausgewaehlte Konto und ergaenzen die globalen Ausschluesse."
+                                                   Foreground="#6D86A0"
+                                                   TextWrapping="Wrap" />
+                                        <TextBox Margin="0,16,0,0"
+                                                 MinHeight="106"
+                                                 AcceptsReturn="True"
+                                                 TextWrapping="Wrap"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 Text="{Binding SelectedAccount.ExcludedFolderPatternsText, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
                     </ScrollViewer>
                 </Grid>
             </Border>
         </Grid>
 
-        <Border Grid.Row="2" Padding="18" CornerRadius="20" Background="#FFFDF9">
-            <DockPanel>
-                <StackPanel DockPanel.Dock="Left">
-                    <TextBlock Text="{Binding StatusMessage}" FontSize="14" Foreground="#203340" />
-                    <TextBox Margin="0,8,0,0"
-                             Width="620"
-                             MinHeight="64"
-                             MaxHeight="140"
+        <Border Grid.Row="2" Style="{StaticResource SectionCardStyle}" Padding="18">
+            <DockPanel LastChildFill="True">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Width="140" Height="42" Margin="0,0,12,0" Click="OnSaveClicked" Content="Speichern" />
+                    <Button Width="140" Height="42" Style="{StaticResource SecondaryButtonStyle}" Click="OnCloseClicked" Content="Schliessen" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,20,0">
+                    <TextBlock Text="{Binding StatusMessage}" FontSize="14" FontWeight="SemiBold" Foreground="#203A57" />
+                    <TextBox Margin="0,10,0,0"
+                             MinHeight="78"
+                             MaxHeight="160"
                              IsReadOnly="True"
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
                              VerticalScrollBarVisibility="Auto"
                              HorizontalScrollBarVisibility="Auto"
                              Text="{Binding TestResultSummary}" />
-                </StackPanel>
-
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                    <Button Width="130" Height="42" Margin="0,0,12,0" Click="OnSaveClicked" Content="Speichern" />
-                    <Button Width="130" Height="42" Click="OnCloseClicked" Content="Schliessen" />
                 </StackPanel>
             </DockPanel>
         </Border>

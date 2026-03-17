@@ -18,6 +18,7 @@ public partial class AccountSettingsWindow : Window, INotifyPropertyChanged
     private EditableMailAccount? selectedAccount;
     private string selectedProviderHint = MailProviderCatalog.GetByName("Gmail").Hint;
     private string statusMessage = "Bearbeite deine Konten und speichere die Einstellungen.";
+    private string settingsStorageSummary = AppDataPaths.GetUserSettingsFilePath();
     private string testResultSummary = string.Empty;
     private string excludedFolderPatternsText = string.Empty;
     private int initialLookbackDays;
@@ -62,6 +63,16 @@ public partial class AccountSettingsWindow : Window, INotifyPropertyChanged
         }
     }
 
+    public string SettingsStorageSummary
+    {
+        get => settingsStorageSummary;
+        set
+        {
+            settingsStorageSummary = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string TestResultSummary
     {
         get => testResultSummary;
@@ -102,6 +113,7 @@ public partial class AccountSettingsWindow : Window, INotifyPropertyChanged
 
         InitializeComponent();
         DataContext = this;
+        SettingsStorageSummary = AppDataPaths.GetUserSettingsFilePath();
         InitialLookbackDays = currentSettings.MailImport.InitialLookbackDays;
         ExcludedFolderPatternsText = string.Join(Environment.NewLine, currentSettings.MailImport.ExcludedFolderPatterns);
 
@@ -206,7 +218,7 @@ public partial class AccountSettingsWindow : Window, INotifyPropertyChanged
         };
 
         await settingsProvider.SaveAsync(updatedSettings);
-        StatusMessage = "Einstellungen gespeichert.";
+        StatusMessage = $"Einstellungen gespeichert in {AppDataPaths.GetUserSettingsFilePath()}.";
     }
 
     private async Task RunConnectionTestAsync(string? emailAddress = null)
