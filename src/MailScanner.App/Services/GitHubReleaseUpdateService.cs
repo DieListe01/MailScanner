@@ -16,6 +16,7 @@ public sealed class GitHubReleaseUpdateService
     {
         latestReleaseApiUrl = $"https://api.github.com/repos/{owner}/{repository}/releases/latest";
         httpClient = new HttpClient();
+        httpClient.Timeout = TimeSpan.FromSeconds(8);
         httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("MailScanner", "1.0"));
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
     }

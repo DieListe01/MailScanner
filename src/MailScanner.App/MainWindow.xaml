@@ -187,16 +187,36 @@
                                     Background="#1A456E"
                                     BorderBrush="#35648F"
                                     BorderThickness="1">
-                                <DockPanel>
-                                    <TextBlock DockPanel.Dock="Left"
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Row="0"
+                                               Grid.Column="0"
                                                Text="Release-Status"
                                                FontWeight="SemiBold"
                                                Foreground="#F2F8FF" />
-                                    <TextBlock Margin="16,0,0,0"
+                                    <TextBlock Grid.Row="0"
+                                               Grid.Column="1"
+                                               Margin="16,0,0,0"
+                                               Text="{Binding LatestVersionSummary}"
+                                               Foreground="#F7FBFF"
+                                               FontWeight="SemiBold"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="1"
+                                               Grid.Column="0"
+                                               Grid.ColumnSpan="2"
+                                               Margin="0,6,0,0"
                                                Text="{Binding UpdateStatusSummary}"
                                                Foreground="#D6E6F8"
                                                TextWrapping="Wrap" />
-                                </DockPanel>
+                                </Grid>
                             </Border>
 
                             <WrapPanel Grid.Row="2" Margin="0,14,0,0">
@@ -267,7 +287,7 @@
                                         <Button x:Name="TestConnectionButton" Grid.Row="0" Grid.Column="2" Style="{StaticResource ActionButtonStyle}" Click="OnTestConnectionsClicked" Background="#2C659A" BorderBrush="#6691BF" Content="Verbindung" />
                                         <Button x:Name="RefreshButton" Grid.Row="2" Grid.Column="0" Style="{StaticResource ActionButtonStyle}" Click="OnRefreshClicked" Background="#275D90" BorderBrush="#5C88B3" Content="Postfaecher pruefen" />
                                         <Button x:Name="DownloadButton" Grid.Row="2" Grid.Column="2" Style="{StaticResource ActionButtonStyle}" Click="OnDownloadSelectionClicked" Background="#487AB0" BorderBrush="#83A8CD" Content="Auswahl speichern" />
-                                        <Button Grid.Row="4" Grid.ColumnSpan="3" Style="{StaticResource ActionButtonStyle}" Click="OnOpenLatestReleaseClicked" Background="#638FBF" BorderBrush="#9FBAD8" Content="Update" Visibility="{Binding LatestReleaseVisibility}" />
+                                        <Button Grid.Row="4" Grid.ColumnSpan="3" Style="{StaticResource ActionButtonStyle}" Click="OnOpenLatestReleaseClicked" Background="#638FBF" BorderBrush="#9FBAD8" Content="{Binding LatestReleaseButtonText}" Visibility="{Binding LatestReleaseVisibility}" />
                                     </Grid>
                                 </Border>
 

@@ -28,7 +28,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private string invoiceMatchSummary = "0 Rechnungs-Treffer";
     private string lastConnectionTestSummary = string.Empty;
     private GitHubReleaseUpdateService.ReleaseUpdateInfo latestReleaseInfo = GitHubReleaseUpdateService.ReleaseUpdateInfo.Unavailable();
+    private string latestReleaseButtonText = "Update";
     private string latestReleaseUrl = string.Empty;
+    private string latestVersionSummary = "Pruefung laeuft...";
     private Visibility latestReleaseVisibility = Visibility.Collapsed;
     private string attachmentMailSummary = "0 Mails mit Anhang";
     private string lookbackScopeSummary = "Scanbereich: kompletter Verlauf";
@@ -59,7 +61,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         InitializeComponent();
         DataContext = this;
         Loaded += OnLoaded;
-        CurrentVersionSummary = $"v{appVersionService.GetCurrentVersion()}";
+        var currentVersion = appVersionService.GetCurrentVersion();
+        Title = $"MailScanner v{currentVersion}";
+        CurrentVersionSummary = $"Installiert: v{currentVersion}";
         RefreshExcludedFolderSummary();
         RefreshLookbackSummary();
         RefreshAccountSummary();
@@ -183,6 +187,26 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         set
         {
             latestReleaseVisibility = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string LatestReleaseButtonText
+    {
+        get => latestReleaseButtonText;
+        set
+        {
+            latestReleaseButtonText = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string LatestVersionSummary
+    {
+        get => latestVersionSummary;
+        set
+        {
+            latestVersionSummary = value;
             OnPropertyChanged();
         }
     }
@@ -482,6 +506,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             {
                 latestReleaseUrl = release.ReleaseUrl;
                 LatestReleaseVisibility = Visibility.Visible;
+                LatestReleaseButtonText = $"Update auf {release.LatestVersion}";
+                LatestVersionSummary = $"Neu verfuegbar: {release.LatestVersion}";
                 UpdateStatusSummary = release.InstallerAsset is null
                     ? $"Neue GitHub-Release verfuegbar: {release.LatestVersion}"
                     : $"Neue Version {release.LatestVersion} inkl. Installer verfuegbar";
@@ -491,11 +517,15 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             }
 
             LatestReleaseVisibility = Visibility.Collapsed;
+            LatestReleaseButtonText = "Update";
+            LatestVersionSummary = "Neueste Release installiert";
             UpdateStatusSummary = "GitHub-Release aktuell.";
         }
         catch (Exception ex)
         {
             LatestReleaseVisibility = Visibility.Collapsed;
+            LatestReleaseButtonText = "Update";
+            LatestVersionSummary = "Release-Check derzeit nicht verfuegbar";
             UpdateStatusSummary = $"Release-Pruefung derzeit nicht verfuegbar: {ex.Message}";
         }
     }
