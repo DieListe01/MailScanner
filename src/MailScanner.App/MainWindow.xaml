@@ -29,13 +29,13 @@
             <GradientStop Offset="0" Color="#3F75B4" />
             <GradientStop Offset="1" Color="#2A5C97" />
         </LinearGradientBrush>
-        <DropShadowEffect x:Key="PanelShadow" BlurRadius="30" ShadowDepth="12" Color="#2E527A" Opacity="0.14" />
-        <DropShadowEffect x:Key="HeroShadow" BlurRadius="40" ShadowDepth="16" Color="#203B59" Opacity="0.16" />
-        <DropShadowEffect x:Key="ButtonShadow" BlurRadius="16" ShadowDepth="6" Color="#16385C" Opacity="0.18" />
+        <DropShadowEffect x:Key="PanelShadow" BlurRadius="25" ShadowDepth="8" Color="#2E527A" Opacity="0.12" />
+        <DropShadowEffect x:Key="HeroShadow" BlurRadius="35" ShadowDepth="12" Color="#203B59" Opacity="0.14" />
+        <DropShadowEffect x:Key="ButtonShadow" BlurRadius="12" ShadowDepth="4" Color="#16385C" Opacity="0.15" />
 
         <Style x:Key="MetricCardStyle" TargetType="Border">
-            <Setter Property="CornerRadius" Value="18" />
-            <Setter Property="Padding" Value="16" />
+            <Setter Property="CornerRadius" Value="20" />
+            <Setter Property="Padding" Value="18" />
             <Setter Property="Background" Value="{StaticResource PanelBrush}" />
             <Setter Property="Effect" Value="{StaticResource PanelShadow}" />
         </Style>
