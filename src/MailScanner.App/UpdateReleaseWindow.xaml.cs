@@ -102,7 +102,7 @@ public partial class UpdateReleaseWindow : Window, INotifyPropertyChanged
             // Wait a moment to ensure the application is fully closed
             await Task.Delay(1000);
 
-            StatusMessage = "Starte Update-Installer...";
+            StatusMessage = "Starte Update-Installer....";
             
             // Start the installer - it will handle updating the application and restarting it
             Process.Start(new ProcessStartInfo
