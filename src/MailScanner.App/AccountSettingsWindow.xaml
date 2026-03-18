@@ -240,7 +240,7 @@
         <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
             <Button Width="160" Height="42" Margin="0,0,12,0" Click="OnSaveClicked" Content="Speichern" IsEnabled="{Binding CanSaveTest}" />
             <Button Width="176" Height="42" Margin="0,0,12,0" Click="OnTestSelectedClicked" Content="Ausgewaehltes testen" IsEnabled="{Binding CanSaveTest}" />
-            <Button Width="160" Height="42" Style="{StaticResource SecondaryButtonStyle}" Click="OnTestAllClicked" Content="Alle testen" IsEnabled="{Binding CanSaveTest}" />
+            <Button Width="160" Height="42" Style="{StaticResource SecondaryActionButton}" Click="OnTestAllClicked" Content="Alle testen" IsEnabled="{Binding CanSaveTest}" />
         </StackPanel>
         <TextBlock Text="{Binding StatusMessage}"
                    TextWrapping="Wrap"

@@ -5,56 +5,45 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="MailScanner"
-        Height="810"
-        Width="1320"
-        MinHeight="740"
-        MinWidth="1180"
-        Background="#EAF2FD">
+        Height="700"
+        Width="1000"
+        MinHeight="650"
+        MinWidth="900"
+        Background="#F8F9FA">
     <Window.Resources>
-        <SolidColorBrush x:Key="PanelBrush" Color="#FBFDFF" />
-        <SolidColorBrush x:Key="TextBrush" Color="#15314F" />
-        <SolidColorBrush x:Key="MutedBrush" Color="#607A98" />
-        <SolidColorBrush x:Key="StrokeBrush" Color="#D4E0EE" />
-        <LinearGradientBrush x:Key="ShellBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Offset="0" Color="#F4F8FE" />
-            <GradientStop Offset="0.45" Color="#E5EFFB" />
-            <GradientStop Offset="1" Color="#D9E7FA" />
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="HeroBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Offset="0" Color="#14385C" />
-            <GradientStop Offset="0.55" Color="#245A92" />
-            <GradientStop Offset="1" Color="#173B60" />
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="InvoiceBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Offset="0" Color="#3F75B4" />
-            <GradientStop Offset="1" Color="#2A5C97" />
-        </LinearGradientBrush>
-        <DropShadowEffect x:Key="PanelShadow" BlurRadius="25" ShadowDepth="8" Color="#2E527A" Opacity="0.12" />
-        <DropShadowEffect x:Key="HeroShadow" BlurRadius="35" ShadowDepth="12" Color="#203B59" Opacity="0.14" />
-        <DropShadowEffect x:Key="ButtonShadow" BlurRadius="12" ShadowDepth="4" Color="#16385C" Opacity="0.15" />
+        <SolidColorBrush x:Key="PanelBrush" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="TextBrush" Color="#212529" />
+        <SolidColorBrush x:Key="MutedBrush" Color="#6C757D" />
+        <SolidColorBrush x:Key="StrokeBrush" Color="#DEE2E6" />
+        <SolidColorBrush x:Key="ShellBrush" Color="#F8F9FA" />
+        <SolidColorBrush x:Key="HeroBrush" Color="#495057" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#007BFF" />
+        <DropShadowEffect x:Key="PanelShadow" BlurRadius="8" ShadowDepth="2" Color="#000000" Opacity="0.1" />
+        <DropShadowEffect x:Key="HeroShadow" BlurRadius="12" ShadowDepth="3" Color="#000000" Opacity="0.15" />
+        <DropShadowEffect x:Key="ButtonShadow" BlurRadius="6" ShadowDepth="1" Color="#000000" Opacity="0.1" />
 
         <Style x:Key="MetricCardStyle" TargetType="Border">
-            <Setter Property="CornerRadius" Value="20" />
-            <Setter Property="Padding" Value="18" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="16" />
             <Setter Property="Background" Value="{StaticResource PanelBrush}" />
             <Setter Property="Effect" Value="{StaticResource PanelShadow}" />
         </Style>
 
         <Style x:Key="HeroChipStyle" TargetType="Border">
-            <Setter Property="Margin" Value="0,0,12,12" />
-            <Setter Property="Padding" Value="14,7" />
-            <Setter Property="CornerRadius" Value="11" />
-            <Setter Property="Background" Value="#234A75" />
-            <Setter Property="BorderBrush" Value="#335E89" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Background" Value="#E9ECEF" />
+            <Setter Property="BorderBrush" Value="#CED4DA" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
 
         <Style x:Key="InfoChipStyle" TargetType="Border">
-            <Setter Property="Margin" Value="0,0,10,10" />
-            <Setter Property="Padding" Value="11,7" />
-            <Setter Property="CornerRadius" Value="11" />
-            <Setter Property="Background" Value="#EEF5FF" />
-            <Setter Property="BorderBrush" Value="#D9E7F6" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Background" Value="#F8F9FA" />
+            <Setter Property="BorderBrush" Value="#E9ECEF" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
 
@@ -62,193 +51,177 @@
     </Window.Resources>
 
     <Grid>
-        <Grid.Background>
-            <StaticResource ResourceKey="ShellBrush" />
-        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <Grid Margin="28">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <Border Padding="20" CornerRadius="8" Background="{StaticResource HeroBrush}" Effect="{StaticResource HeroShadow}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="280" />
+                </Grid.ColumnDefinitions>
 
-            <Border Padding="28" CornerRadius="30" Background="{StaticResource HeroBrush}" Effect="{StaticResource HeroShadow}">
-                <Grid>
-                    <Canvas IsHitTestVisible="False">
-                        <Ellipse Width="320" Height="320" Fill="#10FFFFFF" Canvas.Left="650" Canvas.Top="-160" />
-                        <Ellipse Width="240" Height="240" Fill="#10000000" Canvas.Left="860" Canvas.Top="34" />
-                        <Ellipse Width="360" Height="360" Fill="#0F000000" Canvas.Left="-130" Canvas.Top="90" />
-                        <Rectangle Width="520" Height="240" RadiusX="120" RadiusY="120" Fill="#0BFFFFFF" Canvas.Left="280" Canvas.Top="-40" />
-                    </Canvas>
+                <Grid Margin="0,0,28,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="360" />
-                        </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <DockPanel LastChildFill="False">
+                            <TextBlock DockPanel.Dock="Left"
+                                       Text="MailScanner"
+                                       FontFamily="Segoe UI"
+                                       FontSize="24"
+                                       FontWeight="SemiBold"
+                                       Foreground="#FFFFFF" />
+                            <Border DockPanel.Dock="Left"
+                                    Margin="8,6,0,0"
+                                    Padding="6,3"
+                                    CornerRadius="4"
+                                    Background="{StaticResource AccentBrush}"
+                                    BorderThickness="1">
+                                <TextBlock Text="{Binding CurrentVersionSummary}"
+                                           Foreground="#FFFFFF"
+                                           FontWeight="Normal"
+                                           FontSize="12" />
+                            </Border>
+                        </DockPanel>
 
-                        <Grid Margin="0,0,28,0">
+                        <TextBlock Margin="0,8,0,0"
+                                   MaxWidth="500"
+                                   FontSize="14"
+                                   LineHeight="20"
+                                   TextWrapping="Wrap"
+                                   Foreground="#E9ECEF"
+                                   Text="Dokumente aus privaten Postfächern strukturiert sammeln, priorisieren, prüfen und sicher ins lokale DMS übernehmen." />
+                            </StackPanel>
+
+                        <Border Grid.Row="1"
+                                Margin="0,12,0,0"
+                                Padding="12,8"
+                                CornerRadius="6"
+                                Background="#343A40"
+                                BorderBrush="#495057"
+                                BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="Release-Status"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           Foreground="#E9ECEF" />
+                                <Border Margin="0,6,0,0"
+                                        Padding="6,2"
+                                        HorizontalAlignment="Left"
+                                        CornerRadius="4"
+                                        Background="#6C757D"
+                                        BorderThickness="1">
+                                    <TextBlock Text="{Binding LatestVersionSummary}"
+                                               Foreground="#FFFFFF"
+                                               FontWeight="Normal"
+                                               FontSize="10" />
+                                </Border>
+                                <TextBlock Margin="0,6,0,0"
+                                           Text="{Binding UpdateStatusSummary}"
+                                           Foreground="#DEE2E6"
+                                           FontSize="11"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+
+                        <WrapPanel Grid.Row="2" Margin="0,12,0,0">
+                            <Border Style="{StaticResource HeroChipStyle}">
+                                <TextBlock Text="Vorschau vor dem Download" Foreground="#495057" FontSize="11" />
+                            </Border>
+                            <Border Style="{StaticResource HeroChipStyle}">
+                                <TextBlock Text="SQLite + Dateisystem" Foreground="#495057" FontSize="11" />
+                            </Border>
+                            <Border Style="{StaticResource HeroChipStyle}">
+                                <TextBlock Text="Kompletter Verlauf scanbar" Foreground="#495057" FontSize="11" />
+                            </Border>
+                        </WrapPanel>
+                    </Grid>
+
+                    <Border Grid.Column="1"
+                            Padding="16"
+                            CornerRadius="8"
+                            Background="#FFFFFF"
+                            BorderBrush="#DEE2E6"
+                            BorderThickness="1"
+                            Effect="{StaticResource PanelShadow}">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <StackPanel>
-                                <DockPanel LastChildFill="False">
-                                    <TextBlock DockPanel.Dock="Left"
-                                               Text="MailScanner"
-                                               FontFamily="Bahnschrift"
-                                               FontSize="40"
-                                               FontWeight="SemiBold"
-                                               Foreground="#F7FBFF" />
-                                    <Border DockPanel.Dock="Left"
-                                            Margin="12,10,0,0"
-                                            Padding="10,5"
-                                            CornerRadius="10"
-                                            Background="#2A5B90"
-                                            BorderBrush="#4B7BAB"
-                                            BorderThickness="1">
-                                        <TextBlock Text="{Binding CurrentVersionSummary}"
-                                                   Foreground="#F4FAFF"
-                                                   FontWeight="SemiBold" />
-                                    </Border>
-                                </DockPanel>
+                            <TextBlock Text="Aktionen"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#212529" />
+                            <TextBlock Grid.Row="1"
+                                       Margin="0,4,0,0"
+                                       Text="Die wichtigsten Aktionen kompakt in einem Bereich."
+                                       Foreground="#6C757D"
+                                       FontSize="11"
+                                       TextWrapping="Wrap" />
 
-                                <TextBlock Margin="0,10,0,0"
-                                           MaxWidth="590"
-                                           FontSize="16"
-                                           LineHeight="27"
-                                           TextWrapping="Wrap"
-                                           Foreground="#D7E7F9"
-                                           Text="Dokumente aus privaten Postfaechern strukturiert sammeln, priorisieren, pruefen und sicher ins lokale DMS uebernehmen." />
-                            </StackPanel>
-
-                            <Border Grid.Row="1"
-                                    Margin="0,16,170,0"
-                                    Padding="14,12"
-                                    CornerRadius="14"
-                                    Background="#1A456E"
-                                    BorderBrush="#35648F"
+                            <Border Grid.Row="2"
+                                    Margin="0,12,0,0"
+                                    Padding="12"
+                                    CornerRadius="6"
+                                    Background="#F8F9FA"
+                                    BorderBrush="#DEE2E6"
                                     BorderThickness="1">
-                                <StackPanel>
-                                    <TextBlock Text="Release-Status"
-                                               FontSize="12"
-                                               FontWeight="SemiBold"
-                                               Foreground="#BCD4EE" />
-                                    <Border Margin="0,8,0,0"
-                                            Padding="10,5"
-                                            HorizontalAlignment="Left"
-                                            CornerRadius="999"
-                                            Background="#24527E"
-                                            BorderBrush="#4D7AA6"
-                                            BorderThickness="1">
-                                        <TextBlock Text="{Binding LatestVersionSummary}"
-                                                   Foreground="#F7FBFF"
-                                                   FontWeight="SemiBold" />
-                                    </Border>
-                                    <TextBlock Margin="0,10,0,0"
-                                               Text="{Binding UpdateStatusSummary}"
-                                               Foreground="#D6E6F8"
-                                               TextWrapping="Wrap" />
-                                </StackPanel>
-                            </Border>
-
-                            <WrapPanel Grid.Row="2" Margin="0,14,0,0">
-                                <Border Style="{StaticResource HeroChipStyle}" Background="#224A74">
-                                    <TextBlock Text="Vorschau vor dem Download" Foreground="#EFF6FF" />
-                                </Border>
-                                <Border Style="{StaticResource HeroChipStyle}" Background="#1B4369">
-                                    <TextBlock Text="SQLite + Dateisystem" Foreground="#E7F2FF" />
-                                </Border>
-                                <Border Style="{StaticResource HeroChipStyle}" Background="#315F95">
-                                    <TextBlock Text="Kompletter Verlauf scanbar" Foreground="#F6FBFF" />
-                                </Border>
-                            </WrapPanel>
-                        </Grid>
-
-                        <Border Grid.Column="1"
-                                Padding="20"
-                                CornerRadius="22"
-                                Background="#163B61"
-                                BorderBrush="#527DA8"
-                                BorderThickness="1">
-                            <Grid>
-                                <Grid.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0" Color="#183F67" />
-                                        <GradientStop Offset="1" Color="#15375A" />
-                                    </LinearGradientBrush>
-                                </Grid.Background>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <TextBlock Text="Aktionen"
-                                           FontSize="17"
-                                           FontWeight="SemiBold"
-                                           Foreground="#F5FAFF" />
-                                <TextBlock Grid.Row="1"
-                                           Margin="0,5,0,0"
-                                           Text="Die wichtigsten Aktionen kompakt in einem Bereich."
-                                           Foreground="#C2D8F1"
-                                           TextWrapping="Wrap" />
-
-                                <Border Grid.Row="2"
-                                        Margin="0,14,0,0"
-                                        Padding="12"
-                                        CornerRadius="16"
-                                        Background="#1E4A74"
-                                        BorderBrush="#3F6B95"
-                                        BorderThickness="1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="10" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="8" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="8" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-
-                                        <Button x:Name="SettingsButton" Grid.Row="0" Grid.Column="0" Style="{StaticResource ActionButtonStyle}" Click="OnOpenSettingsClicked" Background="#3974B0" BorderBrush="#75A3CF" Content="Konten" />
-                                        <Button x:Name="TestConnectionButton" Grid.Row="0" Grid.Column="2" Style="{StaticResource ActionButtonStyle}" Click="OnTestConnectionsClicked" Background="#2C659A" BorderBrush="#6691BF" Content="Verbindung" />
-                                        <Button x:Name="RefreshButton" Grid.Row="2" Grid.Column="0" Style="{StaticResource ActionButtonStyle}" Click="OnRefreshClicked" Background="#275D90" BorderBrush="#5C88B3" Content="Postfaecher pruefen" />
-                                        <Button x:Name="DownloadButton" Grid.Row="2" Grid.Column="2" Style="{StaticResource ActionButtonStyle}" Click="OnDownloadSelectionClicked" Background="#487AB0" BorderBrush="#83A8CD" Content="Auswahl speichern" />
-                                        <Button Grid.Row="4" Grid.ColumnSpan="3" Style="{StaticResource ActionButtonStyle}" Click="OnOpenLatestReleaseClicked" Background="#638FBF" BorderBrush="#9FBAD8" Content="{Binding LatestReleaseButtonText}" Visibility="{Binding LatestReleaseVisibility}" />
-                                    </Grid>
-                                </Border>
-
-                                <Grid Grid.Row="3" Margin="0,18,0,0">
+                                <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="8" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <Border Margin="0,0,8,0"
-                                            Padding="10,8"
-                                            CornerRadius="12"
-                                            Background="#1D456D"
-                                            BorderBrush="#366A98"
-                                            BorderThickness="1">
-                                        <TextBlock Text="Vollscan" Foreground="#D6E6F7" FontWeight="SemiBold" />
-                                    </Border>
-                                    <Border Grid.Column="1"
-                                            Margin="8,0,0,0"
-                                            Padding="10,8"
-                                            CornerRadius="12"
-                                            Background="#1D456D"
-                                            BorderBrush="#366A98"
-                                            BorderThickness="1">
-                                        <TextBlock Text="Live-Updatecheck" Foreground="#D6E6F7" FontWeight="SemiBold" />
-                                    </Border>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="6" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="6" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <Button x:Name="SettingsButton" Grid.Row="0" Grid.Column="0" Style="{StaticResource PrimaryActionButton}" Click="OnOpenSettingsClicked" Content="Konten" />
+                                    <Button x:Name="TestConnectionButton" Grid.Row="0" Grid.Column="2" Style="{StaticResource SecondaryActionButton}" Click="OnTestConnectionsClicked" Content="Verbindung" />
+                                    <Button x:Name="RefreshButton" Grid.Row="2" Grid.Column="0" Style="{StaticResource SecondaryActionButton}" Click="OnRefreshClicked" Content="Postfächer prüfen" />
+                                    <Button x:Name="DownloadButton" Grid.Row="2" Grid.Column="2" Style="{StaticResource PrimaryActionButton}" Click="OnDownloadSelectionClicked" Content="Auswahl speichern" />
+                                    <Button Grid.Row="4" Grid.ColumnSpan="3" Style="{StaticResource PrimaryActionButton}" Click="OnOpenLatestReleaseClicked" Content="{Binding LatestReleaseButtonText}" Visibility="{Binding LatestReleaseVisibility}" />
+                                </Grid>
+                            </Border>
+
+                            <Grid Grid.Row="3" Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Margin="0,0,4,0"
+                                        Padding="8,4"
+                                        CornerRadius="4"
+                                        Background="#E9ECEF"
+                                        BorderBrush="#CED4DA"
+                                        BorderThickness="1">
+                                    <TextBlock Text="Vollscan" Foreground="#495057" FontWeight="Normal" FontSize="10" />
+                                </Border>
+                                <Border Grid.Column="1"
+                                        Margin="4,0,0,0"
+                                        Padding="8,4"
+                                        CornerRadius="4"
+                                        Background="#E9ECEF"
+                                        BorderBrush="#CED4DA"
+                                        BorderThickness="1">
+                                    <TextBlock Text="Live-Updatecheck" Foreground="#495057" FontWeight="Normal" FontSize="10" />
+                                </Border>
                                 </Grid>
                             </Grid>
                         </Border>
