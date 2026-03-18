@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using MailScanner.App.Services;
 
@@ -77,15 +78,40 @@ public partial class UpdateReleaseWindow : Window, INotifyPropertyChanged
         {
             StatusMessage = "Lade Installer herunter...";
             var targetDirectory = Path.Combine(Path.GetTempPath(), "MailScanner", "updates", releaseInfo.LatestVersion.TrimStart('v', 'V'));
-            var installerPath = await releaseUpdateService.DownloadInstallerAsync(releaseInfo.InstallerAsset, targetDirectory);
+            
+            // Create progress handler for download progress
+            IProgress<double> progress = new Progress<double>(percent =>
+            {
+                // Update UI on dispatcher thread
+                Dispatcher.Invoke(() =>
+                {
+                    StatusMessage = $"Lade Installer herunter... {percent:F1}%";
+                });
+            });
+            
+            var installerPath = await releaseUpdateService.DownloadInstallerAsync(
+                releaseInfo.InstallerAsset, 
+                targetDirectory, 
+                progress);
 
-            StatusMessage = "Starte Installer...";
+            StatusMessage = "Download abgeschlossen. Bereite Update vor...";
+            
+            // Close the main application so the installer can replace files
+            Application.Current.MainWindow?.Close();
+            
+            // Wait a moment to ensure the application is fully closed
+            await Task.Delay(1000);
+
+            StatusMessage = "Starte Update-Installer...";
+            
+            // Start the installer - it will handle updating the application and restarting it
             Process.Start(new ProcessStartInfo
             {
                 FileName = installerPath,
                 UseShellExecute = true
             });
 
+            // Close this update window
             DialogResult = true;
             Close();
         }

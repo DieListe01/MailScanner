@@ -52,7 +52,7 @@ public sealed class GitHubReleaseUpdateService
             GetPreferredInstallerAsset(release.Assets));
     }
 
-    public async Task<string> DownloadInstallerAsync(ReleaseAssetInfo asset, string targetDirectory, CancellationToken cancellationToken = default)
+    public async Task<string> DownloadInstallerAsync(ReleaseAssetInfo asset, string targetDirectory, IProgress<double>? progress = null, CancellationToken cancellationToken = default)
     {
         Directory.CreateDirectory(targetDirectory);
         var filePath = Path.Combine(targetDirectory, asset.FileName);
@@ -63,9 +63,27 @@ public sealed class GitHubReleaseUpdateService
             cancellationToken);
         response.EnsureSuccessStatusCode();
 
+        var totalBytes = response.Content.Headers.ContentLength ?? -1L;
         await using var source = await response.Content.ReadAsStreamAsync(cancellationToken);
         await using var target = File.Create(filePath);
-        await source.CopyToAsync(target, cancellationToken);
+
+        if (totalBytes > 0 && progress != null)
+        {
+            var buffer = new byte[81920]; // 80KB buffer
+            long totalBytesRead = 0;
+            int bytesRead;
+            while ((bytesRead = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+            {
+                await target.WriteAsync(buffer, 0, bytesRead, cancellationToken);
+                totalBytesRead += bytesRead;
+                double percent = (double)totalBytesRead / totalBytes * 100;
+                progress.Report(Math.Min(percent, 100));
+            }
+        }
+        else
+        {
+            await source.CopyToAsync(target, cancellationToken);
+        }
 
         return filePath;
     }
