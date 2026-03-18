@@ -1,8 +1,9 @@
 <Window x:Class="MailScanner.App.AccountSettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:d="http://schemas.microsoft.com/exprese/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:MailScanner.App.Controls"
         mc:Ignorable="d"
         Title="Mailkonten verwalten"
         Height="820"
@@ -13,8 +14,8 @@
         Background="#EEF3FB">
     <Window.Resources>
         <Style x:Key="SectionCardStyle" TargetType="Border">
-            <Setter Property="Padding" Value="18" />
-            <Setter Property="CornerRadius" Value="24" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="CornerRadius" Value="12" />
             <Setter Property="Background" Value="#FBFDFF" />
             <Setter Property="BorderBrush" Value="#D8E4F2" />
             <Setter Property="BorderThickness" Value="1" />
@@ -26,11 +27,7 @@
             <Setter Property="Foreground" Value="#486581" />
         </Style>
 
-        <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="Background" Value="#F1F6FD" />
-            <Setter Property="Foreground" Value="#254A72" />
-            <Setter Property="BorderBrush" Value="#C7D9EC" />
-        </Style>
+
 
         <Style TargetType="ListBoxItem">
             <Setter Property="Padding" Value="0" />
@@ -40,12 +37,43 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
                         <Border x:Name="Root"
-                                Padding="14,12"
-                                CornerRadius="16"
+                                Padding="12"
+                                CornerRadius="8"
                                 Background="#F4F8FD"
                                 BorderBrush="#D7E4F1"
                                 BorderThickness="1">
-                            <ContentPresenter />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Status indicator -->
+                                <Ellipse Width="10" Height="10"
+                                         Fill="#9E9E9E"
+                                         VerticalAlignment="Center"
+                                         Margin="0,0,8,0"/>
+                                <!-- Details -->
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               FontWeight="SemiBold"
+                                               Foreground="#21415F"/>
+                                    <TextBlock Text="{Binding EmailAddress}"
+                                               Foreground="#7890A7"
+                                               FontSize="12"/>
+                                </StackPanel>
+                                <!-- Provider badge -->
+                                <Border Grid.Column="2"
+                                        Background="#E9F2FD"
+                                        CornerRadius="6"
+                                        Padding="4,2"
+                                        Margin="8,0,0,0">
+                                    <TextBlock Text="{Binding ProviderName}"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Foreground="#335B83"/>
+                                </Border>
+                            </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -175,10 +203,10 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
 
-                    <StackPanel Grid.Row="2">
-                        <Button Height="42" Margin="0,0,0,10" Click="OnAddAccountClicked" Content="Neues Konto" />
-                        <Button Height="42" Click="OnRemoveAccountClicked" Style="{StaticResource SecondaryButtonStyle}" Content="Ausgewaehltes Konto entfernen" />
-                    </StackPanel>
+                     <StackPanel Grid.Row="2">
+                         <Button Height="42" Margin="0,0,0,10" Click="OnAddAccountClicked" Content="Neues Konto" Style="{StaticResource SecondaryActionButton}" />
+                         <Button Height="42" Click="OnRemoveAccountClicked" Style="{StaticResource DangerActionButton}" Content="Ausgewaehltes Konto entfernen" />
+                     </StackPanel>
                 </Grid>
             </Border>
 
@@ -195,20 +223,36 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel>
-                            <TextBlock Text="Kontodetails"
-                                       FontSize="24"
-                                       FontWeight="SemiBold"
-                                       Foreground="#203A57" />
-                            <TextBlock Margin="0,5,0,0"
-                                       Text="Adresse, Zugangsdaten, Scanordner und Provider-Vorgaben."
-                                       Foreground="#6D86A0" />
-                        </StackPanel>
+<StackPanel>
+    <TextBlock Text="Details zum Konto"
+            FontSize="24"
+            FontWeight="SemiBold"
+            Foreground="#203A57" />
+    <TextBlock Margin="0,5,0,0"
+            Text="Adresse, Zugangsdaten, Scanordner und Provider-Vorgaben."
+            Foreground="#6D86A0" />
+</StackPanel>
 
-                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <Button Width="176" Height="42" Margin="0,0,12,0" Click="OnTestSelectedClicked" Content="Ausgewaehltes testen" />
-                            <Button Width="160" Height="42" Style="{StaticResource SecondaryButtonStyle}" Click="OnTestAllClicked" Content="Alle testen" />
-                        </StackPanel>
+    <StackPanel Grid.Column="1">
+        <controls:StatusBanner Message="{Binding ValidationMessage}"
+                               State="{Binding ValidationBannerState}"
+                               Margin="0,0,0,8" />
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <Button Width="160" Height="42" Margin="0,0,12,0" Click="OnSaveClicked" Content="Speichern" IsEnabled="{Binding CanSaveTest}" />
+            <Button Width="176" Height="42" Margin="0,0,12,0" Click="OnTestSelectedClicked" Content="Ausgewaehltes testen" IsEnabled="{Binding CanSaveTest}" />
+            <Button Width="160" Height="42" Style="{StaticResource SecondaryButtonStyle}" Click="OnTestAllClicked" Content="Alle testen" IsEnabled="{Binding CanSaveTest}" />
+        </StackPanel>
+        <TextBlock Text="{Binding StatusMessage}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,4"
+                   FontSize="12"
+                   Foreground="DarkGray" />
+        <TextBlock Text="{Binding TestResultSummary}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,0"
+                   FontSize="11"
+                   Foreground="#666666" />
+    </StackPanel>
                     </Grid>
 
                     <ScrollViewer Grid.Row="1"
@@ -226,37 +270,34 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Datenbank-Pfad" />
-                    <DockPanel Margin="0,8,0,0" LastChildFill="True">
-                        <TextBox Text="{Binding DatabasePath, UpdateSourceTrigger=PropertyChanged}" />
-                        <Button Width="28" Height="24" Margin="4,0,0,0" Content="…" Click="OnBrowseDatabaseClicked" />
-                    </DockPanel>
+                    <controls:FilePathPickerControl Path="{Binding DatabasePath, UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,0" />
                 </StackPanel>
                 <TextBlock Grid.Column="2"
-                           VerticalAlignment="Center"
-                           Text="Vollständiger Pfad zur SQLite-Datenbankdatei (mailscanner.db). Beispiel: Z:\MailScanner\storage\mailscanner.db"
-                           Foreground="#6C8096"
-                           TextWrapping="Wrap" />
+                            VerticalAlignment="Center"
+                            Text="Vollständiger Pfad zur SQLite-Datenbankdatei (mailscanner.db). Beispiel: Z:\MailScanner\storage\mailscanner.db"
+                            Foreground="#6C8096"
+                            TextWrapping="Wrap" />
             </Grid>
         </Border>
 
-                            <Border Margin="0,16,0,0" Style="{StaticResource SectionCardStyle}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="270" />
-                                        <ColumnDefinition Width="20" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                     <DockPanel Margin="0,8,0,0" LastChildFill="True">
-                                         <TextBox Text="{Binding DocumentRootPath, UpdateSourceTrigger=PropertyChanged}" />
-                                         <Button Width="28" Height="24" Margin="4,0,0,0" Content="…" Click="OnBrowseDocumentClicked" />
-                                     </DockPanel>
-                                    <TextBlock Grid.Column="2"
-                                               VerticalAlignment="Center"
-                                               Text="Ordner wo gescannte PDF-Anhänge gespeichert werden. Beispiel: Z:\MailScanner\documents"
-                                               Foreground="#6C8096"
-                                               TextWrapping="Wrap" />
-                                </Grid>
-                            </Border>
+<Border Margin="0,16,0,0" Style="{StaticResource SectionCardStyle}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="270" />
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+            <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Dokumenten-Ordner" />
+            <controls:FolderPathPickerControl Path="{Binding DocumentRootPath, UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,0" />
+        </StackPanel>
+        <TextBlock Grid.Column="2"
+                    VerticalAlignment="Center"
+                    Text="Ordner wo gescannte PDF-Anhänge gespeichert werden. Beispiel: Z:\MailScanner\documents"
+                    Foreground="#6C8096"
+                    TextWrapping="Wrap" />
+    </Grid>
+</Border>
 
                             <Border Style="{StaticResource SectionCardStyle}" Background="#F7FAFE">
                                 <Grid>

@@ -58,62 +58,7 @@
             <Setter Property="BorderThickness" Value="1" />
         </Style>
 
-        <Style x:Key="ActionButtonStyle" TargetType="Button">
-            <Setter Property="Height" Value="40" />
-            <Setter Property="MinWidth" Value="0" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Padding" Value="16,0" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="#F6FAFF" />
-            <Setter Property="Background" Value="#2A649B" />
-            <Setter Property="BorderBrush" Value="#5E8DBA" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Effect" Value="{StaticResource ButtonShadow}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="ButtonRoot"
-                                CornerRadius="10"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
-                            <Grid>
-                                <Border Margin="1"
-                                        Height="10"
-                                        VerticalAlignment="Top"
-                                        CornerRadius="9"
-                                        Opacity="0.08"
-                                        Background="#FFFFFF" />
-                                <Border Margin="1"
-                                        CornerRadius="9"
-                                        BorderBrush="#14FFFFFF"
-                                        BorderThickness="1" />
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ButtonRoot" Property="Opacity" Value="0.97" />
-                                <Setter TargetName="ButtonRoot" Property="BorderBrush" Value="#86ADD3" />
-                                <Setter TargetName="ButtonRoot" Property="Background" Value="#3170AC" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="ButtonRoot" Property="RenderTransformOrigin" Value="0.5,0.5" />
-                                <Setter TargetName="ButtonRoot" Property="RenderTransform">
-                                    <Setter.Value>
-                                        <TranslateTransform Y="1" />
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="ButtonRoot" Property="Opacity" Value="0.55" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+
     </Window.Resources>
 
     <Grid>

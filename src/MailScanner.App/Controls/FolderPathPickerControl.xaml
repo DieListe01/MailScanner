@@ -1,0 +1,60 @@
+<UserControl x:Class="MailScanner.App.Controls.FolderPathPickerControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MailScanner.App.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="40" d:DesignWidth="400">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="PathTextBox"
+                 IsReadOnly="True"
+                 VerticalAlignment="Center"
+                 Padding="6,4"
+                 BorderThickness="1"
+                 BorderBrush="#CCCCCC"
+                 Background="White"
+                 FontSize="12"
+                 ToolTip="{Binding Text, ElementName=PathTextBox}"
+                 TextWrapping="NoWrap"/>
+        <Button Grid.Column="1"
+                Content="📁"
+                Width="32" Height="32"
+                Margin="4,0,0,0"
+                Padding="0"
+                BorderThickness="1"
+                BorderBrush="#CCCCCC"
+                Background="White"
+                FontSize="16"
+                Click="BrowseButton_Click"
+                ToolTip="Ordner auswählen"/>
+        <Button Grid.Column="2"
+                Content="⧉"
+                Width="32" Height="32"
+                Margin="4,0,0,0"
+                Padding="0"
+                BorderThickness="1"
+                BorderBrush="#CCCCCC"
+                Background="White"
+                FontSize="16"
+                Click="CopyButton_Click"
+                ToolTip="Pfad kopieren"/>
+        <Button Grid.Column="3"
+                Content="↗"
+                Width="32" Height="32"
+                Margin="4,0,0,0"
+                Padding="0"
+                BorderThickness="1"
+                BorderBrush="#CCCCCC"
+                Background="White"
+                FontSize="16"
+                Click="OpenButton_Click"
+                ToolTip="Im Explorer öffnen"/>
+    </Grid>
+</UserControl>
