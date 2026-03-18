@@ -97,7 +97,7 @@ public partial class UpdateReleaseWindow : Window, INotifyPropertyChanged
             StatusMessage = "Download abgeschlossen. Bereite Update vor...";
             
             // Close the main application so the installer can replace files
-            Application.Current.MainWindow?.Close();
+            System.Windows.Application.Current.MainWindow?.Close();
             
             // Wait a moment to ensure the application is fully closed
             await Task.Delay(1000);
