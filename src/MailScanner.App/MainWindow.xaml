@@ -526,14 +526,14 @@
                                         <TextBlock Text="Rechnungen anzeigen" FontSize="11" FontWeight="SemiBold" Foreground="#BED1F4"/>
                                         <TextBlock Text="Vorschau zeigt Mail- und Trefferdaten. 'Anhang oeffnen' klappt nur, wenn die Datei bereits heruntergeladen wurde." Margin="0,10,0,0" FontSize="11" Foreground="#D6DEEF" TextWrapping="Wrap"/>
                                         <Button Content="Scanner" Style="{StaticResource ToolButton}" Margin="0,14,0,0" HorizontalAlignment="Left" Click="OnScannerNavClicked"/>
+                                        <TextBlock Text="Die zwei kleinen dunklen Balken waren vorher interne Tabs fuer Liste/Vorschau. Die habe ich jetzt entfernt." Margin="0,10,0,0" FontSize="10.5" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Border>
                             </Grid>
                         </Border>
 
-                        <TabControl x:Name="ResultsTabs" Grid.Row="1">
-                            <TabItem Header="Liste">
-                                <Grid Margin="0,12,0,0" Style="{StaticResource RevealGrid}">
+                        <Grid Grid.Row="1">
+                            <Grid x:Name="ResultsListView" Visibility="{Binding ResultsListVisibility}" Margin="0,12,0,0" Style="{StaticResource RevealGrid}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="*"/>
@@ -548,11 +548,12 @@
 
                                             <StackPanel Grid.Column="0">
                                                 <WrapPanel Margin="0,0,0,12">
-                                                    <Button x:Name="ViewButton" Content="Vorschau" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnViewClicked"/>
-                                                    <Button x:Name="OpenFileButton" Content="Datei oeffnen" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnOpenSelectedFileClicked"/>
-                                                    <Button x:Name="DownloadButton" Content="Herunterladen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,8,0" Click="OnDownloadSelectionClicked"/>
-                                                    <Button x:Name="DeleteButton" Content="Loeschen" Style="{StaticResource ToolDangerButton}" Margin="0,0,16,0" Click="OnDeleteClicked"/>
+                                                    <Button x:Name="ViewButton" Content="Vorschau" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnViewClicked" IsEnabled="{Binding CanPreviewSelection}"/>
+                                                    <Button x:Name="OpenFileButton" Content="Datei oeffnen" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnOpenSelectedFileClicked" IsEnabled="{Binding CanOpenSelectedFile}"/>
+                                                    <Button x:Name="DownloadButton" Content="Herunterladen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,8,0" Click="OnDownloadSelectionClicked" IsEnabled="{Binding CanDownloadSelection}"/>
+                                                    <Button x:Name="DeleteButton" Content="Loeschen" Style="{StaticResource ToolDangerButton}" Margin="0,0,16,0" Click="OnDeleteClicked" IsEnabled="{Binding CanDeleteSelection}"/>
                                                     <CheckBox x:Name="OnlyAttachmentsCheckBox" Content="Nur mit Anhang" Style="{StaticResource InputCheckBox}" IsChecked="{Binding OnlyWithAttachments}" Margin="0,8,16,0"/>
+                                                    <CheckBox x:Name="OnlyInvoicesCheckBox" Content="Nur Rechnungen" Style="{StaticResource InputCheckBox}" IsChecked="{Binding OnlyInvoices}" Margin="0,8,16,0"/>
                                                     <CheckBox x:Name="OnlyDocPdfCheckBox" Content="Nur PDF / DOC" Style="{StaticResource InputCheckBox}" IsChecked="{Binding OnlyDocPdf}" Margin="0,8,0,0"/>
                                                 </WrapPanel>
 
@@ -606,11 +607,9 @@
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </Border>
-                                </Grid>
-                            </TabItem>
+                            </Grid>
 
-                            <TabItem x:Name="PreviewTabItem" Header="Vorschau" Visibility="{Binding PreviewTabVisibility}">
-                                <Grid Margin="0,12,0,0" Style="{StaticResource RevealGrid}">
+                            <Grid x:Name="ResultsPreviewView" Visibility="{Binding ResultsPreviewVisibility}" Margin="0,12,0,0" Style="{StaticResource RevealGrid}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="*"/>
@@ -659,9 +658,8 @@
                                         </StackPanel>
                                     </Grid>
                                 </Grid>
-                            </TabItem>
-                        </TabControl>
-                    </Grid>
+                            </Grid>
+                        </Grid>
 
                     <ScrollViewer x:Name="AccountsWorkspace" Visibility="{Binding AccountsPageVisibility}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <Grid Margin="0,0,4,0">

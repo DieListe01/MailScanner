@@ -23,8 +23,13 @@ public partial class MainWindow
         {
             previewTabVisibility = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(ResultsListVisibility));
+            OnPropertyChanged(nameof(ResultsPreviewVisibility));
         }
     }
+
+    public Visibility ResultsListVisibility => PreviewTabVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+    public Visibility ResultsPreviewVisibility => PreviewTabVisibility;
 
     private void OnScannerNavClicked(object sender, RoutedEventArgs e)
     {
@@ -38,11 +43,8 @@ public partial class MainWindow
 
     private void OnResultsNavClicked(object sender, RoutedEventArgs e)
     {
+        PreviewTabVisibility = Visibility.Collapsed;
         SetCurrentPage(WorkspacePage.Results);
-        if (ResultsTabs != null)
-        {
-            ResultsTabs.SelectedIndex = 0;
-        }
     }
 
     private void SetCurrentPage(WorkspacePage page)

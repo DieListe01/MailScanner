@@ -50,11 +50,16 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private string statusMessage = "Bereit. Bitte zuerst die Konten verwalten oder einen Verbindungstest starten.";
     private string selectionInfo = string.Empty;
     private bool onlyWithAttachments = true; // Default: nur mit Anhang
-    private bool onlyDocPdf = false;
+    private bool onlyDocPdf = true;
+    private bool onlyInvoices = true;
     private string updateStatusSummary = "Pruefe GitHub-Releases nach dem Start...";
     private ScanLogger scanLogger = new();
     private CancellationTokenSource? cancellationTokenSource;
     private DispatcherTimer? liveUpdateTimer;
+    private bool canPreviewSelection;
+    private bool canOpenSelectedFile;
+    private bool canDownloadSelection;
+    private bool canDeleteSelection;
 
     public MainWindow(
         IAppSettingsProvider settingsProvider,
@@ -349,6 +354,17 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
     }
 
+    public bool OnlyInvoices
+    {
+        get => onlyInvoices;
+        set
+        {
+            onlyInvoices = value;
+            OnPropertyChanged();
+            _ = ApplySearchAsync();
+        }
+    }
+
     public string LogText
     {
         get => scanLogger.GetLogText();
@@ -371,6 +387,11 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    public bool CanPreviewSelection { get => canPreviewSelection; set { canPreviewSelection = value; OnPropertyChanged(); } }
+    public bool CanOpenSelectedFile { get => canOpenSelectedFile; set { canOpenSelectedFile = value; OnPropertyChanged(); } }
+    public bool CanDownloadSelection { get => canDownloadSelection; set { canDownloadSelection = value; OnPropertyChanged(); } }
+    public bool CanDeleteSelection { get => canDeleteSelection; set { canDeleteSelection = value; OnPropertyChanged(); } }
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
@@ -878,6 +899,11 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private void OnCandidatesSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
         var selectedCount = CandidatesGrid.SelectedItems.Count;
+        CanPreviewSelection = selectedCount == 1;
+        CanOpenSelectedFile = selectedCount == 1;
+        CanDownloadSelection = selectedCount >= 1;
+        CanDeleteSelection = selectedCount >= 1;
+
         if (selectedCount == 0)
         {
             SelectionInfo = "";
@@ -935,23 +961,16 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             await documentCandidateStore.UpsertAsync(candidates, cancellationTokenSource.Token);
             
             // Apply filters and show results immediately
-            var filteredCandidates = candidates.AsEnumerable();
-            if (OnlyWithAttachments)
-            {
-                filteredCandidates = filteredCandidates.Where(c => !c.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase));
-            }
-            if (OnlyDocPdf)
-            {
-                var allowedExtensions = new[] { ".pdf", ".doc", ".docx" };
-                filteredCandidates = filteredCandidates.Where(c => 
-                    allowedExtensions.Any(ext => c.AttachmentName.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
-            }
+            var filteredCandidates = ApplyCandidateFilters(candidates);
             
-            ReplaceCandidates(filteredCandidates);
+            var filteredCandidateList = filteredCandidates.ToList();
+            ReplaceCandidates(filteredCandidateList);
             
-            StatusMessage = $"Scan abgeschlossen! {filteredCandidates.Count()} Dokumente gefunden.";
-            LiveScanInfo = $"✅ Fertig! {filteredCandidates.Count()} Treffer gefunden";
-            scanLogger.LogInfo($"=== SCAN ABGESCHLOSSEN: {filteredCandidates.Count()} Dokumente gefunden ===");
+            StatusMessage = $"Scan abgeschlossen! {filteredCandidateList.Count} Dokumente gefunden.";
+            LiveScanInfo = $"Fertig! {filteredCandidateList.Count} Treffer gefunden";
+            scanLogger.LogInfo($"=== SCAN ABGESCHLOSSEN: {filteredCandidateList.Count} Dokumente gefunden ===");
+            SetCurrentPage(WorkspacePage.Results);
+            PreviewTabVisibility = Visibility.Collapsed;
         }
         catch (OperationCanceledException)
         {
@@ -976,21 +995,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private async Task ApplySearchAsync()
     {
         var allCandidates = await documentCandidateStore.SearchAsync(SearchText);
-        
-        // Apply filters
-        var filteredCandidates = allCandidates.AsEnumerable();
-        
-        if (OnlyWithAttachments)
-        {
-            filteredCandidates = filteredCandidates.Where(c => !c.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase));
-        }
-        
-        if (OnlyDocPdf)
-        {
-            var allowedExtensions = new[] { ".pdf", ".doc", ".docx" };
-            filteredCandidates = filteredCandidates.Where(c => 
-                allowedExtensions.Any(ext => c.AttachmentName.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
-        }
+        var filteredCandidates = ApplyCandidateFilters(allCandidates);
         
         ReplaceCandidates(filteredCandidates);
 
@@ -1016,6 +1021,30 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             || candidate.AttachmentName.Contains(term, StringComparison.OrdinalIgnoreCase)
             || candidate.StoredFilePath.Contains(term, StringComparison.OrdinalIgnoreCase)
             || candidate.MessageId.Contains(term, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private IEnumerable<DocumentCandidate> ApplyCandidateFilters(IEnumerable<DocumentCandidate> candidates)
+    {
+        var filteredCandidates = candidates.AsEnumerable();
+
+        if (OnlyWithAttachments)
+        {
+            filteredCandidates = filteredCandidates.Where(c => !c.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (OnlyDocPdf)
+        {
+            var allowedExtensions = new[] { ".pdf", ".doc", ".docx" };
+            filteredCandidates = filteredCandidates.Where(c =>
+                allowedExtensions.Any(ext => c.AttachmentName.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        if (OnlyInvoices)
+        {
+            filteredCandidates = filteredCandidates.Where(c => c.SuggestedCategory == DocumentCategory.Invoice);
+        }
+
+        return filteredCandidates;
     }
 
     private void RefreshAccountSummary()

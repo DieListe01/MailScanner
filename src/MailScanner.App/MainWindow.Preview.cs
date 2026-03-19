@@ -60,7 +60,6 @@ Derzeit werden die lokal verfuegbaren Metadaten angezeigt.";
 
         PreviewTabVisibility = System.Windows.Visibility.Visible;
         SetCurrentPage(WorkspacePage.Results);
-        ResultsTabs.SelectedItem = PreviewTabItem;
         StatusMessage = $"Vorschau geladen: {candidate.Subject}";
     }
 
