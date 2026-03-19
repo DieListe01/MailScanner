@@ -59,8 +59,8 @@ Hinweis: Der vollstaendige Mail-Text wird in einer spaeteren Ausbaustufe direkt 
 Derzeit werden die lokal verfuegbaren Metadaten angezeigt.";
 
         PreviewTabVisibility = System.Windows.Visibility.Visible;
-        SetCurrentPage(WorkspacePage.Scanner);
-        ScannerTabs.SelectedItem = PreviewTabItem;
+        SetCurrentPage(WorkspacePage.Results);
+        ResultsTabs.SelectedItem = PreviewTabItem;
         StatusMessage = $"Vorschau geladen: {candidate.Subject}";
     }
 

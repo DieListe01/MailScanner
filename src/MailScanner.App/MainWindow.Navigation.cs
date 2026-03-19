@@ -11,6 +11,7 @@ public partial class MainWindow
     public DebugLogService DebugLog { get; } = DebugLogService.Instance;
 
     public Visibility ScannerPageVisibility => currentPage == WorkspacePage.Scanner ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility ResultsPageVisibility => currentPage == WorkspacePage.Results ? Visibility.Visible : Visibility.Collapsed;
     public Visibility AccountsPageVisibility => currentPage == WorkspacePage.Accounts ? Visibility.Visible : Visibility.Collapsed;
     public Visibility UpdatePageVisibility => currentPage == WorkspacePage.Update ? Visibility.Visible : Visibility.Collapsed;
     public Visibility DebugPageVisibility => currentPage == WorkspacePage.Debug ? Visibility.Visible : Visibility.Collapsed;
@@ -35,10 +36,20 @@ public partial class MainWindow
         SetCurrentPage(WorkspacePage.Debug);
     }
 
+    private void OnResultsNavClicked(object sender, RoutedEventArgs e)
+    {
+        SetCurrentPage(WorkspacePage.Results);
+        if (ResultsTabs != null)
+        {
+            ResultsTabs.SelectedIndex = 0;
+        }
+    }
+
     private void SetCurrentPage(WorkspacePage page)
     {
         currentPage = page;
         OnPropertyChanged(nameof(ScannerPageVisibility));
+        OnPropertyChanged(nameof(ResultsPageVisibility));
         OnPropertyChanged(nameof(AccountsPageVisibility));
         OnPropertyChanged(nameof(UpdatePageVisibility));
         OnPropertyChanged(nameof(DebugPageVisibility));
@@ -48,6 +59,7 @@ public partial class MainWindow
     private void UpdateNavigationVisualState()
     {
         SetNavigationButtonStyle(RefreshButton, currentPage == WorkspacePage.Scanner);
+        SetNavigationButtonStyle(ResultsButton, currentPage == WorkspacePage.Results);
         SetNavigationButtonStyle(AccountButton, currentPage == WorkspacePage.Accounts);
         SetNavigationButtonStyle(UpdateButton, currentPage == WorkspacePage.Update);
         SetNavigationButtonStyle(DebugButton, currentPage == WorkspacePage.Debug);
@@ -61,6 +73,7 @@ public partial class MainWindow
     private enum WorkspacePage
     {
         Scanner,
+        Results,
         Accounts,
         Update,
         Debug
