@@ -849,11 +849,11 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Konto" Style="{StaticResource SectionTitle}" Margin="0,0,0,12"/>
                                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Anzeigename" Style="{StaticResource FieldLabel}"/>
-                                    <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource InputTextBox}" Text="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.DisplayName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource InputTextBox}" Foreground="White" Text="{Binding SelectedEditorAccount.DisplayName, UpdateSourceTrigger=PropertyChanged}"/>
                                     <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,12,0,0" Text="E-Mail" Style="{StaticResource FieldLabel}"/>
-                                    <TextBox Grid.Row="2" Grid.Column="1" Margin="0,12,0,0" Style="{StaticResource InputTextBox}" Text="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.EmailAddress, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Margin="0,12,0,0" Style="{StaticResource InputTextBox}" Foreground="White" Text="{Binding SelectedEditorAccount.EmailAddress, UpdateSourceTrigger=PropertyChanged}"/>
                                     <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,12,0,0" Text="Benutzername" Style="{StaticResource FieldLabel}"/>
-                                    <TextBox Grid.Row="3" Grid.Column="1" Margin="0,12,0,0" Style="{StaticResource InputTextBox}" Text="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.UserName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBox Grid.Row="3" Grid.Column="1" Margin="0,12,0,0" Style="{StaticResource InputTextBox}" Foreground="White" Text="{Binding SelectedEditorAccount.UserName, UpdateSourceTrigger=PropertyChanged}"/>
                                     <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,12,0,0" Text="Passwort" Style="{StaticResource FieldLabel}"/>
                                     <PasswordBox x:Name="EmbeddedPasswordBox" Grid.Row="4" Grid.Column="1" Margin="0,12,0,0" Style="{StaticResource InputPasswordBox}" PasswordChanged="OnEmbeddedPasswordChanged"/>
                                 </Grid>
@@ -874,13 +874,13 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="IMAP-Einstellungen" Style="{StaticResource SectionTitle}" Margin="0,0,0,12"/>
                                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Server" Style="{StaticResource FieldLabel}"/>
-                                    <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource InputTextBox}" Text="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.ImapHost, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource InputTextBox}" Foreground="White" Text="{Binding SelectedEditorAccount.ImapHost, UpdateSourceTrigger=PropertyChanged}"/>
                                     <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,12,0,0" Text="Port" Style="{StaticResource FieldLabel}"/>
-                                    <TextBox Grid.Row="2" Grid.Column="1" Margin="0,12,0,0" Width="140" HorizontalAlignment="Left" Style="{StaticResource InputTextBox}" Text="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.ImapPort}"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Margin="0,12,0,0" Width="140" HorizontalAlignment="Left" Style="{StaticResource InputTextBox}" Foreground="White" Text="{Binding SelectedEditorAccount.ImapPort}"/>
                                     <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,12,0,0" Text="Ordner" Style="{StaticResource FieldLabel}"/>
-                                    <TextBox Grid.Row="3" Grid.Column="1" Margin="0,12,0,0" Style="{StaticResource InputTextBox}" Text="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.FolderName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBox Grid.Row="3" Grid.Column="1" Margin="0,12,0,0" Style="{StaticResource InputTextBox}" Foreground="White" Text="{Binding SelectedEditorAccount.FolderName, UpdateSourceTrigger=PropertyChanged}"/>
                                     <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Margin="0,14,0,0">
-                                        <CheckBox Content="SSL verwenden" Style="{StaticResource InputCheckBox}" IsChecked="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.UseSsl}"/>
+                                        <CheckBox Content="SSL verwenden" Style="{StaticResource InputCheckBox}" IsChecked="{Binding SelectedEditorAccount.UseSsl}"/>
                                         <Border Style="{StaticResource InsetCard}" Margin="0,12,0,0">
                                             <StackPanel>
                                                 <TextBlock Text="Best Practice" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
@@ -958,16 +958,16 @@
                                 <StackPanel>
                                     <TextBlock Text="Dateitypen" Style="{StaticResource SectionTitle}"/>
                                     <WrapPanel>
-                                        <CheckBox Content="PDF" Style="{StaticResource InputCheckBox}" IsChecked="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.SearchPdf}" Margin="0,0,14,10"/>
-                                        <CheckBox Content="DOC" Style="{StaticResource InputCheckBox}" IsChecked="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.SearchDoc}" Margin="0,0,14,10"/>
-                                        <CheckBox Content="DOCX" Style="{StaticResource InputCheckBox}" IsChecked="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.SearchDocx}" Margin="0,0,14,10"/>
-                                        <CheckBox Content="XLS" Style="{StaticResource InputCheckBox}" IsChecked="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.SearchXls}" Margin="0,0,14,10"/>
-                                        <CheckBox Content="XLSX" Style="{StaticResource InputCheckBox}" IsChecked="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.SearchXlsx}" Margin="0,0,14,10"/>
-                                        <CheckBox Content="PPT" Style="{StaticResource InputCheckBox}" IsChecked="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.SearchPpt}" Margin="0,0,14,10"/>
-                                        <CheckBox Content="PPTX" Style="{StaticResource InputCheckBox}" IsChecked="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.SearchPptx}" Margin="0,0,14,10"/>
-                                        <CheckBox Content="Bilder" Style="{StaticResource InputCheckBox}" IsChecked="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.SearchImages}" Margin="0,0,14,10"/>
-                                        <CheckBox Content="TXT" Style="{StaticResource InputCheckBox}" IsChecked="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.SearchTxt}" Margin="0,0,14,10"/>
-                                        <CheckBox Content="Sonstige" Style="{StaticResource InputCheckBox}" IsChecked="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.SearchOther}" Margin="0,0,14,10"/>
+                                        <CheckBox Content="PDF" Style="{StaticResource InputCheckBox}" IsChecked="{Binding SelectedEditorAccount.SearchPdf}" Margin="0,0,14,10"/>
+                                        <CheckBox Content="DOC" Style="{StaticResource InputCheckBox}" IsChecked="{Binding SelectedEditorAccount.SearchDoc}" Margin="0,0,14,10"/>
+                                        <CheckBox Content="DOCX" Style="{StaticResource InputCheckBox}" IsChecked="{Binding SelectedEditorAccount.SearchDocx}" Margin="0,0,14,10"/>
+                                        <CheckBox Content="XLS" Style="{StaticResource InputCheckBox}" IsChecked="{Binding SelectedEditorAccount.SearchXls}" Margin="0,0,14,10"/>
+                                        <CheckBox Content="XLSX" Style="{StaticResource InputCheckBox}" IsChecked="{Binding SelectedEditorAccount.SearchXlsx}" Margin="0,0,14,10"/>
+                                        <CheckBox Content="PPT" Style="{StaticResource InputCheckBox}" IsChecked="{Binding SelectedEditorAccount.SearchPpt}" Margin="0,0,14,10"/>
+                                        <CheckBox Content="PPTX" Style="{StaticResource InputCheckBox}" IsChecked="{Binding SelectedEditorAccount.SearchPptx}" Margin="0,0,14,10"/>
+                                        <CheckBox Content="Bilder" Style="{StaticResource InputCheckBox}" IsChecked="{Binding SelectedEditorAccount.SearchImages}" Margin="0,0,14,10"/>
+                                        <CheckBox Content="TXT" Style="{StaticResource InputCheckBox}" IsChecked="{Binding SelectedEditorAccount.SearchTxt}" Margin="0,0,14,10"/>
+                                        <CheckBox Content="Sonstige" Style="{StaticResource InputCheckBox}" IsChecked="{Binding SelectedEditorAccount.SearchOther}" Margin="0,0,14,10"/>
                                     </WrapPanel>
                                     <TextBlock Text="Nur aktivierte Dateitypen werden beim Scan als Kandidaten uebernommen." Margin="0,10,0,0" FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
                                 </StackPanel>
@@ -977,7 +977,7 @@
                                 <StackPanel>
                                     <TextBlock Text="Ignorierte Dateinamen" Style="{StaticResource SectionTitle}"/>
                                     <TextBlock Text="Muster pro Zeile, z.B. logo, impressum, agb, footer" Style="{StaticResource FieldLabel}"/>
-                                    <TextBox Text="{Binding ElementName=EmbeddedAccountsListBox, Path=SelectedItem.IgnoredAttachmentNamePatternsText, UpdateSourceTrigger=PropertyChanged}"
+                                    <TextBox Text="{Binding SelectedEditorAccount.IgnoredAttachmentNamePatternsText, UpdateSourceTrigger=PropertyChanged}"
                                              Height="120"
                                              Style="{StaticResource InputTextBox}"
                                              AcceptsReturn="True"
