@@ -44,6 +44,7 @@ public sealed class CandidateListItem
         : Candidate.AlreadyDownloaded || (!string.IsNullOrWhiteSpace(Candidate.StoredFilePath) && File.Exists(Candidate.StoredFilePath))
             ? "Heruntergeladen"
             : "Datei fehlt";
+    public bool IsInvoiceCandidate => Candidate.SuggestedCategory == DocumentCategory.Invoice;
     public int PriorityScore { get; }
     public string PriorityLabel => PriorityScore >= 120 ? "Sehr hoch" : PriorityScore >= 80 ? "Hoch" : PriorityScore >= 45 ? "Mittel" : "Niedrig";
     public string MatchReason { get; }

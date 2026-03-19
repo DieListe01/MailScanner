@@ -526,7 +526,7 @@
                                         <TextBlock Text="Rechnungen anzeigen" FontSize="11" FontWeight="SemiBold" Foreground="#BED1F4"/>
                                         <TextBlock Text="Vorschau zeigt Mail- und Trefferdaten. 'Anhang oeffnen' klappt nur, wenn die Datei bereits heruntergeladen wurde." Margin="0,10,0,0" FontSize="11" Foreground="#D6DEEF" TextWrapping="Wrap"/>
                                         <Button Content="Scanner" Style="{StaticResource ToolButton}" Margin="0,14,0,0" HorizontalAlignment="Left" Click="OnScannerNavClicked"/>
-                                        <TextBlock Text="Die zwei kleinen dunklen Balken waren vorher interne Tabs fuer Liste/Vorschau. Die habe ich jetzt entfernt." Margin="0,10,0,0" FontSize="10.5" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
+                                        <TextBlock Text="Datei fehlt = erst herunterladen. Heruntergeladen = PDF/DOC ist lokal verfuegbar." Margin="0,10,0,0" FontSize="10.5" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Border>
                             </Grid>
@@ -624,28 +624,28 @@
                                 <Border Grid.Row="0" Background="{StaticResource HeroBrush}" BorderBrush="#334152" BorderThickness="1" CornerRadius="16" Padding="16" Margin="0,0,0,10">
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions>
-                                        <StackPanel>
-                                            <TextBlock Text="AKTUELLE VORSCHAU" FontSize="10" FontWeight="SemiBold" Foreground="#A9C2F3"/>
-                                            <TextBlock Text="{Binding PreviewSubject}" Margin="0,8,0,0" FontSize="22" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap"/>
-                                            <TextBlock Text="{Binding PreviewSender}" Margin="0,8,0,0" FontSize="12" Foreground="#D6DEEF" TextWrapping="Wrap"/>
-                                            <WrapPanel Margin="0,12,0,0">
-                                                <Border Style="{StaticResource ChipBorder}" Background="#18202B" BorderBrush="#42577D"><TextBlock Text="{Binding PreviewAccountName}" FontSize="11" Foreground="#D9E6FF"/></Border>
-                                                <Border Style="{StaticResource ChipBorder}" Background="#18202B" BorderBrush="#42577D"><TextBlock Text="{Binding PreviewReceivedAtDisplay}" FontSize="11" Foreground="#D9E6FF"/></Border>
-                                            </WrapPanel>
-                                        </StackPanel>
-                                        <Border Grid.Column="1" Margin="16,0,0,0" Background="#1B2230" BorderBrush="#34518A" BorderThickness="1" CornerRadius="14" Padding="12">
                                             <StackPanel>
-                                                <TextBlock Text="Dateistatus" FontSize="11" FontWeight="SemiBold" Foreground="#BED1F4"/>
-                                                <TextBlock Text="{Binding PreviewAttachmentName}" Margin="0,10,0,0" FontSize="13" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap"/>
-                                                <TextBlock Text="{Binding PreviewCategoryLabel}" Margin="0,6,0,0" FontSize="11" Foreground="#D6DEEF" TextWrapping="Wrap"/>
+                                                <TextBlock Text="AKTUELLE VORSCHAU" FontSize="10" FontWeight="SemiBold" Foreground="#A9C2F3"/>
+                                                <TextBlock Text="{Binding PreviewSubject}" Margin="0,8,0,0" FontSize="22" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding PreviewSender}" Margin="0,8,0,0" FontSize="12" Foreground="#D6DEEF" TextWrapping="Wrap"/>
                                                 <WrapPanel Margin="0,12,0,0">
-                                                    <Button Content="Datei oeffnen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,8,0" Click="OnOpenPreviewAttachmentClicked"/>
-                                                    <Button Content="Herunterladen" Style="{StaticResource ToolButton}" Click="OnDownloadSelectionClicked" IsEnabled="{Binding CanDownloadSelection}"/>
+                                                    <Border Style="{StaticResource ChipBorder}" Background="#18202B" BorderBrush="#42577D"><TextBlock Text="{Binding PreviewAccountName}" FontSize="11" Foreground="#D9E6FF"/></Border>
+                                                    <Border Style="{StaticResource ChipBorder}" Background="#18202B" BorderBrush="#42577D"><TextBlock Text="{Binding PreviewReceivedAtDisplay}" FontSize="11" Foreground="#D9E6FF"/></Border>
                                                 </WrapPanel>
                                             </StackPanel>
-                                        </Border>
-                                    </Grid>
-                                </Border>
+                                            <Border Grid.Column="1" Margin="16,0,0,0" Background="#1B2230" BorderBrush="#34518A" BorderThickness="1" CornerRadius="14" Padding="12">
+                                                <StackPanel>
+                                                    <TextBlock Text="Dateistatus" FontSize="11" FontWeight="SemiBold" Foreground="#BED1F4"/>
+                                                    <TextBlock Text="{Binding PreviewAttachmentName}" Margin="0,10,0,0" FontSize="13" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding PreviewCategoryLabel}" Margin="0,6,0,0" FontSize="11" Foreground="#D6DEEF" TextWrapping="Wrap"/>
+                                                    <WrapPanel Margin="0,12,0,0">
+                                                        <Button Content="Datei oeffnen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,8,0" Click="OnOpenPreviewAttachmentClicked"/>
+                                                        <Button Content="Herunterladen" Style="{StaticResource ToolButton}" Click="OnDownloadSelectionClicked" IsEnabled="{Binding CanDownloadSelection}"/>
+                                                    </WrapPanel>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
 
                                 <Border Grid.Row="1" Style="{StaticResource SurfaceCard}" Margin="0,0,0,10">
                                     <Grid>
@@ -663,13 +663,13 @@
                                 <Border Grid.Row="2" Style="{StaticResource SurfaceCard}" Padding="0">
                                     <Grid>
                                         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                                        <Border Grid.Row="0" Background="#1A1E25" BorderBrush="#2F3642" BorderThickness="0,0,0,1" CornerRadius="12,12,0,0" Padding="16,12">
+                                        <Border Grid.Row="0" Background="#1A1E25" BorderBrush="#2F3642" BorderThickness="0,0,0,1" CornerRadius="12,12,0,0" Padding="14,10">
                                             <StackPanel>
                                                 <TextBlock Text="Mail-Inhalt" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
                                                 <TextBlock Text="Wenn noch keine lokale Datei vorliegt, siehst du hier trotzdem schon den Kontext zum Treffer." Margin="0,4,0,0" FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
                                             </StackPanel>
                                         </Border>
-                                        <TextBox Grid.Row="1" Text="{Binding PreviewContentText}" IsReadOnly="True" BorderThickness="0" Background="{StaticResource CodeBackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}" Padding="18" FontFamily="Consolas" FontSize="11.2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                                        <TextBox Grid.Row="1" Text="{Binding PreviewContentText}" IsReadOnly="True" BorderThickness="0" Background="{StaticResource CodeBackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}" Padding="14" FontFamily="Consolas" FontSize="10.8" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
                                     </Grid>
                                 </Border>
                             </Grid>
@@ -680,7 +680,7 @@
                     <Grid Margin="0,0,4,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -945,7 +945,7 @@
                             </Border>
                         </Grid>
 
-                        <Grid Grid.Row="3" Grid.Column="2" Margin="0,14,0,0">
+                        <Grid Grid.Row="3" Grid.Column="2" Margin="0,10,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="16"/>
@@ -986,7 +986,7 @@
                             </Border>
                         </Grid>
 
-                        <Border Grid.Row="4" Grid.ColumnSpan="3" Style="{StaticResource SurfaceCard}" Padding="16,12" Margin="0,14,0,0" VerticalAlignment="Bottom">
+                        <Border Grid.Row="4" Grid.ColumnSpan="3" Style="{StaticResource SurfaceCard}" Padding="14,10" Margin="0,10,0,0" VerticalAlignment="Bottom">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -994,7 +994,7 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
                                     <TextBlock Text="Aenderungen zuerst testen, danach speichern." FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
-                                    <TextBlock Text="Die Einstellungen werden direkt in deinen lokalen App-Daten abgelegt." Margin="0,4,0,0" FontSize="11" Foreground="{StaticResource MutedBrush}"/>
+                                    <TextBlock Text="Die Einstellungen werden direkt in deinen lokalen App-Daten abgelegt." Margin="0,3,0,0" FontSize="10.5" Foreground="{StaticResource MutedBrush}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                                     <Button Content="Scanner" Style="{StaticResource ToolButton}" Margin="0,0,10,0" Click="OnScannerNavClicked"/>

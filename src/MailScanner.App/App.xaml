@@ -685,6 +685,18 @@
                 <Setter Property="BorderThickness" Value="0,0,0,1"/>
                 <Setter Property="Height" Value="38"/>
                 <Style.Triggers>
+                    <DataTrigger Binding="{Binding FileAvailabilityLabel}" Value="Datei fehlt">
+                        <Setter Property="Background" Value="#1D2027"/>
+                        <Setter Property="Foreground" Value="#C6CBD6"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding FileAvailabilityLabel}" Value="Nur Vorschau">
+                        <Setter Property="Background" Value="#1A1D23"/>
+                        <Setter Property="Foreground" Value="#AAB1BF"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsInvoiceCandidate}" Value="True">
+                        <Setter Property="Background" Value="#2B2227"/>
+                        <Setter Property="BorderBrush" Value="#7D4D57"/>
+                    </DataTrigger>
                     <Trigger Property="IsMouseOver" Value="True">
                         <Setter Property="Background" Value="#242B37"/>
                         <Setter Property="BorderBrush" Value="#48556B"/>
