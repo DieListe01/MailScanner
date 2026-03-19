@@ -17,6 +17,7 @@ public sealed class RegistryAppSettingsStore : IAppSettingsProvider
 
     private AppSettings currentSettings = LoadFromRegistry();
     private bool registryWorking = true;
+    private static string lastLoadSource = "Standardwerte";
 
     public AppSettings GetCurrentSettings()
     {
@@ -30,6 +31,7 @@ public sealed class RegistryAppSettingsStore : IAppSettingsProvider
     }
 
     public bool IsRegistryWorking() => registryWorking;
+    public string GetLoadSourceSummary() => lastLoadSource;
 
     private static AppSettings LoadFromRegistry()
     {
@@ -38,12 +40,14 @@ public sealed class RegistryAppSettingsStore : IAppSettingsProvider
             using var key = Registry.CurrentUser.OpenSubKey(RegistryKey, false);
             if (key == null)
             {
+                lastLoadSource = "Keine Registry-Daten gefunden, Standardwerte aktiv";
                 return Normalize(new AppSettings());
             }
 
             var settingsJson = key.GetValue("Settings") as string;
             if (string.IsNullOrWhiteSpace(settingsJson))
             {
+                lastLoadSource = $"Registry {RegistryKey} leer, Standardwerte aktiv";
                 return Normalize(new AppSettings());
             }
 
@@ -54,6 +58,7 @@ public sealed class RegistryAppSettingsStore : IAppSettingsProvider
             var settings = JsonSerializer.Deserialize<AppSettings>(settingsJson, SerializerOptions);
             DebugLogService.Instance.LogRegistry($"Deserialized successfully: {settings != null}");
             DebugLogService.Instance.LogRegistry($"Accounts count: {settings?.MailImport.Accounts?.Count ?? 0}");
+            lastLoadSource = $"Registry HKCU\\{RegistryKey}";
             
             return Normalize(settings ?? new AppSettings());
         }
@@ -67,6 +72,7 @@ public sealed class RegistryAppSettingsStore : IAppSettingsProvider
                 {
                     var json = File.ReadAllText(jsonPath);
                     var settings = JsonSerializer.Deserialize<AppSettings>(json, SerializerOptions);
+                    lastLoadSource = $"JSON-Backup {jsonPath}";
                     return Normalize(settings ?? new AppSettings());
                 }
             }
@@ -74,6 +80,7 @@ public sealed class RegistryAppSettingsStore : IAppSettingsProvider
             {
                 // Final fallback
             }
+            lastLoadSource = "Standardwerte (weder Registry noch JSON verfuegbar)";
             return Normalize(new AppSettings());
         }
     }

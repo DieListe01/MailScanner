@@ -61,6 +61,10 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private bool canDownloadSelection;
     private bool canDeleteSelection;
     private ResultsQuickFilter resultsQuickFilter = ResultsQuickFilter.Invoices;
+    private bool autoDownloadAfterScan;
+    private Visibility scanNotificationVisibility = Visibility.Collapsed;
+    private string scanNotificationText = string.Empty;
+    private DispatcherTimer? notificationTimer;
 
     public MainWindow(
         IAppSettingsProvider settingsProvider,
@@ -394,6 +398,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     public bool CanOpenSelectedFile { get => canOpenSelectedFile; set { canOpenSelectedFile = value; OnPropertyChanged(); } }
     public bool CanDownloadSelection { get => canDownloadSelection; set { canDownloadSelection = value; OnPropertyChanged(); } }
     public bool CanDeleteSelection { get => canDeleteSelection; set { canDeleteSelection = value; OnPropertyChanged(); } }
+    public bool AutoDownloadAfterScan { get => autoDownloadAfterScan; set { autoDownloadAfterScan = value; OnPropertyChanged(); } }
+    public Visibility ScanNotificationVisibility { get => scanNotificationVisibility; set { scanNotificationVisibility = value; OnPropertyChanged(); } }
+    public string ScanNotificationText { get => scanNotificationText; set { scanNotificationText = value; OnPropertyChanged(); } }
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
@@ -443,6 +450,24 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private void OnCloseWindowClicked(object sender, RoutedEventArgs e)
     {
         Close();
+    }
+
+    private void ShowScanNotification(string message)
+    {
+        ScanNotificationText = message;
+        ScanNotificationVisibility = Visibility.Visible;
+
+        notificationTimer?.Stop();
+        notificationTimer ??= new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
+        notificationTimer.Tick -= OnNotificationTimerTick;
+        notificationTimer.Tick += OnNotificationTimerTick;
+        notificationTimer.Start();
+    }
+
+    private void OnNotificationTimerTick(object? sender, EventArgs e)
+    {
+        notificationTimer?.Stop();
+        ScanNotificationVisibility = Visibility.Collapsed;
     }
 
     private void OnOpenSettingsClicked(object sender, RoutedEventArgs e)
@@ -972,12 +997,21 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             
             var filteredCandidateList = filteredCandidates.ToList();
             ReplaceCandidates(filteredCandidateList);
+
+            if (AutoDownloadAfterScan && filteredCandidateList.Count > 0)
+            {
+                scanLogger.LogInfo($"[AUTO-DOWNLOAD] Lade {filteredCandidateList.Count} Treffer direkt herunter...");
+                await documentDownloadService.DownloadAsync(filteredCandidateList, cancellationTokenSource.Token);
+                var refreshedCandidates = await documentCandidateStore.SearchAsync(SearchText);
+                ReplaceCandidates(ApplyCandidateFilters(refreshedCandidates).ToList());
+            }
             
             StatusMessage = $"Scan abgeschlossen! {filteredCandidateList.Count} Dokumente gefunden.";
             LiveScanInfo = $"Fertig! {filteredCandidateList.Count} Treffer gefunden";
             scanLogger.LogInfo($"=== SCAN ABGESCHLOSSEN: {filteredCandidateList.Count} Dokumente gefunden ===");
             SetCurrentPage(WorkspacePage.Results);
             PreviewTabVisibility = Visibility.Collapsed;
+            ShowScanNotification($"Scan fertig: {filteredCandidateList.Count} Treffer gefunden");
         }
         catch (OperationCanceledException)
         {
@@ -1147,6 +1181,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         BusyVisibility = isBusy ? Visibility.Visible : Visibility.Collapsed;
         BusyMessage = message ?? string.Empty;
         RefreshButton.IsEnabled = !isBusy;
+        ScanStartButton.IsEnabled = !isBusy;
         AccountButton.IsEnabled = !isBusy;
         ConnectionsButton.IsEnabled = !isBusy;
         DebugButton.IsEnabled = !isBusy;
@@ -1331,14 +1366,14 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                 if (account.SearchOther) fileTypes.Add("Sonstige");
 
                 var excludedText = account.ExcludedFolderPatterns?.Count > 0
-                    ? $", Ordnerfilter: {account.ExcludedFolderPatterns.Count}"
+                    ? $", nicht gescannte Ordner: {string.Join(", ", account.ExcludedFolderPatterns.Take(3))}{(account.ExcludedFolderPatterns.Count > 3 ? " ..." : string.Empty)}"
                     : string.Empty;
                 var ignoredNamesText = account.IgnoredAttachmentNamePatterns?.Count > 0
-                    ? $", Dateiname ignorieren: {account.IgnoredAttachmentNamePatterns.Count}"
+                    ? $", ignorierte Dateinamen: {string.Join(", ", account.IgnoredAttachmentNamePatterns.Take(3))}{(account.IgnoredAttachmentNamePatterns.Count > 3 ? " ..." : string.Empty)}"
                     : string.Empty;
                 var fileTypeText = fileTypes.Count > 0 ? string.Join("/", fileTypes) : "keine Typen";
 
-                accountInfos.Add($"{account.DisplayName} ({account.ImapHost}/{account.FolderName}) - {daysText}, Dateitypen: {fileTypeText}{excludedText}{ignoredNamesText}");
+                accountInfos.Add($"{account.DisplayName} ({account.ImapHost}/{account.FolderName}) - Scan: {daysText}, gescannt: {fileTypeText}{excludedText}{ignoredNamesText}");
             }
             
             var result = string.Join(" | ", accountInfos);

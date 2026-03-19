@@ -118,7 +118,9 @@ public partial class MainWindow
     private void InitializeAccountEditor()
     {
         SettingsStorageSummary = AppDataPaths.GetUserSettingsFilePath();
-        SettingsProviderSummary = "Primaer: Registry unter HKCU\\SOFTWARE\\MailScanner, Backup: appsettings.json";
+        SettingsProviderSummary = settingsProvider is RegistryAppSettingsStore registryStore
+            ? $"Geladen aus: {registryStore.GetLoadSourceSummary()}"
+            : "Geladen ueber konfigurierten Einstellungsanbieter";
         LoadAccountEditorSettings();
     }
 
@@ -127,6 +129,10 @@ public partial class MainWindow
         try
         {
             var currentSettings = settingsProvider.GetCurrentSettings();
+            if (settingsProvider is RegistryAppSettingsStore registryStore)
+            {
+                SettingsProviderSummary = $"Geladen aus: {registryStore.GetLoadSourceSummary()}";
+            }
             EditorAccounts.Clear();
 
             EditorInitialLookbackDays = currentSettings.MailImport.InitialLookbackDays;
