@@ -56,6 +56,30 @@ public sealed class DebugLogService : INotifyPropertyChanged
         _ => GeneralText
     };
 
+    public string GetCombinedText()
+    {
+        return string.Join(Environment.NewLine + Environment.NewLine,
+        [
+            "[Allgemein]" + Environment.NewLine + GeneralText,
+            "[Registry]" + Environment.NewLine + RegistryText,
+            "[Settings]" + Environment.NewLine + SettingsText,
+            "[Fehler]" + Environment.NewLine + ErrorText
+        ]);
+    }
+
+    public void ClearAll()
+    {
+        generalBuilder.Clear();
+        registryBuilder.Clear();
+        settingsBuilder.Clear();
+        errorBuilder.Clear();
+        OnPropertyChanged(nameof(GeneralText));
+        OnPropertyChanged(nameof(RegistryText));
+        OnPropertyChanged(nameof(SettingsText));
+        OnPropertyChanged(nameof(ErrorText));
+        UpdateStatus("Geloescht", "Alle Debug-Bereiche wurden geleert");
+    }
+
     public void ClearTab(int tabIndex)
     {
         switch (tabIndex)

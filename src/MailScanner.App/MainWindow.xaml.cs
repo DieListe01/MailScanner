@@ -92,7 +92,11 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void HandleScanLogChanged()
     {
-        Dispatcher.Invoke(() => OnPropertyChanged(nameof(LogText)));
+        Dispatcher.Invoke(() =>
+        {
+            OnPropertyChanged(nameof(LogText));
+            OnPropertyChanged(nameof(CompactLogText));
+        });
     }
 
     public ObservableCollection<CandidateListItem> Candidates { get; } = [];
@@ -353,6 +357,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+
+    public string CompactLogText => scanLogger.GetRecentLogText(10);
 
     public string LastConnectionTestSummary
     {
@@ -1204,7 +1210,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             
             if (accounts == null || accounts.Count == 0)
             {
-                return "⚠️ Keine Konten konfiguriert";
+                return "Keine Konten konfiguriert";
             }
 
             var accountInfos = new List<string>();
@@ -1217,12 +1223,27 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             
             foreach (var account in accounts)
             {
-                var statusText = "✅ Aktiv"; // Alle Konten sind standardmäßig aktiv
-                var excludedText = account.ExcludedFolderPatterns?.Count > 0 
-                    ? $" ({account.ExcludedFolderPatterns.Count} Ordner ausgeschlossen)" 
-                    : "";
-                
-                accountInfos.Add($"{statusText} {account.DisplayName}: {daysText}{excludedText}");
+                var fileTypes = new List<string>();
+                if (account.SearchPdf) fileTypes.Add("PDF");
+                if (account.SearchDoc) fileTypes.Add("DOC");
+                if (account.SearchDocx) fileTypes.Add("DOCX");
+                if (account.SearchXls) fileTypes.Add("XLS");
+                if (account.SearchXlsx) fileTypes.Add("XLSX");
+                if (account.SearchPpt) fileTypes.Add("PPT");
+                if (account.SearchPptx) fileTypes.Add("PPTX");
+                if (account.SearchImages) fileTypes.Add("Bilder");
+                if (account.SearchTxt) fileTypes.Add("TXT");
+                if (account.SearchOther) fileTypes.Add("Sonstige");
+
+                var excludedText = account.ExcludedFolderPatterns?.Count > 0
+                    ? $", Ordnerfilter: {account.ExcludedFolderPatterns.Count}"
+                    : string.Empty;
+                var ignoredNamesText = account.IgnoredAttachmentNamePatterns?.Count > 0
+                    ? $", Dateiname ignorieren: {account.IgnoredAttachmentNamePatterns.Count}"
+                    : string.Empty;
+                var fileTypeText = fileTypes.Count > 0 ? string.Join("/", fileTypes) : "keine Typen";
+
+                accountInfos.Add($"{account.DisplayName} ({account.ImapHost}/{account.FolderName}) - {daysText}, Dateitypen: {fileTypeText}{excludedText}{ignoredNamesText}");
             }
             
             var result = string.Join(" | ", accountInfos);
@@ -1352,8 +1373,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         try
         {
             await scanLogger.SaveLogAsync();
-            LogFilePathText.Text = $"Gespeichert: {scanLogger.GetLogFilePath()}";
-            StatusMessage = "Protokoll gespeichert!";
+            StatusMessage = $"Protokoll gespeichert: {scanLogger.GetLogFilePath()}";
         }
         catch (Exception ex)
         {
@@ -1367,7 +1387,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         scanLogger = new ScanLogger();
         scanLogger.LogChanged += HandleScanLogChanged;
         OnPropertyChanged(nameof(LogText));
-        LogFilePathText.Text = "";
+        OnPropertyChanged(nameof(CompactLogText));
         StatusMessage = "Protokoll gelöscht!";
     }
 

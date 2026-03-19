@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -62,6 +63,21 @@ public class ScanLogger
     }
 
     public string GetLogText() => logBuilder.ToString();
+
+    public string GetRecentLogText(int maxLines)
+    {
+        if (maxLines <= 0)
+        {
+            return string.Empty;
+        }
+
+        var lines = logBuilder
+            .ToString()
+            .Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries)
+            .TakeLast(maxLines);
+
+        return string.Join(Environment.NewLine, lines);
+    }
 
     public async Task SaveLogAsync()
     {

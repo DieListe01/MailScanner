@@ -167,7 +167,10 @@
                                 <Border.RenderTransform>
                                     <ScaleTransform x:Name="ButtonScale" ScaleX="1" ScaleY="1"/>
                                 </Border.RenderTransform>
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  RecognizesAccessKey="True"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <EventTrigger RoutedEvent="MouseEnter">
@@ -222,7 +225,10 @@
                                 <Border.RenderTransform>
                                     <ScaleTransform x:Name="ButtonScale" ScaleX="1" ScaleY="1"/>
                                 </Border.RenderTransform>
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  RecognizesAccessKey="True"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <EventTrigger RoutedEvent="MouseEnter">
@@ -276,7 +282,10 @@
                                 <Border.RenderTransform>
                                     <ScaleTransform x:Name="ButtonScale" ScaleX="1" ScaleY="1"/>
                                 </Border.RenderTransform>
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  RecognizesAccessKey="True"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <EventTrigger RoutedEvent="MouseEnter">

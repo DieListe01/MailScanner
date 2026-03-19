@@ -109,9 +109,9 @@
                             <TextBlock Text="Scanner, Konten, Releases und Diagnose in einer kompakten Oberflaeche." Margin="0,7,0,0" FontSize="10.5" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="1" Margin="0,20,0,0">
+                        <StackPanel Grid.Row="1" Margin="0,20,0,0" HorizontalAlignment="Stretch">
                             <Button x:Name="RefreshButton" Style="{StaticResource NavigationButton}" Click="OnScannerNavClicked">
-                                <Grid>
+                                <Grid HorizontalAlignment="Stretch">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="28"/>
                                         <ColumnDefinition Width="*"/>
@@ -129,7 +129,7 @@
                             </Button>
 
                             <Button x:Name="AccountButton" Style="{StaticResource NavigationButton}" Click="OnAccountSettingsClicked">
-                                <Grid>
+                                <Grid HorizontalAlignment="Stretch">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="28"/>
                                         <ColumnDefinition Width="*"/>
@@ -147,7 +147,7 @@
                             </Button>
 
                             <Button x:Name="ConnectionsButton" Style="{StaticResource NavigationButton}" Click="OnTestConnectionsClicked">
-                                <Grid>
+                                <Grid HorizontalAlignment="Stretch">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="28"/>
                                         <ColumnDefinition Width="*"/>
@@ -167,7 +167,7 @@
                             </Button>
 
                             <Button x:Name="UpdateButton" Style="{StaticResource NavigationButton}" Click="OnUpdateClicked">
-                                <Grid>
+                                <Grid HorizontalAlignment="Stretch">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="28"/>
                                         <ColumnDefinition Width="*"/>
@@ -184,7 +184,7 @@
                             </Button>
 
                             <Button x:Name="DebugButton" Style="{StaticResource NavigationButton}" Click="OnOpenDebugClicked">
-                                <Grid>
+                                <Grid HorizontalAlignment="Stretch">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="28"/>
                                         <ColumnDefinition Width="*"/>
@@ -202,7 +202,7 @@
                             </Button>
 
                             <Button x:Name="StopButton" Style="{StaticResource NavigationButton}" Click="OnStopClicked" Visibility="{Binding BusyVisibility}" Margin="0,14,0,0">
-                                <Grid>
+                                <Grid HorizontalAlignment="Stretch">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="28"/>
                                         <ColumnDefinition Width="*"/>
@@ -435,7 +435,7 @@
                                             </Grid>
                                         </Border>
                                         <TextBox Grid.Row="1"
-                                                 Text="{Binding LogText}"
+                                                 Text="{Binding CompactLogText}"
                                                  IsReadOnly="True"
                                                  Background="{StaticResource CodeBackgroundBrush}"
                                                  Foreground="{StaticResource TextPrimaryBrush}"
@@ -443,6 +443,7 @@
                                                  Padding="14"
                                                  FontFamily="Consolas"
                                                  FontSize="10.5"
+                                                 Height="220"
                                                  VerticalScrollBarVisibility="Auto"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  TextWrapping="NoWrap"/>
@@ -535,51 +536,6 @@
                                                 <DataGridTextColumn Width="88" Header="Status" Binding="{Binding StatusLabel}"/>
                                             </DataGrid.Columns>
                                         </DataGrid>
-                                    </Border>
-                                </Grid>
-                            </TabItem>
-
-                            <TabItem Header="Protokoll">
-                                <Grid Margin="0,12,0,0" Style="{StaticResource RevealGrid}">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-
-                                    <Border Grid.Row="0" Style="{StaticResource SurfaceCard}" Margin="0,0,0,14">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <StackPanel>
-                                                <TextBlock Text="Scan-Protokoll" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
-                                                <TextBlock Text="Live-Events, Fortschritt und Fehler fuer aktuelle Scans" Margin="0,6,0,0" FontSize="11" Foreground="{StaticResource MutedBrush}"/>
-                                                <TextBlock x:Name="LogFilePathText" Text="" Margin="0,8,0,0" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
-                                            </StackPanel>
-
-                                            <WrapPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                                <Button x:Name="CopyLogButton" Content="Kopieren" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnCopyLogClicked"/>
-                                                <Button x:Name="SaveLogButton" Content="Speichern" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnSaveLogClicked"/>
-                                                <Button x:Name="ClearLogButton" Content="Leeren" Style="{StaticResource ToolDangerButton}" Click="OnClearLogClicked"/>
-                                            </WrapPanel>
-                                        </Grid>
-                                    </Border>
-
-                                    <Border Grid.Row="1" Style="{StaticResource SurfaceCard}" Padding="0">
-                                        <TextBox x:Name="LogTextBox"
-                                                 Text="{Binding LogText}"
-                                                 IsReadOnly="True"
-                                                 Background="{StaticResource CodeBackgroundBrush}"
-                                                 Foreground="{StaticResource TextPrimaryBrush}"
-                                                 BorderThickness="0"
-                                                 Padding="18"
-                                                 FontFamily="Consolas"
-                                                 FontSize="11"
-                                                 VerticalScrollBarVisibility="Auto"
-                                                 HorizontalScrollBarVisibility="Auto"
-                                                 TextWrapping="NoWrap"/>
                                     </Border>
                                 </Grid>
                             </TabItem>
@@ -683,7 +639,8 @@
                         </TabControl>
                     </Grid>
 
-                    <Grid x:Name="AccountsWorkspace" Visibility="{Binding AccountsPageVisibility}">
+                    <ScrollViewer x:Name="AccountsWorkspace" Visibility="{Binding AccountsPageVisibility}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <Grid Margin="0,0,4,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
@@ -832,7 +789,7 @@
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
                                         <TextBlock Text="{Binding StatusMessage}" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" TextWrapping="Wrap"/>
-                                        <TextBlock Text="{Binding SettingsStorageSummary}" Margin="0,8,0,0" FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding SelectedEditorAccountSummary}" Margin="0,8,0,0" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                     <Button Grid.Column="1" Content="Debug" Style="{StaticResource ToolButton}" Width="92" HorizontalAlignment="Right" Click="OnOpenDebugClicked"/>
                                 </Grid>
@@ -1011,6 +968,7 @@
                             </Grid>
                         </Border>
                     </Grid>
+                    </ScrollViewer>
 
                     <Grid x:Name="UpdateWorkspace" Visibility="{Binding UpdatePageVisibility}">
                         <Grid.RowDefinitions>
@@ -1140,7 +1098,7 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
                                     <TextBlock Text="Werkzeuge" Style="{StaticResource SectionTitle}" Margin="0"/>
-                                    <TextBlock Text="Der aktive Tab kann direkt kopiert oder geleert werden." Margin="0,6,0,0" FontSize="11" Foreground="{StaticResource MutedBrush}"/>
+                                    <TextBlock Text="Debug zeigt technische Rohdaten: Registry = gespeicherte Konfiguration, Settings = geladene App-Einstellungen, Fehler = Ausnahmen." Margin="0,6,0,0" FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
                                 </StackPanel>
                                 <WrapPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
                                     <Button Content="Kopieren" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnCopyDebugClicked"/>
@@ -1149,29 +1107,51 @@
                             </Grid>
                         </Border>
 
-                        <Border Grid.Row="2" Style="{StaticResource SurfaceCard}" Padding="0">
-                            <TabControl x:Name="DebugTabsEmbedded" Margin="14,14,14,0">
-                                <TabItem Header="Allgemein">
-                                    <Border Margin="0,12,0,0" Style="{StaticResource InsetCard}" Padding="0">
-                                        <TextBox Text="{Binding DebugLog.GeneralText, Mode=OneWay}" IsReadOnly="True" Background="{StaticResource CodeBackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}" BorderThickness="0" Padding="16" FontFamily="Consolas" FontSize="11" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
-                                    </Border>
-                                </TabItem>
-                                <TabItem Header="Registry">
-                                    <Border Margin="0,12,0,0" Style="{StaticResource InsetCard}" Padding="0">
-                                        <TextBox Text="{Binding DebugLog.RegistryText, Mode=OneWay}" IsReadOnly="True" Background="{StaticResource CodeBackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}" BorderThickness="0" Padding="16" FontFamily="Consolas" FontSize="11" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
-                                    </Border>
-                                </TabItem>
-                                <TabItem Header="Settings">
-                                    <Border Margin="0,12,0,0" Style="{StaticResource InsetCard}" Padding="0">
-                                        <TextBox Text="{Binding DebugLog.SettingsText, Mode=OneWay}" IsReadOnly="True" Background="{StaticResource CodeBackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}" BorderThickness="0" Padding="16" FontFamily="Consolas" FontSize="11" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
-                                    </Border>
-                                </TabItem>
-                                <TabItem Header="Fehler">
-                                    <Border Margin="0,12,0,0" Style="{StaticResource InsetCard}" Padding="0" BorderBrush="#6C3E46">
-                                        <TextBox Text="{Binding DebugLog.ErrorText, Mode=OneWay}" IsReadOnly="True" Background="#190F12" Foreground="#FFD7DA" BorderThickness="0" Padding="16" FontFamily="Consolas" FontSize="11" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
-                                    </Border>
-                                </TabItem>
-                            </TabControl>
+                        <Border Grid.Row="2" Style="{StaticResource SurfaceCard}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="12"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource InsetCard}" Padding="0">
+                                    <Grid>
+                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                        <TextBlock Text="Registry" Margin="16,14,16,0" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                        <TextBox Grid.Row="1" Text="{Binding DebugLog.RegistryText, Mode=OneWay}" IsReadOnly="True" Background="{StaticResource CodeBackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}" BorderThickness="0" Padding="16" FontFamily="Consolas" FontSize="10.5" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+                                    </Grid>
+                                </Border>
+
+                                <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource InsetCard}" Padding="0">
+                                    <Grid>
+                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                        <TextBlock Text="Geladene Settings" Margin="16,14,16,0" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                        <TextBox Grid.Row="1" Text="{Binding DebugLog.SettingsText, Mode=OneWay}" IsReadOnly="True" Background="{StaticResource CodeBackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}" BorderThickness="0" Padding="16" FontFamily="Consolas" FontSize="10.5" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+                                    </Grid>
+                                </Border>
+
+                                <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource InsetCard}" Padding="0">
+                                    <Grid>
+                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                        <TextBlock Text="Allgemein" Margin="16,14,16,0" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                        <TextBox Grid.Row="1" Text="{Binding DebugLog.GeneralText, Mode=OneWay}" IsReadOnly="True" Background="{StaticResource CodeBackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}" BorderThickness="0" Padding="16" FontFamily="Consolas" FontSize="10.5" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+                                    </Grid>
+                                </Border>
+
+                                <Border Grid.Row="2" Grid.Column="2" Style="{StaticResource InsetCard}" Padding="0" BorderBrush="#6C3E46">
+                                    <Grid>
+                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                        <TextBlock Text="Fehler" Margin="16,14,16,0" FontSize="12" FontWeight="SemiBold" Foreground="#FFD7DA"/>
+                                        <TextBox Grid.Row="1" Text="{Binding DebugLog.ErrorText, Mode=OneWay}" IsReadOnly="True" Background="#190F12" Foreground="#FFD7DA" BorderThickness="0" Padding="16" FontFamily="Consolas" FontSize="10.5" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
                         </Border>
 
                         <Border Grid.Row="3" Style="{StaticResource SurfaceCard}" Padding="16,12" Margin="0,14,0,0">

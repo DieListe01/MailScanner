@@ -8,8 +8,8 @@ public partial class MainWindow
     {
         try
         {
-            System.Windows.Clipboard.SetText(DebugLog.GetTextForTab(DebugTabsEmbedded.SelectedIndex));
-            StatusMessage = "Debug-Inhalt in die Zwischenablage kopiert.";
+            System.Windows.Clipboard.SetText(DebugLog.GetCombinedText());
+            StatusMessage = "Debug-Uebersicht in die Zwischenablage kopiert.";
         }
         catch (Exception ex)
         {
@@ -19,7 +19,7 @@ public partial class MainWindow
 
     private void OnClearDebugClicked(object sender, RoutedEventArgs e)
     {
-        DebugLog.ClearTab(DebugTabsEmbedded.SelectedIndex);
-        StatusMessage = "Aktiver Debug-Tab geleert.";
+        DebugLog.ClearAll();
+        StatusMessage = "Debug-Ausgabe geleert.";
     }
 }

@@ -18,6 +18,7 @@ public partial class MainWindow
     private string editorDatabasePath = string.Empty;
     private string editorDocumentRootPath = string.Empty;
     private bool isAccountEditorBusy;
+    private string selectedEditorAccountSummary = string.Empty;
 
     public ObservableCollection<EditableMailAccount> EditorAccounts { get; } = [];
 
@@ -104,6 +105,16 @@ public partial class MainWindow
 
     public bool CanSaveAccountSettings => !isAccountEditorBusy && EditorAccounts.Any(a => !string.IsNullOrWhiteSpace(a.EmailAddress));
 
+    public string SelectedEditorAccountSummary
+    {
+        get => selectedEditorAccountSummary;
+        set
+        {
+            selectedEditorAccountSummary = value;
+            OnPropertyChanged();
+        }
+    }
+
     private void InitializeAccountEditor()
     {
         SettingsStorageSummary = AppDataPaths.GetUserSettingsFilePath();
@@ -135,6 +146,13 @@ public partial class MainWindow
 
             SelectedEditorAccount = EditorAccounts[0];
             SyncSelectedEditorAccount();
+            Dispatcher.InvokeAsync(() =>
+            {
+                if (EmbeddedAccountsListBox != null)
+                {
+                    EmbeddedAccountsListBox.SelectedItem = SelectedEditorAccount;
+                }
+            });
             DebugLogService.Instance.LogSettings($"Konten geladen: {EditorAccounts.Count}");
         }
         catch (Exception ex)
@@ -213,6 +231,10 @@ public partial class MainWindow
         {
             EmbeddedPasswordBox.Password = SelectedEditorAccount?.Password ?? string.Empty;
         }
+
+        SelectedEditorAccountSummary = SelectedEditorAccount is null
+            ? "Kein Konto ausgewaehlt."
+            : $"Aktives Scan-Setup: {SelectedEditorAccount.DisplayName} | {SelectedEditorAccount.EmailAddress} | {SelectedEditorAccount.ImapHost}:{SelectedEditorAccount.ImapPort} | Ordner {SelectedEditorAccount.FolderName}";
     }
 
     private void OnEmbeddedPasswordChanged(object sender, RoutedEventArgs e)
