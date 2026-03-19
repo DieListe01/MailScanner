@@ -39,10 +39,11 @@ public partial class App : System.Windows.Application
             await DatabaseInitializer.InitializeAsync(dbContext);
 
             IAppSettingsProvider settingsProvider = settingsStore;
+            var scanLogger = new ScanLogger();
             IMailboxScanStateStore mailboxScanStateStore = new MailboxScanStateStore(dbContext);
             IDocumentCandidateStore documentCandidateStore = new DocumentCandidateStore(dbContext);
             IDocumentRecordStore documentRecordStore = new DocumentRecordStore(dbContext);
-            IMailImportService mailImportService = new ImapMailImportService(settingsProvider, mailboxScanStateStore, documentCandidateStore);
+            IMailImportService mailImportService = new ImapMailImportService(settingsProvider, mailboxScanStateStore, documentCandidateStore, scanLogger);
             IMailConnectionTestService mailConnectionTestService = new ImapConnectionTestService(settingsProvider);
             IDocumentDownloadService documentDownloadService = new ImapDocumentDownloadService(settingsProvider, documentCandidateStore, documentRecordStore);
             var appVersionService = new AppVersionService();
@@ -54,6 +55,7 @@ public partial class App : System.Windows.Application
                 mailConnectionTestService,
                 documentCandidateStore,
                 documentDownloadService,
+                scanLogger,
                 appVersionService,
                 releaseUpdateService);
             MainWindow = mainWindow;
@@ -76,4 +78,3 @@ public partial class App : System.Windows.Application
         base.OnExit(e);
     }
 }
-

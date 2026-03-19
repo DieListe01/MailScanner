@@ -13,7 +13,8 @@ namespace MailScanner.Infrastructure.Services;
 public sealed class ImapMailImportService(
     IAppSettingsProvider settingsProvider,
     IMailboxScanStateStore mailboxScanStateStore,
-    IDocumentCandidateStore documentCandidateStore) : IMailImportService
+    IDocumentCandidateStore documentCandidateStore,
+    ScanLogger logger) : IMailImportService
 {
     private const int ImapTimeoutMilliseconds = 15000;
     private static readonly string[] InvoiceKeywords =
@@ -65,7 +66,6 @@ public sealed class ImapMailImportService(
         var totalInvoiceMatchesFound = 0;
 
         // Log scan start
-        var logger = new ScanLogger();
         logger.LogInfo($"=== MAIL-SCAN START ===");
         logger.LogInfo($"Konten: {accounts.Length}, Voll-Scan: {isFullScan}, Lookback: {settings.InitialLookbackDays} Tage");
         logger.LogInfo($"Ausschluss-Ordner: {string.Join(", ", excludedFolderPatterns)}");
@@ -482,10 +482,20 @@ public sealed class ImapMailImportService(
 
     private static MimePart[] ApplyFileTypeFilters(MimePart[] attachments, ImapAccountSettings account)
     {
+        var ignoredPatterns = account.IgnoredAttachmentNamePatterns
+            .Where(pattern => !string.IsNullOrWhiteSpace(pattern))
+            .Select(pattern => pattern.Trim())
+            .ToArray();
+
         return attachments.Where(attachment => 
         {
             var fileName = (attachment.FileName ?? string.Empty).ToLowerInvariant();
             var extension = Path.GetExtension(fileName);
+
+            if (ignoredPatterns.Any(pattern => fileName.Contains(pattern, StringComparison.OrdinalIgnoreCase)))
+            {
+                return false;
+            }
             
             // PDF
             if (account.SearchPdf && extension == ".pdf")

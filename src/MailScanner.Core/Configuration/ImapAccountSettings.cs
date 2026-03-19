@@ -24,4 +24,5 @@ public sealed class ImapAccountSettings
     public bool SearchImages { get; init; } = false;
     public bool SearchTxt { get; init; } = false;
     public bool SearchOther { get; init; } = false;
+    public IReadOnlyCollection<string> IgnoredAttachmentNamePatterns { get; init; } = [];
 }

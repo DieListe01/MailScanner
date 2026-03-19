@@ -12,6 +12,7 @@ public partial class MainWindow
 {
     private EditableMailAccount? selectedEditorAccount;
     private string settingsStorageSummary = string.Empty;
+    private string settingsProviderSummary = string.Empty;
     private int editorInitialLookbackDays = 30;
     private string editorExcludedFolderPatternsText = string.Empty;
     private string editorDatabasePath = string.Empty;
@@ -43,6 +44,16 @@ public partial class MainWindow
         set
         {
             settingsStorageSummary = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string SettingsProviderSummary
+    {
+        get => settingsProviderSummary;
+        set
+        {
+            settingsProviderSummary = value;
             OnPropertyChanged();
         }
     }
@@ -96,6 +107,7 @@ public partial class MainWindow
     private void InitializeAccountEditor()
     {
         SettingsStorageSummary = AppDataPaths.GetUserSettingsFilePath();
+        SettingsProviderSummary = "Primaer: Registry unter HKCU\\SOFTWARE\\MailScanner, Backup: appsettings.json";
         LoadAccountEditorSettings();
     }
 
@@ -122,6 +134,7 @@ public partial class MainWindow
             }
 
             SelectedEditorAccount = EditorAccounts[0];
+            SyncSelectedEditorAccount();
             DebugLogService.Instance.LogSettings($"Konten geladen: {EditorAccounts.Count}");
         }
         catch (Exception ex)
@@ -140,6 +153,7 @@ public partial class MainWindow
         if (emptyAccount != null)
         {
             SelectedEditorAccount = emptyAccount;
+            SyncSelectedEditorAccount();
             return;
         }
 
@@ -153,6 +167,7 @@ public partial class MainWindow
 
         EditorAccounts.Add(newAccount);
         SelectedEditorAccount = newAccount;
+        SyncSelectedEditorAccount();
         StatusMessage = "Neues Konto vorbereitet.";
         OnPropertyChanged(nameof(CanSaveAccountSettings));
     }
@@ -173,8 +188,31 @@ public partial class MainWindow
         }
 
         SelectedEditorAccount = EditorAccounts[Math.Min(index, EditorAccounts.Count - 1)];
+        SyncSelectedEditorAccount();
         StatusMessage = "Konto entfernt.";
         OnPropertyChanged(nameof(CanSaveAccountSettings));
+    }
+
+    private void OnEmbeddedAccountSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        SyncSelectedEditorAccount();
+    }
+
+    private void SyncSelectedEditorAccount()
+    {
+        if (EmbeddedAccountsListBox?.SelectedItem is EditableMailAccount account)
+        {
+            if (!ReferenceEquals(SelectedEditorAccount, account))
+            {
+                SelectedEditorAccount = account;
+                return;
+            }
+        }
+
+        if (EmbeddedPasswordBox != null)
+        {
+            EmbeddedPasswordBox.Password = SelectedEditorAccount?.Password ?? string.Empty;
+        }
     }
 
     private void OnEmbeddedPasswordChanged(object sender, RoutedEventArgs e)

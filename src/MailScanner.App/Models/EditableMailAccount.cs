@@ -29,6 +29,7 @@ public sealed class EditableMailAccount : INotifyPropertyChanged
     private bool searchImages = false;
     private bool searchTxt = false;
     private bool searchOther = false;
+    private string ignoredAttachmentNamePatternsText = string.Empty;
 
     public string ProviderName { get => providerName; set => SetField(ref providerName, value); }
     public string DisplayName { get => displayName; set => SetField(ref displayName, value); }
@@ -53,6 +54,7 @@ public sealed class EditableMailAccount : INotifyPropertyChanged
     public bool SearchImages { get => searchImages; set => SetField(ref searchImages, value); }
     public bool SearchTxt { get => searchTxt; set => SetField(ref searchTxt, value); }
     public bool SearchOther { get => searchOther; set => SetField(ref searchOther, value); }
+    public string IgnoredAttachmentNamePatternsText { get => ignoredAttachmentNamePatternsText; set => SetField(ref ignoredAttachmentNamePatternsText, value); }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -79,7 +81,8 @@ public sealed class EditableMailAccount : INotifyPropertyChanged
             SearchPpt = SearchPpt,
             SearchImages = SearchImages,
             SearchTxt = SearchTxt,
-            SearchOther = SearchOther
+            SearchOther = SearchOther,
+            IgnoredAttachmentNamePatterns = ParsePatterns(IgnoredAttachmentNamePatternsText)
         };
     }
 
@@ -106,11 +109,17 @@ public sealed class EditableMailAccount : INotifyPropertyChanged
             SearchPpt = settings.SearchPpt,
             SearchImages = settings.SearchImages,
             SearchTxt = settings.SearchTxt,
-            SearchOther = settings.SearchOther
+            SearchOther = settings.SearchOther,
+            IgnoredAttachmentNamePatternsText = string.Join(Environment.NewLine, settings.IgnoredAttachmentNamePatterns)
         };
     }
 
     private static string[] ParseExcludedFolderPatterns(string input)
+    {
+        return ParsePatterns(input);
+    }
+
+    private static string[] ParsePatterns(string input)
     {
         return input
             .Split(['\r', '\n', ';', ','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)

@@ -62,6 +62,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         IMailConnectionTestService mailConnectionTestService,
         IDocumentCandidateStore documentCandidateStore,
         IDocumentDownloadService documentDownloadService,
+        ScanLogger scanLogger,
         AppVersionService appVersionService,
         GitHubReleaseUpdateService releaseUpdateService)
     {
@@ -70,6 +71,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         this.mailConnectionTestService = mailConnectionTestService;
         this.documentCandidateStore = documentCandidateStore;
         this.documentDownloadService = documentDownloadService;
+        this.scanLogger = scanLogger;
+        this.scanLogger.LogChanged += HandleScanLogChanged;
         this.appVersionService = appVersionService;
         this.releaseUpdateService = releaseUpdateService;
 
@@ -85,6 +88,11 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         RefreshExcludedFolderSummary();
         RefreshLookbackSummary();
         RefreshAccountSummary();
+    }
+
+    private void HandleScanLogChanged()
+    {
+        Dispatcher.Invoke(() => OnPropertyChanged(nameof(LogText)));
     }
 
     public ObservableCollection<CandidateListItem> Candidates { get; } = [];
@@ -1355,7 +1363,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void OnClearLogClicked(object sender, RoutedEventArgs e)
     {
+        scanLogger.LogChanged -= HandleScanLogChanged;
         scanLogger = new ScanLogger();
+        scanLogger.LogChanged += HandleScanLogChanged;
         OnPropertyChanged(nameof(LogText));
         LogFilePathText.Text = "";
         StatusMessage = "Protokoll gelöscht!";
