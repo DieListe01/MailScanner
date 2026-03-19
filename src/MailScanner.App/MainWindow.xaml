@@ -548,12 +548,14 @@
 
                                             <StackPanel Grid.Column="0">
                                                 <WrapPanel Margin="0,0,0,12">
+                                                    <Button x:Name="InvoiceResultsButton" Content="Rechnungen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,8,0" Click="OnShowInvoicesClicked"/>
+                                                    <Button x:Name="DownloadedResultsButton" Content="Downloads" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnShowDownloadedClicked"/>
+                                                    <Button x:Name="AllResultsButton" Content="Alle" Style="{StaticResource ToolButton}" Margin="0,0,16,0" Click="OnShowAllResultsClicked"/>
                                                     <Button x:Name="ViewButton" Content="Vorschau" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnViewClicked" IsEnabled="{Binding CanPreviewSelection}"/>
                                                     <Button x:Name="OpenFileButton" Content="Datei oeffnen" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnOpenSelectedFileClicked" IsEnabled="{Binding CanOpenSelectedFile}"/>
                                                     <Button x:Name="DownloadButton" Content="Herunterladen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,8,0" Click="OnDownloadSelectionClicked" IsEnabled="{Binding CanDownloadSelection}"/>
                                                     <Button x:Name="DeleteButton" Content="Loeschen" Style="{StaticResource ToolDangerButton}" Margin="0,0,16,0" Click="OnDeleteClicked" IsEnabled="{Binding CanDeleteSelection}"/>
                                                     <CheckBox x:Name="OnlyAttachmentsCheckBox" Content="Nur mit Anhang" Style="{StaticResource InputCheckBox}" IsChecked="{Binding OnlyWithAttachments}" Margin="0,8,16,0"/>
-                                                    <CheckBox x:Name="OnlyInvoicesCheckBox" Content="Nur Rechnungen" Style="{StaticResource InputCheckBox}" IsChecked="{Binding OnlyInvoices}" Margin="0,8,16,0"/>
                                                     <CheckBox x:Name="OnlyDocPdfCheckBox" Content="Nur PDF / DOC" Style="{StaticResource InputCheckBox}" IsChecked="{Binding OnlyDocPdf}" Margin="0,8,0,0"/>
                                                 </WrapPanel>
 
@@ -595,16 +597,17 @@
                                                   RowBackground="Transparent"
                                                   AlternatingRowBackground="#20242C"
                                                   GridLinesVisibility="Horizontal">
-                                            <DataGrid.Columns>
-                                                <DataGridTextColumn Width="1.0*" Header="Konto" Binding="{Binding AccountName}"/>
-                                                <DataGridTextColumn Width="1.25*" Header="Absender" Binding="{Binding Sender}"/>
-                                                <DataGridTextColumn Width="2.3*" Header="Betreff" Binding="{Binding Subject}"/>
-                                                <DataGridTextColumn Width="1.0*" Header="Empfangen" Binding="{Binding ReceivedAtDisplay}"/>
-                                                <DataGridTextColumn Width="1.3*" Header="Anhang" Binding="{Binding AttachmentName}"/>
-                                                <DataGridTextColumn Width="1.6*" Header="Warum gefunden" Binding="{Binding MatchReason}"/>
-                                                <DataGridTextColumn Width="68" Header="Score" Binding="{Binding PriorityScore}"/>
-                                                <DataGridTextColumn Width="88" Header="Status" Binding="{Binding StatusLabel}"/>
-                                            </DataGrid.Columns>
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Width="1.0*" Header="Konto" Binding="{Binding AccountName}"/>
+                                                    <DataGridTextColumn Width="1.25*" Header="Absender" Binding="{Binding Sender}"/>
+                                                    <DataGridTextColumn Width="2.3*" Header="Betreff" Binding="{Binding Subject}"/>
+                                                    <DataGridTextColumn Width="1.0*" Header="Empfangen" Binding="{Binding ReceivedAtDisplay}"/>
+                                                    <DataGridTextColumn Width="1.3*" Header="Anhang" Binding="{Binding AttachmentName}"/>
+                                                    <DataGridTextColumn Width="1.6*" Header="Warum gefunden" Binding="{Binding MatchReason}"/>
+                                                    <DataGridTextColumn Width="110" Header="Datei" Binding="{Binding FileAvailabilityLabel}"/>
+                                                    <DataGridTextColumn Width="68" Header="Score" Binding="{Binding PriorityScore}"/>
+                                                    <DataGridTextColumn Width="88" Header="Status" Binding="{Binding StatusLabel}"/>
+                                                </DataGrid.Columns>
                                         </DataGrid>
                                     </Border>
                             </Grid>

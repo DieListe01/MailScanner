@@ -1,3 +1,4 @@
+using System.IO;
 using MailScanner.Core.Enums;
 using MailScanner.Core.Models;
 
@@ -38,6 +39,11 @@ public sealed class CandidateListItem
     public string AttachmentSizeDisplay => FormatFileSize(Candidate.AttachmentSizeInBytes);
     public string CategoryLabel => Candidate.SuggestedCategory.ToString();
     public string StatusLabel => Candidate.Status.ToString();
+    public string FileAvailabilityLabel => Candidate.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase)
+        ? "Nur Vorschau"
+        : Candidate.AlreadyDownloaded || (!string.IsNullOrWhiteSpace(Candidate.StoredFilePath) && File.Exists(Candidate.StoredFilePath))
+            ? "Heruntergeladen"
+            : "Datei fehlt";
     public int PriorityScore { get; }
     public string PriorityLabel => PriorityScore >= 120 ? "Sehr hoch" : PriorityScore >= 80 ? "Hoch" : PriorityScore >= 45 ? "Mittel" : "Niedrig";
     public string MatchReason { get; }

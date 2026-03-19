@@ -29,7 +29,7 @@ public partial class MainWindow
     public string PreviewCategoryLabel { get => previewCategoryLabel; set { previewCategoryLabel = value; OnPropertyChanged(); } }
     public string PreviewContentText { get => previewContentText; set { previewContentText = value; OnPropertyChanged(); } }
 
-    private void ShowPreview(DocumentCandidate candidate)
+    private void ShowPreview(DocumentCandidate candidate, bool updateStatus = true)
     {
         previewCandidate = candidate;
         var listItem = CandidateListItem.FromCandidate(candidate);
@@ -54,13 +54,17 @@ Anhang: {candidate.AttachmentName} ({candidate.AttachmentSizeInBytes} Bytes)
 
 Status: {candidate.Status}
 Kategorie: {candidate.SuggestedCategory}
+Datei: {CandidateListItem.FromCandidate(candidate).FileAvailabilityLabel}
 
 Hinweis: Der vollstaendige Mail-Text wird in einer spaeteren Ausbaustufe direkt aus dem Import geladen.
 Derzeit werden die lokal verfuegbaren Metadaten angezeigt.";
 
         PreviewTabVisibility = System.Windows.Visibility.Visible;
         SetCurrentPage(WorkspacePage.Results);
-        StatusMessage = $"Vorschau geladen: {candidate.Subject}";
+        if (updateStatus)
+        {
+            StatusMessage = $"Vorschau geladen: {candidate.Subject}";
+        }
     }
 
     private void OnOpenPreviewAttachmentClicked(object sender, System.Windows.RoutedEventArgs e)

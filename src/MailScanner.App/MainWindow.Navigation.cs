@@ -5,6 +5,13 @@ namespace MailScanner.App;
 
 public partial class MainWindow
 {
+    private enum ResultsQuickFilter
+    {
+        Invoices,
+        Downloaded,
+        All
+    }
+
     private WorkspacePage currentPage = WorkspacePage.Scanner;
     private Visibility previewTabVisibility = Visibility.Collapsed;
 

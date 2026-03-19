@@ -60,6 +60,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private bool canOpenSelectedFile;
     private bool canDownloadSelection;
     private bool canDeleteSelection;
+    private ResultsQuickFilter resultsQuickFilter = ResultsQuickFilter.Invoices;
 
     public MainWindow(
         IAppSettingsProvider settingsProvider,
@@ -87,6 +88,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         InitializeAccountEditor();
         SetCurrentPage(WorkspacePage.Scanner);
         Loaded += OnLoaded;
+        Loaded += (_, _) => UpdateResultsFilterButtons();
         var currentVersion = appVersionService.GetCurrentVersion();
         Title = $"MailScanner v{currentVersion}";
         CurrentVersionSummary = $"Installiert: v{currentVersion}";
@@ -911,6 +913,10 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         else if (selectedCount == 1)
         {
             SelectionInfo = $"1 Dokument ausgewählt";
+            if (CandidatesGrid.SelectedItem is CandidateListItem selectedItem)
+            {
+                ShowPreview(selectedItem.Candidate, false);
+            }
         }
         else
         {
@@ -926,6 +932,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         try
         {
             ShowPreview(selectedCandidate.Candidate);
+            OpenCandidateAttachment(selectedCandidate.Candidate);
         }
         catch (Exception ex)
         {
@@ -1039,12 +1046,53 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                 allowedExtensions.Any(ext => c.AttachmentName.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
         }
 
-        if (OnlyInvoices)
+        if (OnlyInvoices || resultsQuickFilter == ResultsQuickFilter.Invoices)
         {
             filteredCandidates = filteredCandidates.Where(c => c.SuggestedCategory == DocumentCategory.Invoice);
         }
 
+        if (resultsQuickFilter == ResultsQuickFilter.Downloaded)
+        {
+            filteredCandidates = filteredCandidates.Where(c => c.AlreadyDownloaded || !string.IsNullOrWhiteSpace(c.StoredFilePath));
+        }
+
         return filteredCandidates;
+    }
+
+    private void OnShowAllResultsClicked(object sender, RoutedEventArgs e)
+    {
+        resultsQuickFilter = ResultsQuickFilter.All;
+        OnlyInvoices = false;
+        UpdateResultsFilterButtons();
+        _ = ApplySearchAsync();
+    }
+
+    private void OnShowInvoicesClicked(object sender, RoutedEventArgs e)
+    {
+        resultsQuickFilter = ResultsQuickFilter.Invoices;
+        OnlyInvoices = true;
+        UpdateResultsFilterButtons();
+        _ = ApplySearchAsync();
+    }
+
+    private void OnShowDownloadedClicked(object sender, RoutedEventArgs e)
+    {
+        resultsQuickFilter = ResultsQuickFilter.Downloaded;
+        OnlyInvoices = false;
+        UpdateResultsFilterButtons();
+        _ = ApplySearchAsync();
+    }
+
+    private void UpdateResultsFilterButtons()
+    {
+        if (AllResultsButton == null || InvoiceResultsButton == null || DownloadedResultsButton == null)
+        {
+            return;
+        }
+
+        AllResultsButton.Style = (Style)FindResource(resultsQuickFilter == ResultsQuickFilter.All ? "ToolPrimaryButton" : "ToolButton");
+        InvoiceResultsButton.Style = (Style)FindResource(resultsQuickFilter == ResultsQuickFilter.Invoices ? "ToolPrimaryButton" : "ToolButton");
+        DownloadedResultsButton.Style = (Style)FindResource(resultsQuickFilter == ResultsQuickFilter.Downloaded ? "ToolPrimaryButton" : "ToolButton");
     }
 
     private void RefreshAccountSummary()
