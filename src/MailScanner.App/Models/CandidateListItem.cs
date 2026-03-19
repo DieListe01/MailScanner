@@ -5,6 +5,13 @@ namespace MailScanner.App.Models;
 
 public sealed class CandidateListItem
 {
+    private static readonly string[] AttachmentKeywords =
+    [
+        "dokument", "document", "pdf", "anhang", "attachment",
+        "bericht", "report", "bestellung", "order", "lieferschein",
+        "delivery", "kalkulation", "angebot", "quote", "vertrag", "contract"
+    ];
+
     private static readonly string[] InvoiceKeywords =
     [
         "invoice",
@@ -80,40 +87,77 @@ public sealed class CandidateListItem
         {
             case DocumentCategory.Invoice:
                 score += 80;
-                reasons.Add("Kategorie Rechnung");
+                reasons.Add("Rechnung");
                 break;
             case DocumentCategory.Taxes:
                 score += 60;
-                reasons.Add("Kategorie Steuern");
+                reasons.Add("Steuer-Dokument");
                 break;
             case DocumentCategory.Insurance:
                 score += 40;
-                reasons.Add("Kategorie Versicherung");
+                reasons.Add("Versicherung");
                 break;
             case DocumentCategory.Bank:
                 score += 35;
-                reasons.Add("Kategorie Bank");
+                reasons.Add("Bank-Dokument");
+                break;
+            case DocumentCategory.Other:
+                score += 20;
+                reasons.Add("Allgemeines Dokument");
                 break;
         }
 
+        // Check for invoice keywords
         if (ContainsAnyKeyword(subject, InvoiceKeywords))
         {
             score += 40;
-            reasons.Add("Keyword im Betreff");
+            reasons.Add("Rechnungs-Keyword");
         }
 
         if (ContainsAnyKeyword(attachmentName, InvoiceKeywords))
         {
             score += 45;
-            reasons.Add("Keyword im Dateinamen");
+            reasons.Add("Rechnungs-Dateiname");
         }
 
+        // Check for general document keywords
+        if (ContainsAnyKeyword(subject, AttachmentKeywords))
+        {
+            score += 25;
+            reasons.Add("Dokumenten-Keyword");
+        }
+
+        if (ContainsAnyKeyword(attachmentName, AttachmentKeywords))
+        {
+            score += 30;
+            reasons.Add("Dokumenten-Dateiname");
+        }
+
+        // Check for suspicious senders
         if (ContainsAnyKeyword(sender, ["rechnung", "invoice", "billing", "kundenservice", "service", "buchhaltung"]))
         {
             score += 18;
-            reasons.Add("Auffaelliger Absender");
+            reasons.Add("Auffälliger Absender");
         }
 
+        // File type bonus
+        if (attachmentName.EndsWith(".pdf"))
+        {
+            score += 15;
+            reasons.Add("PDF-Dokument");
+        }
+        else if (attachmentName.EndsWith(".doc") || attachmentName.EndsWith(".docx"))
+        {
+            score += 12;
+            reasons.Add("Word-Dokument");
+        }
+        else if (attachmentName.EndsWith(".xls") || attachmentName.EndsWith(".xlsx"))
+        {
+            score += 12;
+            reasons.Add("Excel-Dokument");
+        }
+
+        // Age-based scoring
         var ageInDays = Math.Max(0, (DateTimeOffset.Now - candidate.ReceivedAt).Days);
 
         if (ageInDays <= 14)
@@ -132,9 +176,11 @@ public sealed class CandidateListItem
             score += 10;
         }
 
-        if (score == 0)
+        // Fallback for very low scores
+        if (score < 20)
         {
-            reasons.Add("Allgemeiner PDF-Kandidat");
+            reasons.Add("Mit Anhang");
+            score = 20;
         }
 
         return new CandidateListItem(candidate, score, string.Join(" | ", reasons.Take(3)));

@@ -12,4 +12,16 @@ public sealed class ImapAccountSettings
     public bool UseSsl { get; init; } = true;
     public string FolderName { get; init; } = "INBOX";
     public IReadOnlyCollection<string> ExcludedFolderPatterns { get; init; } = [];
+    
+    // Dateityp-Filter pro Konto
+    public bool SearchPdf { get; init; } = true;
+    public bool SearchDoc { get; init; } = true;
+    public bool SearchDocx { get; init; } = true;
+    public bool SearchXlsx { get; init; } = false;
+    public bool SearchXls { get; init; } = false;
+    public bool SearchPptx { get; init; } = false;
+    public bool SearchPpt { get; init; } = false;
+    public bool SearchImages { get; init; } = false;
+    public bool SearchTxt { get; init; } = false;
+    public bool SearchOther { get; init; } = false;
 }

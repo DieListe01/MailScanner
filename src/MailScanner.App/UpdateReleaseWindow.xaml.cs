@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using MailScanner.App.Services;
 
 namespace MailScanner.App;
@@ -39,6 +40,7 @@ public partial class UpdateReleaseWindow : Window, INotifyPropertyChanged
     public string ReleaseTitle { get; }
     public string ReleaseNotes { get; }
     public string InstallerSummary { get; }
+    public bool CanInstallUpdate => releaseInfo.InstallerAsset is not null;
 
     public string StatusMessage
     {
@@ -51,6 +53,32 @@ public partial class UpdateReleaseWindow : Window, INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnTitleBarMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton != MouseButton.Left)
+        {
+            return;
+        }
+
+        if (e.ClickCount == 2 && ResizeMode == ResizeMode.CanResize)
+        {
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            return;
+        }
+
+        DragMove();
+    }
+
+    private void OnMinimizeWindowClicked(object sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState.Minimized;
+    }
+
+    private void OnToggleMaximizeWindowClicked(object sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+    }
 
     private void OnOpenReleasePageClicked(object sender, RoutedEventArgs e)
     {

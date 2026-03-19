@@ -63,6 +63,16 @@ public sealed class DocumentCandidateStore(MailScannerDbContext dbContext) : IDo
             .ToArray();
     }
 
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var entity = await dbContext.DocumentCandidates.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        if (entity is not null)
+        {
+            dbContext.DocumentCandidates.Remove(entity);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+    }
+
     private IQueryable<DocumentCandidateEntity> BuildQuery(string? searchText)
     {
         var query = dbContext.DocumentCandidates.AsNoTracking();

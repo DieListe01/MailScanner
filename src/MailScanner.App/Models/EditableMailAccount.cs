@@ -16,6 +16,19 @@ public sealed class EditableMailAccount : INotifyPropertyChanged
     private bool useSsl = true;
     private string folderName = "INBOX";
     private string excludedFolderPatternsText = string.Empty;
+    private int initialLookbackDays = 0;
+    
+    // Dateityp-Filter
+    private bool searchPdf = true;
+    private bool searchDoc = true;
+    private bool searchDocx = true;
+    private bool searchXlsx = false;
+    private bool searchXls = false;
+    private bool searchPptx = false;
+    private bool searchPpt = false;
+    private bool searchImages = false;
+    private bool searchTxt = false;
+    private bool searchOther = false;
 
     public string ProviderName { get => providerName; set => SetField(ref providerName, value); }
     public string DisplayName { get => displayName; set => SetField(ref displayName, value); }
@@ -27,6 +40,19 @@ public sealed class EditableMailAccount : INotifyPropertyChanged
     public bool UseSsl { get => useSsl; set => SetField(ref useSsl, value); }
     public string FolderName { get => folderName; set => SetField(ref folderName, value); }
     public string ExcludedFolderPatternsText { get => excludedFolderPatternsText; set => SetField(ref excludedFolderPatternsText, value); }
+    public int InitialLookbackDays { get => initialLookbackDays; set => SetField(ref initialLookbackDays, value); }
+    
+    // Dateityp-Filter Properties
+    public bool SearchPdf { get => searchPdf; set => SetField(ref searchPdf, value); }
+    public bool SearchDoc { get => searchDoc; set => SetField(ref searchDoc, value); }
+    public bool SearchDocx { get => searchDocx; set => SetField(ref searchDocx, value); }
+    public bool SearchXlsx { get => searchXlsx; set => SetField(ref searchXlsx, value); }
+    public bool SearchXls { get => searchXls; set => SetField(ref searchXls, value); }
+    public bool SearchPptx { get => searchPptx; set => SetField(ref searchPptx, value); }
+    public bool SearchPpt { get => searchPpt; set => SetField(ref searchPpt, value); }
+    public bool SearchImages { get => searchImages; set => SetField(ref searchImages, value); }
+    public bool SearchTxt { get => searchTxt; set => SetField(ref searchTxt, value); }
+    public bool SearchOther { get => searchOther; set => SetField(ref searchOther, value); }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -43,7 +69,17 @@ public sealed class EditableMailAccount : INotifyPropertyChanged
             ImapPort = ImapPort,
             UseSsl = UseSsl,
             FolderName = FolderName,
-            ExcludedFolderPatterns = ParseExcludedFolderPatterns(ExcludedFolderPatternsText)
+            ExcludedFolderPatterns = ParseExcludedFolderPatterns(ExcludedFolderPatternsText),
+            SearchPdf = SearchPdf,
+            SearchDoc = SearchDoc,
+            SearchDocx = SearchDocx,
+            SearchXlsx = SearchXlsx,
+            SearchXls = SearchXls,
+            SearchPptx = SearchPptx,
+            SearchPpt = SearchPpt,
+            SearchImages = SearchImages,
+            SearchTxt = SearchTxt,
+            SearchOther = SearchOther
         };
     }
 
@@ -60,7 +96,17 @@ public sealed class EditableMailAccount : INotifyPropertyChanged
             ImapPort = settings.ImapPort,
             UseSsl = settings.UseSsl,
             FolderName = settings.FolderName,
-            ExcludedFolderPatternsText = string.Join(Environment.NewLine, settings.ExcludedFolderPatterns)
+            ExcludedFolderPatternsText = string.Join(Environment.NewLine, settings.ExcludedFolderPatterns),
+            SearchPdf = settings.SearchPdf,
+            SearchDoc = settings.SearchDoc,
+            SearchDocx = settings.SearchDocx,
+            SearchXlsx = settings.SearchXlsx,
+            SearchXls = settings.SearchXls,
+            SearchPptx = settings.SearchPptx,
+            SearchPpt = settings.SearchPpt,
+            SearchImages = settings.SearchImages,
+            SearchTxt = settings.SearchTxt,
+            SearchOther = settings.SearchOther
         };
     }
 

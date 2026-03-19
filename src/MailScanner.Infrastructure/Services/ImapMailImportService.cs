@@ -6,6 +6,7 @@ using MailScanner.Core.Enums;
 using MailScanner.Core.Models;
 using MailScanner.Core.Services;
 using MimeKit;
+using System.IO;
 
 namespace MailScanner.Infrastructure.Services;
 
@@ -18,11 +19,27 @@ public sealed class ImapMailImportService(
     private static readonly string[] InvoiceKeywords =
     [
         "invoice",
-        "rechnung",
+        "rechnung", 
         "bill",
         "beleg",
         "quittung",
-        "abrechnung"
+        "abrechnung",
+        "dokument",
+        "document",
+        "pdf",
+        "anhang",
+        "attachment",
+        "bericht",
+        "report",
+        "bestellung",
+        "order",
+        "lieferschein",
+        "delivery",
+        "kalkulation",
+        "angebot",
+        "quote",
+        "vertrag",
+        "contract"
     ];
 
     public async Task<IReadOnlyCollection<DocumentCandidate>> ImportNewCandidatesAsync(IProgress<MailImportProgress>? progress = null, CancellationToken cancellationToken = default)
@@ -47,8 +64,16 @@ public sealed class ImapMailImportService(
         var totalPdfCandidatesFound = 0;
         var totalInvoiceMatchesFound = 0;
 
+        // Log scan start
+        var logger = new ScanLogger();
+        logger.LogInfo($"=== MAIL-SCAN START ===");
+        logger.LogInfo($"Konten: {accounts.Length}, Voll-Scan: {isFullScan}, Lookback: {settings.InitialLookbackDays} Tage");
+        logger.LogInfo($"Ausschluss-Ordner: {string.Join(", ", excludedFolderPatterns)}");
+
         foreach (var account in accounts)
         {
+            logger.LogInfo($"--- SCAN KONTO: {account.DisplayName} ({account.EmailAddress}) ---");
+            
             var accountExcludedFolderPatterns = excludedFolderPatterns
                 .Concat(account.ExcludedFolderPatterns.Where(pattern => !string.IsNullOrWhiteSpace(pattern)).Select(pattern => pattern.Trim()))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -66,6 +91,7 @@ public sealed class ImapMailImportService(
                 isFullScan,
                 accountExcludedFolderPatterns,
                 progress,
+                logger,
                 cancellationToken);
 
             importedCandidates.AddRange(accountImportResult.Candidates);
@@ -74,7 +100,14 @@ public sealed class ImapMailImportService(
             totalAttachmentMessagesFound += accountImportResult.AttachmentMessagesFound;
             totalPdfCandidatesFound += accountImportResult.PdfCandidatesFound;
             totalInvoiceMatchesFound += accountImportResult.InvoiceMatchesFound;
+            
+            logger.LogInfo($"Konto {account.DisplayName} abgeschlossen: {accountImportResult.MessagesScanned} Mails, {accountImportResult.AttachmentMessagesFound} mit Anhang, {accountImportResult.Candidates.Count} Treffer");
         }
+
+        logger.LogInfo($"=== SCAN GESAMTERGEBNIS ===");
+        logger.LogInfo($"Gesamt: {totalMessagesScanned} Mails gescannt, {totalAttachmentMessagesFound} mit Anhang, {importedCandidates.Count} Treffer");
+        logger.LogInfo($"PDFs: {totalPdfCandidatesFound}, Rechnungen: {totalInvoiceMatchesFound}");
+        await logger.SaveLogAsync();
 
         if (importedCandidates.Count > 0)
         {
@@ -96,6 +129,7 @@ public sealed class ImapMailImportService(
         bool isFullScan,
         IReadOnlyCollection<string> excludedFolderPatterns,
         IProgress<MailImportProgress>? progress,
+        ScanLogger logger,
         CancellationToken cancellationToken)
     {
         using var client = new ImapClient();
@@ -146,64 +180,21 @@ public sealed class ImapMailImportService(
                 continue;
             }
 
-            await folder.OpenAsync(FolderAccess.ReadOnly, cancellationToken);
-
-            var lastState = await mailboxScanStateStore.GetAsync(account.EmailAddress, folder.FullName, cancellationToken);
-
-            IList<UniqueId> uniqueIds = isFullScan
-                ? await folder.SearchAsync(SearchQuery.All, cancellationToken)
-                : lastState is { LastScannedUid: > 0 }
-                ? await folder.SearchAsync(SearchQuery.Uids(new UniqueIdRange(new UniqueId(lastState.LastScannedUid + 1), UniqueId.MaxValue)), cancellationToken)
-                : await folder.SearchAsync(SearchQuery.DeliveredAfter(DateTime.Today.AddDays(-settings.InitialLookbackDays)), cancellationToken);
-
-            uint maxUid = lastState?.LastScannedUid ?? 0;
-
-            foreach (var uniqueId in uniqueIds.OrderBy(x => x.Id))
+            try
             {
-                var message = await folder.GetMessageAsync(uniqueId, cancellationToken);
-                accountMessagesScanned++;
-                oldestScannedMessageDate = oldestScannedMessageDate is null || message.Date < oldestScannedMessageDate
-                    ? message.Date
-                    : oldestScannedMessageDate;
-                var hasAttachments = message.Attachments.Any();
+                await folder.OpenAsync(FolderAccess.ReadOnly, cancellationToken);
 
-                if (hasAttachments)
-                {
-                    accountAttachmentMessagesFound++;
-                }
+                var lastState = await mailboxScanStateStore.GetAsync(account.EmailAddress, folder.FullName, cancellationToken);
 
-                var isInvoiceMatch = IsInvoiceMatch(message);
+                // Always use lookback scan for reliability - UID-based incremental scan can miss emails
+                var lookbackDays = isFullScan ? 3650 : settings.InitialLookbackDays; // 10 years for "full" scan
+                var searchDate = DateTime.Today.AddDays(-lookbackDays);
+                
+                IList<UniqueId> uniqueIds = await folder.SearchAsync(SearchQuery.DeliveredAfter(searchDate), cancellationToken);
+                
+                logger.LogInfo($"Suche in {folder.FullName}: {uniqueIds.Count} Mails seit {searchDate:dd.MM.yyyy}");
 
-                var pdfParts = message.Attachments
-                    .OfType<MimePart>()
-                    .Where(IsPdfAttachment)
-                    .ToArray();
-
-                if (isInvoiceMatch && pdfParts.Length > 0)
-                {
-                    accountInvoiceMatchesFound++;
-                }
-
-                foreach (var attachment in pdfParts)
-                {
-                    candidates.Add(new DocumentCandidate
-                    {
-                        AccountName = account.DisplayName,
-                        AccountAddress = account.EmailAddress,
-                        FolderName = folder.FullName,
-                        ImapUid = uniqueId.Id,
-                        MessageId = message.MessageId ?? string.Empty,
-                        Sender = message.From.Mailboxes.FirstOrDefault()?.Address ?? string.Empty,
-                        Subject = message.Subject ?? string.Empty,
-                        ReceivedAt = message.Date,
-                        AttachmentName = attachment.FileName ?? "attachment.pdf",
-                        AttachmentSizeInBytes = GetAttachmentSize(attachment),
-                        SuggestedCategory = SuggestCategory(message, attachment),
-                        Status = DocumentCandidateStatus.Pending
-                    });
-
-                    accountPdfCandidatesFound++;
-                }
+                uint maxUid = lastState?.LastScannedUid ?? 0;
 
                 progress?.Report(new MailImportProgress
                 {
@@ -222,24 +213,156 @@ public sealed class ImapMailImportService(
                     OldestScannedMessageAgeDays = GetMessageAgeInDays(oldestScannedMessageDate),
                     OldestScannedMessageDate = oldestScannedMessageDate,
                     ExcludedFolderCount = excludedFolderCount,
-                    StatusText = $"{account.DisplayName}: {accountMessagesScanned} Mails durchsucht, {accountAttachmentMessagesFound} Mails mit Anhang, {accountPdfCandidatesFound} PDF-Anhaenge, {accountInvoiceMatchesFound} Rechnungs-Treffer"
+                    StatusText = $"Scanne {uniqueIds.Count} Mails in {folder.FullName}..."
                 });
 
-                if (uniqueId.Id > maxUid)
+                foreach (var uniqueId in uniqueIds.OrderBy(x => x.Id))
                 {
-                    maxUid = uniqueId.Id;
+                    try
+                    {
+                        var message = await folder.GetMessageAsync(uniqueId, cancellationToken);
+                        accountMessagesScanned++;
+                        oldestScannedMessageDate = oldestScannedMessageDate is null || message.Date < oldestScannedMessageDate
+                            ? message.Date
+                            : oldestScannedMessageDate;
+                        var hasAttachments = message.Attachments.Any();
+
+                        if (hasAttachments)
+                        {
+                            accountAttachmentMessagesFound++;
+                        }
+
+                        var isInvoiceMatch = IsInvoiceMatch(message);
+                        var sender = message.From.Mailboxes.FirstOrDefault()?.Address ?? "Unbekannt";
+                        var subject = message.Subject ?? "Kein Betreff";
+
+                        // Log EVERY mail with detailed info
+                        logger.LogMail(account.DisplayName, folder.FullName, subject, sender, hasAttachments, false, isInvoiceMatch);
+
+                        // Log attachment details
+                        if (hasAttachments)
+                        {
+                            var attachmentNames = message.Attachments.OfType<MimePart>().Select(a => a.FileName ?? "no-name").ToArray();
+                            logger.LogInfo($"Anhänge in Mail: {string.Join(", ", attachmentNames)}");
+                        }
+
+                        var pdfParts = message.Attachments
+                            .OfType<MimePart>()
+                            .Where(IsPdfAttachment)
+                            .ToArray();
+
+                        // Add ALL attachments, not just PDFs or invoices
+                        var allAttachments = message.Attachments
+                            .OfType<MimePart>()
+                            .Where(part => !string.IsNullOrWhiteSpace(part.FileName))
+                            .ToArray();
+
+                        if (isInvoiceMatch && pdfParts.Length > 0)
+                        {
+                            accountInvoiceMatchesFound++;
+                            logger.LogInfo($"RECHNUNGS-TREFFER: {subject} von {sender}");
+                        }
+
+                        // Add ALL attachments - apply account-specific file type filters
+                        var filteredAttachments = ApplyFileTypeFilters(allAttachments, account);
+                        
+                        foreach (var attachment in filteredAttachments)
+                        {
+                            var isPdf = IsPdfAttachment(attachment);
+                            candidates.Add(new DocumentCandidate
+                            {
+                                AccountName = account.DisplayName,
+                                AccountAddress = account.EmailAddress,
+                                FolderName = folder.FullName,
+                                ImapUid = uniqueId.Id,
+                                MessageId = message.MessageId ?? string.Empty,
+                                Sender = sender,
+                                Subject = subject,
+                                ReceivedAt = message.Date,
+                                AttachmentName = attachment.FileName ?? "attachment",
+                                AttachmentSizeInBytes = GetAttachmentSize(attachment),
+                                SuggestedCategory = isPdf ? SuggestCategory(message, attachment) : DocumentCategory.Other,
+                                Status = DocumentCandidateStatus.Pending
+                            });
+                            
+                            var attachmentType = isPdf ? "PDF" : "DOC";
+                            logger.LogInfo($"{attachmentType}-Treffer: {attachment.FileName} von {sender}");
+                        }
+
+                        // Also add mails without attachments if they match invoice keywords
+                        if (!hasAttachments && isInvoiceMatch)
+                        {
+                            candidates.Add(new DocumentCandidate
+                            {
+                                AccountName = account.DisplayName,
+                                AccountAddress = account.EmailAddress,
+                                FolderName = folder.FullName,
+                                ImapUid = uniqueId.Id,
+                                MessageId = message.MessageId ?? string.Empty,
+                                Sender = sender,
+                                Subject = subject,
+                                ReceivedAt = message.Date,
+                                AttachmentName = "[Email-Text]",
+                                AttachmentSizeInBytes = message.TextBody?.Length ?? 0,
+                                SuggestedCategory = DocumentCategory.Invoice,
+                                Status = DocumentCandidateStatus.Pending
+                            });
+                            
+                            logger.LogInfo($"Rechnungs-Mail (ohne Anhang): {subject} von {sender}");
+                        }
+
+                        // Update counters correctly
+                        accountPdfCandidatesFound += pdfParts.Length;
+
+                        progress?.Report(new MailImportProgress
+                        {
+                            AccountName = account.DisplayName,
+                            FolderName = folder.FullName,
+                            AccountsTotal = accountsTotal,
+                            AccountsCompleted = accountsCompleted,
+                            FoldersTotal = allFolders.Count,
+                            FoldersCompleted = index,
+                            ConfiguredLookbackDays = settings.InitialLookbackDays,
+                            IsFullScan = isFullScan,
+                            MessagesScanned = baseMessagesScanned + accountMessagesScanned,
+                            AttachmentMessagesFound = baseAttachmentMessagesFound + accountAttachmentMessagesFound,
+                            PdfCandidatesFound = basePdfCandidatesFound + accountPdfCandidatesFound,
+                            InvoiceMatchesFound = baseInvoiceMatchesFound + accountInvoiceMatchesFound,
+                            OldestScannedMessageAgeDays = GetMessageAgeInDays(oldestScannedMessageDate),
+                            OldestScannedMessageDate = oldestScannedMessageDate,
+                            ExcludedFolderCount = excludedFolderCount,
+                            StatusText = $"{account.DisplayName}: {accountMessagesScanned} Mails, {accountAttachmentMessagesFound} mit Anhang, {candidates.Count} Treffer, {accountPdfCandidatesFound} PDFs, {accountInvoiceMatchesFound} Rechnungen"
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError($"Fehler bei Mail {uniqueId.Id}: {ex.Message}", ex);
+                        // Skip problematic messages but continue scanning
+                        continue;
+                    }
+
+                    if (uniqueId.Id > maxUid)
+                    {
+                        maxUid = uniqueId.Id;
+                    }
                 }
+
+                await mailboxScanStateStore.SaveAsync(new MailboxScanState
+                {
+                    AccountAddress = account.EmailAddress,
+                    FolderName = folder.FullName,
+                    LastScannedUid = maxUid,
+                    UpdatedAt = DateTimeOffset.UtcNow
+                }, cancellationToken);
+
+                await folder.CloseAsync(false, cancellationToken);
             }
-
-            await mailboxScanStateStore.SaveAsync(new MailboxScanState
+            catch (Exception ex)
             {
-                AccountAddress = account.EmailAddress,
-                FolderName = folder.FullName,
-                LastScannedUid = maxUid,
-                UpdatedAt = DateTimeOffset.UtcNow
-            }, cancellationToken);
-
-            await folder.CloseAsync(false, cancellationToken);
+                // Skip problematic folders but continue scanning
+                logger.LogError($"Fehler bei Ordner {folder.FullName}: {ex.Message}", ex);
+                continue;
+            }
         }
         
         await client.DisconnectAsync(true, cancellationToken);
@@ -355,5 +478,62 @@ public sealed class ImapMailImportService(
     private static bool ContainsAnyKeyword(string haystack, IEnumerable<string> keywords)
     {
         return keywords.Any(haystack.Contains);
+    }
+
+    private static MimePart[] ApplyFileTypeFilters(MimePart[] attachments, ImapAccountSettings account)
+    {
+        return attachments.Where(attachment => 
+        {
+            var fileName = (attachment.FileName ?? string.Empty).ToLowerInvariant();
+            var extension = Path.GetExtension(fileName);
+            
+            // PDF
+            if (account.SearchPdf && extension == ".pdf")
+                return true;
+                
+            // DOC
+            if (account.SearchDoc && extension == ".doc")
+                return true;
+                
+            // DOCX
+            if (account.SearchDocx && extension == ".docx")
+                return true;
+                
+            // XLSX
+            if (account.SearchXlsx && extension == ".xlsx")
+                return true;
+                
+            // XLS
+            if (account.SearchXls && extension == ".xls")
+                return true;
+                
+            // PPTX
+            if (account.SearchPptx && extension == ".pptx")
+                return true;
+                
+            // PPT
+            if (account.SearchPpt && extension == ".ppt")
+                return true;
+                
+            // Images
+            if (account.SearchImages && IsImageFile(extension))
+                return true;
+                
+            // TXT
+            if (account.SearchTxt && extension == ".txt")
+                return true;
+                
+            // Other
+            if (account.SearchOther)
+                return true;
+                
+            return false;
+        }).ToArray();
+    }
+
+    private static bool IsImageFile(string extension)
+    {
+        var imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp" };
+        return imageExtensions.Contains(extension);
     }
 }

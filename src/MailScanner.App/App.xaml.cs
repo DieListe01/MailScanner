@@ -25,9 +25,7 @@ public partial class App : System.Windows.Application
     {
         try
         {
-            AppDataPaths.EnsureUserSettingsFileSeeded();
-            var settingsFilePath = AppDataPaths.GetUserSettingsFilePath();
-            settingsStore = new IniAppSettingsStore(settingsFilePath);
+            settingsStore = new RegistryAppSettingsStore();
             var settings = settingsStore.GetCurrentSettings();
 
             Directory.CreateDirectory(Path.GetDirectoryName(settings.Storage.DatabasePath) ?? AppContext.BaseDirectory);

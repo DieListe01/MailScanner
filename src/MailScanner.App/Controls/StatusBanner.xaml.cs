@@ -56,10 +56,10 @@ namespace MailScanner.App.Controls
             set => SetValue(BackgroundBrushProperty, value);
         }
 
-        public static readonly System.Windows.DependencyProperty BorderBrushProperty =
+        public static readonly new System.Windows.DependencyProperty BorderBrushProperty =
             System.Windows.DependencyProperty.Register("BorderBrush", typeof(System.Windows.Media.Brush), typeof(StatusBanner), new System.Windows.PropertyMetadata(System.Windows.Media.Brushes.Transparent));
 
-        public System.Windows.Media.Brush BorderBrush
+        public new System.Windows.Media.Brush BorderBrush
         {
             get => (System.Windows.Media.Brush)GetValue(BorderBrushProperty);
             set => SetValue(BorderBrushProperty, value);
