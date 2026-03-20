@@ -53,6 +53,15 @@ jobs:
         run: |
           iscc "installer/MailScanner.iss" /DAppVersion=${{ steps.version.outputs.value }} /DPublishDir="$pwd\publish" /DOutputDir="$pwd\artifacts\installer"
 
+      - name: Create installer hash
+        shell: pwsh
+        run: |
+          $installer = Get-ChildItem "artifacts/installer/*.exe" | Select-Object -First 1
+          if (-not $installer) { throw "Installer not found." }
+          $hashFile = Join-Path $installer.DirectoryName ($installer.BaseName + ".sha256.txt")
+          $hash = Get-FileHash $installer.FullName -Algorithm SHA256
+          "SHA256  $($hash.Hash)  $($installer.Name)" | Out-File $hashFile -Encoding ascii
+
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
@@ -67,3 +76,4 @@ jobs:
         with:
           files: |
             artifacts/installer/*.exe
+            artifacts/installer/*.sha256.txt
