@@ -344,6 +344,52 @@
                 <Setter Property="FontSize" Value="11.5"/>
             </Style>
 
+            <Style x:Key="ToolbarFilterButton" TargetType="Button" BasedOn="{StaticResource ToolButton}">
+                <Setter Property="Height" Value="32"/>
+                <Setter Property="Padding" Value="14,0"/>
+                <Setter Property="FontSize" Value="11.5"/>
+                <Setter Property="BorderBrush" Value="#354254"/>
+                <Setter Property="Background" Value="#202733"/>
+            </Style>
+
+            <Style x:Key="ToolbarActionButton" TargetType="Button" BasedOn="{StaticResource ToolButton}">
+                <Setter Property="Height" Value="32"/>
+                <Setter Property="Padding" Value="12,0"/>
+                <Setter Property="FontSize" Value="11.5"/>
+                <Setter Property="BorderBrush" Value="#42506A"/>
+                <Setter Property="Background" Value="#1C2330"/>
+            </Style>
+
+            <Style x:Key="ToolbarActionPrimaryButton" TargetType="Button" BasedOn="{StaticResource ToolPrimaryButton}">
+                <Setter Property="Height" Value="32"/>
+                <Setter Property="Padding" Value="12,0"/>
+                <Setter Property="FontSize" Value="11.5"/>
+            </Style>
+
+            <Style x:Key="ToolbarActionDangerButton" TargetType="Button" BasedOn="{StaticResource ToolDangerButton}">
+                <Setter Property="Height" Value="32"/>
+                <Setter Property="Padding" Value="12,0"/>
+                <Setter Property="FontSize" Value="11.5"/>
+            </Style>
+
+            <Style x:Key="SidebarActionButton" TargetType="Button" BasedOn="{StaticResource ToolButton}">
+                <Setter Property="Height" Value="32"/>
+                <Setter Property="MinWidth" Value="124"/>
+                <Setter Property="Padding" Value="14,0"/>
+                <Setter Property="FontSize" Value="11.5"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            </Style>
+
+            <Style x:Key="SidebarActionPrimaryButton" TargetType="Button" BasedOn="{StaticResource ToolPrimaryButton}">
+                <Setter Property="Height" Value="32"/>
+                <Setter Property="MinWidth" Value="124"/>
+                <Setter Property="Padding" Value="14,0"/>
+                <Setter Property="FontSize" Value="11.5"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            </Style>
+
             <Style x:Key="ToolbarIconButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
                 <Setter Property="Width" Value="30"/>
                 <Setter Property="MinWidth" Value="30"/>

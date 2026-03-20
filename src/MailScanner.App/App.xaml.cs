@@ -23,8 +23,14 @@ public partial class App : System.Windows.Application
 
     private async Task StartAsync()
     {
+        StartupWindow? startupWindow = null;
         try
         {
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            var appVersionService = new AppVersionService();
+            startupWindow = new StartupWindow($"Version {appVersionService.GetCurrentVersion()}");
+            startupWindow.Show();
+
             settingsStore = new RegistryAppSettingsStore();
             var settings = settingsStore.GetCurrentSettings();
 
@@ -46,7 +52,6 @@ public partial class App : System.Windows.Application
             IMailImportService mailImportService = new ImapMailImportService(settingsProvider, mailboxScanStateStore, documentCandidateStore, scanLogger);
             IMailConnectionTestService mailConnectionTestService = new ImapConnectionTestService(settingsProvider);
             IDocumentDownloadService documentDownloadService = new ImapDocumentDownloadService(settingsProvider, documentCandidateStore, documentRecordStore);
-            var appVersionService = new AppVersionService();
             var releaseUpdateService = new GitHubReleaseUpdateService("DieListe01", "MailScanner");
 
             var mainWindow = new MainWindow(
@@ -58,11 +63,14 @@ public partial class App : System.Windows.Application
                 scanLogger,
                 appVersionService,
                 releaseUpdateService);
+            startupWindow.Close();
             MainWindow = mainWindow;
+            ShutdownMode = ShutdownMode.OnMainWindowClose;
             mainWindow.Show();
         }
         catch (Exception ex)
         {
+            startupWindow?.Close();
             System.Windows.MessageBox.Show(
                 $"MailScanner konnte nicht gestartet werden.\n\nDetails: {ex.Message}",
                 "Startfehler",

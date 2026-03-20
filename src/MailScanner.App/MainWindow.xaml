@@ -556,17 +556,51 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Grid.Column="0">
-                                        <WrapPanel Margin="0,0,0,12">
-                                            <Button x:Name="InvoiceResultsButton" Content="Rechnungen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,8,0" Click="OnShowInvoicesClicked"/>
-                                            <Button x:Name="DownloadedResultsButton" Content="Downloads" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnShowDownloadedClicked"/>
-                                            <Button x:Name="AllResultsButton" Content="Alle" Style="{StaticResource ToolButton}" Margin="0,0,16,0" Click="OnShowAllResultsClicked"/>
-                                            <Button x:Name="ViewButton" Content="Vorschau" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnViewClicked" IsEnabled="{Binding CanPreviewSelection}"/>
-                                            <Button x:Name="OpenFileButton" Content="Datei oeffnen" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnOpenSelectedFileClicked" IsEnabled="{Binding CanOpenSelectedFile}"/>
-                                            <Button x:Name="RevealFileButton" Content="Im Ordner zeigen" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnRevealSelectedFileClicked" IsEnabled="{Binding CanOpenSelectedFile}"/>
-                                            <Button x:Name="DownloadButton" Content="Herunterladen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,8,0" Click="OnDownloadSelectionClicked" IsEnabled="{Binding CanDownloadSelection}"/>
-                                            <Button x:Name="DeleteButton" Content="Loeschen" Style="{StaticResource ToolDangerButton}" Margin="0,0,16,0" Click="OnDeleteClicked" IsEnabled="{Binding CanDeleteSelection}"/>
+                                        <WrapPanel Margin="0,0,0,10">
+                                            <Border Style="{StaticResource ChipBorder}" Background="#18202B" BorderBrush="#42577D" Margin="0,0,10,8">
+                                                <TextBlock Text="Filter" FontSize="10.5" FontWeight="SemiBold" Foreground="#B8CCF3"/>
+                                            </Border>
+                                            <Button x:Name="InvoiceResultsButton" Content="Rechnungen" Style="{StaticResource ToolbarActionPrimaryButton}" Margin="0,0,8,8" Click="OnShowInvoicesClicked"/>
+                                            <Button x:Name="DownloadedResultsButton" Content="Downloads" Style="{StaticResource ToolbarFilterButton}" Margin="0,0,8,8" Click="OnShowDownloadedClicked"/>
+                                            <Button x:Name="AllResultsButton" Content="Alle" Style="{StaticResource ToolbarFilterButton}" Margin="0,0,12,8" Click="OnShowAllResultsClicked"/>
                                             <CheckBox x:Name="OnlyAttachmentsCheckBox" Content="Nur mit Anhang" Style="{StaticResource InputCheckBox}" IsChecked="{Binding OnlyWithAttachments}" Margin="0,8,16,0"/>
                                             <CheckBox x:Name="OnlyDocPdfCheckBox" Content="Nur PDF / DOC" Style="{StaticResource InputCheckBox}" IsChecked="{Binding OnlyDocPdf}" Margin="0,8,0,0"/>
+                                        </WrapPanel>
+
+                                        <WrapPanel Margin="0,0,0,12">
+                                            <Border Style="{StaticResource ChipBorder}" Background="#1A2130" BorderBrush="#394860" Margin="0,0,10,8">
+                                                <TextBlock Text="Aktionen" FontSize="10.5" FontWeight="SemiBold" Foreground="#C7D5ED"/>
+                                            </Border>
+                                            <Button x:Name="ViewButton" Style="{StaticResource ToolbarActionButton}" Margin="0,0,8,8" Click="OnViewClicked" IsEnabled="{Binding CanPreviewSelection}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE8A1;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Vorschau" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
+                                            <Button x:Name="OpenFileButton" Style="{StaticResource ToolbarActionButton}" Margin="0,0,8,8" Click="OnOpenSelectedFileClicked" IsEnabled="{Binding CanOpenSelectedFile}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE8A5;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Datei oeffnen" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
+                                            <Button x:Name="RevealFileButton" Style="{StaticResource ToolbarActionButton}" Margin="0,0,8,8" Click="OnRevealSelectedFileClicked" IsEnabled="{Binding CanOpenSelectedFile}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE838;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Ordner zeigen" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
+                                            <Button x:Name="DownloadButton" Style="{StaticResource ToolbarActionPrimaryButton}" Margin="0,0,8,8" Click="OnDownloadSelectionClicked" IsEnabled="{Binding CanDownloadSelection}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Herunterladen" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
+                                            <Button x:Name="DeleteButton" Style="{StaticResource ToolbarActionDangerButton}" Margin="0,0,8,8" Click="OnDeleteClicked" IsEnabled="{Binding CanDeleteSelection}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Loeschen" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
                                         </WrapPanel>
 
                                         <WrapPanel>
@@ -629,7 +663,7 @@
 
                                 <Border Grid.Row="0" Background="{StaticResource HeroBrush}" BorderBrush="#334152" BorderThickness="1" CornerRadius="16" Padding="16" Margin="0,0,0,10">
                                     <Grid>
-                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="184"/></Grid.ColumnDefinitions>
                                             <StackPanel>
                                                 <TextBlock Text="AKTUELLE VORSCHAU" FontSize="10" FontWeight="SemiBold" Foreground="#A9C2F3"/>
                                                 <TextBlock Text="{Binding PreviewSubject}" Margin="0,8,0,0" FontSize="22" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap"/>
@@ -644,11 +678,11 @@
                                                     <TextBlock Text="Dateistatus" FontSize="11" FontWeight="SemiBold" Foreground="#BED1F4"/>
                                                     <TextBlock Text="{Binding PreviewAttachmentName}" Margin="0,10,0,0" FontSize="13" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap"/>
                                                     <TextBlock Text="{Binding PreviewCategoryLabel}" Margin="0,6,0,0" FontSize="11" Foreground="#D6DEEF" TextWrapping="Wrap"/>
-                                                    <WrapPanel Margin="0,12,0,0">
-                                                        <Button Content="Datei oeffnen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,8,0" Click="OnOpenPreviewAttachmentClicked"/>
-                                                        <Button Content="Im Ordner zeigen" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnRevealPreviewAttachmentClicked"/>
-                                                        <Button Content="Herunterladen" Style="{StaticResource ToolButton}" Click="OnDownloadSelectionClicked" IsEnabled="{Binding CanDownloadSelection}"/>
-                                                    </WrapPanel>
+                                                    <StackPanel Margin="0,12,0,0">
+                                                        <Button Content="Datei oeffnen" Style="{StaticResource SidebarActionPrimaryButton}" Margin="0,0,0,8" Click="OnOpenPreviewAttachmentClicked"/>
+                                                        <Button Content="Ordner zeigen" Style="{StaticResource SidebarActionButton}" Margin="0,0,0,8" Click="OnRevealPreviewAttachmentClicked"/>
+                                                        <Button Content="Herunterladen" Style="{StaticResource SidebarActionButton}" Click="OnDownloadSelectionClicked" IsEnabled="{Binding CanDownloadSelection}"/>
+                                                    </StackPanel>
                                                 </StackPanel>
                                             </Border>
                                         </Grid>

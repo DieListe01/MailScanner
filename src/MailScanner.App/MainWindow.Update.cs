@@ -95,22 +95,76 @@ public partial class MainWindow
     private void SyncUpdatePanel(GitHubReleaseUpdateService.ReleaseUpdateInfo release)
     {
         var currentVersion = appVersionService.GetCurrentVersion();
-        UpdatePanelVersionSummary = string.IsNullOrWhiteSpace(release.LatestVersion)
-            ? $"Installiert: {currentVersion}"
-            : $"Installiert: {currentVersion}   Neu: {release.LatestVersion}";
-        UpdatePanelReleaseTitle = string.IsNullOrWhiteSpace(release.ReleaseTitle) ? "GitHub Release" : release.ReleaseTitle;
-        UpdatePanelReleaseNotes = string.IsNullOrWhiteSpace(release.ReleaseNotes)
-            ? "Keine Release-Notizen vorhanden."
-            : release.ReleaseNotes;
-        UpdatePanelInstallerSummary = release.InstallerAsset is null
-            ? "Zur aktuell gefundenen Version liegt kein Installer-Asset vor."
-            : $"Installer gefunden: {release.InstallerAsset.FileName} - Standard-Ziel: {DefaultInstallDirectory}";
-        UpdatePanelStatusMessage = release.IsUpdateAvailable
-            ? $"Neue Version gefunden. Der Installer fuehrt dich anschliessend per 'Weiter' durch die Installation. Standard-Ziel: {DefaultInstallDirectory}"
-            : string.IsNullOrWhiteSpace(release.ReleaseUrl)
+        var latestVersion = release.LatestVersion;
+
+        if (string.IsNullOrWhiteSpace(latestVersion))
+        {
+            UpdatePanelVersionSummary = $"Installiert: {currentVersion}";
+            UpdatePanelReleaseTitle = string.IsNullOrWhiteSpace(release.ReleaseTitle) ? "GitHub Release" : release.ReleaseTitle;
+            UpdatePanelReleaseNotes = string.IsNullOrWhiteSpace(release.ReleaseNotes)
+                ? "Keine Release-Notizen vorhanden."
+                : release.ReleaseNotes;
+            UpdatePanelInstallerSummary = release.InstallerAsset is null
+                ? "Zur aktuell gefundenen Version liegt kein Installer-Asset vor."
+                : $"Installer gefunden: {release.InstallerAsset.FileName} - Standard-Ziel: {DefaultInstallDirectory}";
+            UpdatePanelStatusMessage = string.IsNullOrWhiteSpace(release.ReleaseUrl)
                 ? "Release-Check nicht verfuegbar."
                 : "MailScanner ist auf dem neuesten Stand.";
-        CanInstallUpdate = release.InstallerAsset is not null;
+            CanInstallUpdate = false;
+            return;
+        }
+
+        var latestIsCurrent = string.Equals(latestVersion.TrimStart('v', 'V'), currentVersion.TrimStart('v', 'V'), StringComparison.OrdinalIgnoreCase);
+        var currentIsNewer = IsCurrentVersionNewerThanRelease(currentVersion, latestVersion);
+
+        if (release.IsUpdateAvailable)
+        {
+            UpdatePanelVersionSummary = $"Installiert: {currentVersion}   Neu: {latestVersion}";
+            UpdatePanelReleaseTitle = string.IsNullOrWhiteSpace(release.ReleaseTitle) ? $"GitHub Release {latestVersion}" : release.ReleaseTitle;
+            UpdatePanelReleaseNotes = string.IsNullOrWhiteSpace(release.ReleaseNotes)
+                ? "Keine Release-Notizen vorhanden."
+                : release.ReleaseNotes;
+            UpdatePanelInstallerSummary = release.InstallerAsset is null
+                ? "Zur aktuell gefundenen Version liegt kein Installer-Asset vor."
+                : $"Installer gefunden: {release.InstallerAsset.FileName} - Standard-Ziel: {DefaultInstallDirectory}";
+            UpdatePanelStatusMessage = $"Neue Version gefunden. Der Installer fuehrt dich anschliessend per 'Weiter' durch die Installation. Standard-Ziel: {DefaultInstallDirectory}";
+            CanInstallUpdate = release.InstallerAsset is not null;
+            return;
+        }
+
+        UpdatePanelVersionSummary = latestIsCurrent || currentIsNewer
+            ? $"Installiert: {currentVersion}" + (currentIsNewer ? $"   Letzte GitHub-Release: {latestVersion}" : string.Empty)
+            : $"Installiert: {currentVersion}";
+        UpdatePanelReleaseTitle = latestIsCurrent || currentIsNewer
+            ? $"GitHub Release {latestVersion}"
+            : (string.IsNullOrWhiteSpace(release.ReleaseTitle) ? "GitHub Release" : release.ReleaseTitle);
+        UpdatePanelReleaseNotes = latestIsCurrent || currentIsNewer
+            ? (string.IsNullOrWhiteSpace(release.ReleaseNotes)
+                ? $"GitHub-Release {latestVersion} ist die derzeit veroeffentlichte Version."
+                : release.ReleaseNotes)
+            : (string.IsNullOrWhiteSpace(release.ReleaseNotes) ? "Keine Release-Notizen vorhanden." : release.ReleaseNotes);
+        UpdatePanelInstallerSummary = currentIsNewer
+            ? $"Lokaler Build ist neuer als die letzte GitHub-Release. Standard-Ziel fuer Installer: {DefaultInstallDirectory}"
+            : $"Neueste GitHub-Release ist bereits installiert. Standard-Ziel fuer Installer: {DefaultInstallDirectory}";
+        UpdatePanelStatusMessage = currentIsNewer
+            ? "Lokaler Entwicklungsstand ist neuer als die letzte GitHub-Release. Kein Update noetig."
+            : "MailScanner ist auf dem neuesten Stand.";
+        CanInstallUpdate = false;
+    }
+
+    private static bool IsCurrentVersionNewerThanRelease(string currentVersion, string latestVersion)
+    {
+        if (!Version.TryParse(currentVersion.Trim().TrimStart('v', 'V'), out var current))
+        {
+            return false;
+        }
+
+        if (!Version.TryParse(latestVersion.Trim().TrimStart('v', 'V'), out var latest))
+        {
+            return false;
+        }
+
+        return current > latest;
     }
 
     private void NotifyUpdateDownloadStateChanged()
