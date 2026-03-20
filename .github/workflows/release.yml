@@ -40,7 +40,9 @@ jobs:
       - name: Publish app
         shell: pwsh
         run: |
-          dotnet publish "src/MailScanner.App/MailScanner.App.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -p:Version=${{ steps.version.outputs.value }} -o publish
+          $version = "${{ steps.version.outputs.value }}"
+          $assemblyVersion = "$version.0"
+          dotnet publish "src/MailScanner.App/MailScanner.App.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -p:Version=$version -p:AssemblyVersion=$assemblyVersion -p:FileVersion=$assemblyVersion -p:InformationalVersion=$version -o publish
 
       - name: Install Inno Setup
         shell: pwsh

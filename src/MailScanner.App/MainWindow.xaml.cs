@@ -881,6 +881,24 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         OpenCandidateAttachment(selectedCandidates[0]);
     }
 
+    private void OnRevealSelectedFileClicked(object sender, RoutedEventArgs e)
+    {
+        var selectedCandidates = CandidatesGrid.SelectedItems.Cast<CandidateListItem>().Select(item => item.Candidate).ToArray();
+        if (selectedCandidates.Length == 0)
+        {
+            StatusMessage = "Bitte zuerst einen Treffer auswaehlen.";
+            return;
+        }
+
+        if (selectedCandidates.Length > 1)
+        {
+            StatusMessage = "Bitte nur einen Treffer zum Anzeigen im Ordner auswaehlen.";
+            return;
+        }
+
+        RevealCandidateAttachment(selectedCandidates[0]);
+    }
+
     private void OnDeleteClicked(object sender, RoutedEventArgs e)
     {
         var selectedCandidates = CandidatesGrid.SelectedItems.Cast<CandidateListItem>().Select(item => item.Candidate).ToArray();

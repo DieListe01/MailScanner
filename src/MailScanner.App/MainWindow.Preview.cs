@@ -77,6 +77,16 @@ Derzeit werden die lokal verfuegbaren Metadaten angezeigt.";
         OpenCandidateAttachment(previewCandidate);
     }
 
+    private void OnRevealPreviewAttachmentClicked(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (previewCandidate is null)
+        {
+            return;
+        }
+
+        RevealCandidateAttachment(previewCandidate);
+    }
+
     private void OpenCandidateAttachment(DocumentCandidate candidate)
     {
         try
@@ -87,22 +97,7 @@ Derzeit werden die lokal verfuegbaren Metadaten angezeigt.";
                 return;
             }
 
-            var possiblePaths = new[]
-            {
-                System.IO.Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    "MailScanner",
-                    candidate.AccountName,
-                    candidate.AttachmentName),
-                System.IO.Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    "MailScanner",
-                    candidate.AccountAddress,
-                    candidate.AttachmentName),
-                candidate.StoredFilePath
-            };
-
-            var foundPath = possiblePaths.FirstOrDefault(path => !string.IsNullOrEmpty(path) && System.IO.File.Exists(path));
+            var foundPath = ResolveCandidateAttachmentPath(candidate);
             if (foundPath != null)
             {
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
@@ -120,5 +115,45 @@ Derzeit werden die lokal verfuegbaren Metadaten angezeigt.";
         {
             StatusMessage = $"Fehler beim Oeffnen: {ex.Message}";
         }
+    }
+
+    private void RevealCandidateAttachment(DocumentCandidate candidate)
+    {
+        try
+        {
+            var foundPath = ResolveCandidateAttachmentPath(candidate);
+            if (foundPath != null)
+            {
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{foundPath}\"");
+                StatusMessage = $"Datei im Ordner markiert: {candidate.AttachmentName}";
+                return;
+            }
+
+            StatusMessage = $"Dokument nicht gefunden: {candidate.AttachmentName}. Bitte zuerst herunterladen.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Fehler beim Oeffnen des Zielordners: {ex.Message}";
+        }
+    }
+
+    private static string? ResolveCandidateAttachmentPath(DocumentCandidate candidate)
+    {
+        var possiblePaths = new[]
+        {
+            System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "MailScanner",
+                candidate.AccountName,
+                candidate.AttachmentName),
+            System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "MailScanner",
+                candidate.AccountAddress,
+                candidate.AttachmentName),
+            candidate.StoredFilePath
+        };
+
+        return possiblePaths.FirstOrDefault(path => !string.IsNullOrEmpty(path) && System.IO.File.Exists(path));
     }
 }

@@ -458,9 +458,13 @@ namespace MailScanner
 
         private void OnBrowseDatabaseClicked(object sender, RoutedEventArgs e)
         {
-            using var dialog = new WinForms.OpenFileDialog();
+            using var dialog = new WinForms.SaveFileDialog();
             dialog.Filter = "SQLite-Datenbankdatei (*.db)|*.db|Alle Dateien (*.*)|*.*";
-            dialog.Title = "SQLite-Datenbankdatei auswählen";
+            dialog.Title = "SQLite-Datenbankdatei auswählen oder neu anlegen";
+            dialog.DefaultExt = "db";
+            dialog.AddExtension = true;
+            dialog.OverwritePrompt = false;
+            dialog.CheckPathExists = true;
             if (!string.IsNullOrWhiteSpace(DatabasePath))
             {
                 dialog.FileName = System.IO.Path.GetFileName(DatabasePath);

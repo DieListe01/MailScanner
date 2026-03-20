@@ -367,9 +367,13 @@ public partial class MainWindow
 
     private void OnEmbeddedBrowseDatabaseClicked(object sender, RoutedEventArgs e)
     {
-        using var dialog = new WinForms.OpenFileDialog();
+        using var dialog = new WinForms.SaveFileDialog();
         dialog.Filter = "SQLite-Datenbankdatei (*.db)|*.db|Alle Dateien (*.*)|*.*";
-        dialog.Title = "SQLite-Datenbankdatei auswaehlen";
+        dialog.Title = "SQLite-Datenbankdatei auswaehlen oder neu anlegen";
+        dialog.DefaultExt = "db";
+        dialog.AddExtension = true;
+        dialog.OverwritePrompt = false;
+        dialog.CheckPathExists = true;
         if (!string.IsNullOrWhiteSpace(EditorDatabasePath))
         {
             dialog.FileName = System.IO.Path.GetFileName(EditorDatabasePath);

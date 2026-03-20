@@ -288,6 +288,10 @@
                                             <TextBlock Text="Release-Status" FontSize="11" FontWeight="SemiBold" Foreground="#B8CCF3"/>
                                             <TextBlock Text="{Binding LatestVersionSummary}" Margin="0,6,0,0" FontSize="15" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap"/>
                                             <TextBlock Text="{Binding UpdateStatusSummary}" Margin="0,6,0,0" FontSize="10.5" Foreground="#D3DEEF" TextWrapping="Wrap"/>
+                                            <Button Content="Update holen" Style="{StaticResource ToolPrimaryButton}" Margin="0,12,0,0" HorizontalAlignment="Left" Click="OnQuickUpdateDownloadClicked" IsEnabled="{Binding CanInstallUpdate}"/>
+                                            <StackPanel Margin="0,10,0,0" Visibility="{Binding UpdateDownloadProgressVisibility}">
+                                                <ProgressBar Margin="0,8,0,0" Height="8" Minimum="0" Maximum="100" Value="{Binding UpdateDownloadProgressValue}"/>
+                                            </StackPanel>
                                         </StackPanel>
                                     </Border>
 
@@ -558,6 +562,7 @@
                                             <Button x:Name="AllResultsButton" Content="Alle" Style="{StaticResource ToolButton}" Margin="0,0,16,0" Click="OnShowAllResultsClicked"/>
                                             <Button x:Name="ViewButton" Content="Vorschau" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnViewClicked" IsEnabled="{Binding CanPreviewSelection}"/>
                                             <Button x:Name="OpenFileButton" Content="Datei oeffnen" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnOpenSelectedFileClicked" IsEnabled="{Binding CanOpenSelectedFile}"/>
+                                            <Button x:Name="RevealFileButton" Content="Im Ordner zeigen" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnRevealSelectedFileClicked" IsEnabled="{Binding CanOpenSelectedFile}"/>
                                             <Button x:Name="DownloadButton" Content="Herunterladen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,8,0" Click="OnDownloadSelectionClicked" IsEnabled="{Binding CanDownloadSelection}"/>
                                             <Button x:Name="DeleteButton" Content="Loeschen" Style="{StaticResource ToolDangerButton}" Margin="0,0,16,0" Click="OnDeleteClicked" IsEnabled="{Binding CanDeleteSelection}"/>
                                             <CheckBox x:Name="OnlyAttachmentsCheckBox" Content="Nur mit Anhang" Style="{StaticResource InputCheckBox}" IsChecked="{Binding OnlyWithAttachments}" Margin="0,8,16,0"/>
@@ -641,6 +646,7 @@
                                                     <TextBlock Text="{Binding PreviewCategoryLabel}" Margin="0,6,0,0" FontSize="11" Foreground="#D6DEEF" TextWrapping="Wrap"/>
                                                     <WrapPanel Margin="0,12,0,0">
                                                         <Button Content="Datei oeffnen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,8,0" Click="OnOpenPreviewAttachmentClicked"/>
+                                                        <Button Content="Im Ordner zeigen" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnRevealPreviewAttachmentClicked"/>
                                                         <Button Content="Herunterladen" Style="{StaticResource ToolButton}" Click="OnDownloadSelectionClicked" IsEnabled="{Binding CanDownloadSelection}"/>
                                                     </WrapPanel>
                                                 </StackPanel>
@@ -1014,6 +1020,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <Border Grid.Row="0" Background="{StaticResource HeroBrush}" BorderBrush="#334152" BorderThickness="1" CornerRadius="16" Padding="22" Margin="0,0,0,14">
@@ -1093,10 +1100,18 @@
                                 <TextBlock Text="{Binding UpdatePanelStatusMessage}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" VerticalAlignment="Center"/>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                                     <Button Width="124" Content="Release-Seite" Style="{StaticResource ToolButton}" Margin="0,0,10,0" Click="OnOpenReleasePageClicked"/>
-                                    <Button Width="132" Content="Update laden" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,10,0" Click="OnInstallUpdateClicked" IsEnabled="{Binding CanInstallUpdate}"/>
+                                    <Button Width="132" Content="Update holen" Style="{StaticResource ToolPrimaryButton}" Margin="0,0,10,0" Click="OnInstallUpdateClicked" IsEnabled="{Binding CanInstallUpdate}"/>
                                     <Button Width="86" Content="Scanner" Style="{StaticResource ToolButton}" Click="OnScannerNavClicked"/>
                                 </StackPanel>
                             </Grid>
+                        </Border>
+
+                        <Border Grid.Row="3" Style="{StaticResource SurfaceCard}" Padding="16,12" Margin="0,14,0,0" Visibility="{Binding UpdateDownloadProgressVisibility}">
+                            <StackPanel>
+                                <TextBlock Text="Download-Fortschritt" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding UpdateDownloadProgressSummary}" Margin="0,8,0,0" FontSize="11" Foreground="{StaticResource TextPrimaryBrush}" TextWrapping="Wrap"/>
+                                <ProgressBar Margin="0,10,0,0" Height="10" Minimum="0" Maximum="100" Value="{Binding UpdateDownloadProgressValue}"/>
+                            </StackPanel>
                         </Border>
                     </Grid>
 

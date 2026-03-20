@@ -405,8 +405,9 @@
             </Style>
 
             <Style x:Key="InputTextBox" TargetType="TextBox">
-                <Setter Property="Height" Value="36"/>
-                <Setter Property="Padding" Value="11,8"/>
+                <Setter Property="MinHeight" Value="32"/>
+                <Setter Property="Height" Value="Auto"/>
+                <Setter Property="Padding" Value="8,4"/>
                 <Setter Property="FontSize" Value="12"/>
                 <Setter Property="Background" Value="{StaticResource SurfaceMutedBrush}"/>
                 <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
@@ -423,7 +424,11 @@
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     CornerRadius="8"
                                     Padding="{TemplateBinding Padding}">
-                                <ScrollViewer x:Name="PART_ContentHost"/>
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                              Foreground="{TemplateBinding Foreground}"
+                                              Focusable="False"
+                                              HorizontalScrollBarVisibility="Hidden"
+                                              VerticalScrollBarVisibility="Hidden"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsKeyboardFocused" Value="True">
@@ -450,8 +455,9 @@
             </Style>
 
             <Style x:Key="InputPasswordBox" TargetType="PasswordBox">
-                <Setter Property="Height" Value="36"/>
-                <Setter Property="Padding" Value="11,8"/>
+                <Setter Property="MinHeight" Value="32"/>
+                <Setter Property="Height" Value="Auto"/>
+                <Setter Property="Padding" Value="8,4"/>
                 <Setter Property="FontSize" Value="12"/>
                 <Setter Property="Background" Value="{StaticResource SurfaceMutedBrush}"/>
                 <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
@@ -467,7 +473,11 @@
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     CornerRadius="8"
                                     Padding="{TemplateBinding Padding}">
-                                <ScrollViewer x:Name="PART_ContentHost"/>
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                              Foreground="{TemplateBinding Foreground}"
+                                              Focusable="False"
+                                              HorizontalScrollBarVisibility="Hidden"
+                                              VerticalScrollBarVisibility="Hidden"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsKeyboardFocusWithin" Value="True">
