@@ -1,0 +1,337 @@
+<Window x:Class="MailScanner.App.DesignMockupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MailScanner Design Mockup"
+        Width="1600"
+        Height="980"
+        MinWidth="1280"
+        MinHeight="800"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackgroundBrush}">
+    <Grid Margin="12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="14"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="#101522" BorderBrush="#2A3447" BorderThickness="1" CornerRadius="18" Padding="14">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Width="38" Height="38" Background="#18355B" BorderBrush="#4E86FF" BorderThickness="1" CornerRadius="12">
+                        <Viewbox Margin="8">
+                            <Grid Width="22" Height="22">
+                                <Path Data="M3,5 L12,11 L21,5 M4,6 L4,18 L20,18 L20,6"
+                                      Stroke="#D8E6FF"
+                                      StrokeThickness="1.8"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round"/>
+                            </Grid>
+                        </Viewbox>
+                    </Border>
+                    <StackPanel Grid.Column="1" Margin="12,1,0,0">
+                        <TextBlock Text="MailScanner" FontSize="20" FontWeight="SemiBold" Foreground="White"/>
+                        <TextBlock Text="Power Inbox Workspace" FontSize="11.5" Foreground="#8FA4C2"/>
+                    </StackPanel>
+                </Grid>
+
+                <Border Grid.Row="1" Background="#0D1320" BorderBrush="#2B3750" BorderThickness="1" CornerRadius="12" Padding="12" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="WORKSPACE" FontSize="10" FontWeight="SemiBold" Foreground="#6E7F97"/>
+                        <TextBox Margin="0,10,0,0" Height="36" Background="#141C2C" BorderBrush="#31405A" BorderThickness="1" Foreground="#DDE8F9" Padding="12,0" Text="Tools suchen..."/>
+                    </StackPanel>
+                </Border>
+
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Border Style="{StaticResource SurfaceCard}" Margin="0,0,0,12" Background="#121A2A" BorderBrush="#2B3750">
+                            <StackPanel>
+                                <TextBlock Text="BEREICHE" FontSize="10" FontWeight="SemiBold" Foreground="#6E7F97" Margin="0,0,0,12"/>
+                                <Border Background="#3F4DDA" BorderBrush="#7A8BFF" BorderThickness="1" CornerRadius="10" Padding="10,8" Margin="0,0,0,8">
+                                    <TextBlock Text="Scannen" FontSize="14" FontWeight="SemiBold" Foreground="White"/>
+                                </Border>
+                                <Border Background="#151D2B" BorderBrush="#2C3850" BorderThickness="1" CornerRadius="10" Padding="10,8" Margin="0,0,0,8">
+                                    <TextBlock Text="Treffer" FontSize="13" Foreground="#D8E2F5"/>
+                                </Border>
+                                <Border Background="#151D2B" BorderBrush="#2C3850" BorderThickness="1" CornerRadius="10" Padding="10,8" Margin="0,0,0,8">
+                                    <TextBlock Text="Konten" FontSize="13" Foreground="#D8E2F5"/>
+                                </Border>
+                                <Border Background="#151D2B" BorderBrush="#2C3850" BorderThickness="1" CornerRadius="10" Padding="10,8" Margin="0,0,0,8">
+                                    <TextBlock Text="Verbindungen" FontSize="13" Foreground="#D8E2F5"/>
+                                </Border>
+                                <Border Background="#151D2B" BorderBrush="#2C3850" BorderThickness="1" CornerRadius="10" Padding="10,8" Margin="0,0,0,8">
+                                    <TextBlock Text="Updates" FontSize="13" Foreground="#D8E2F5"/>
+                                </Border>
+                                <Border Background="#151D2B" BorderBrush="#2C3850" BorderThickness="1" CornerRadius="10" Padding="10,8">
+                                    <TextBlock Text="Debug" FontSize="13" Foreground="#D8E2F5"/>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource SurfaceCard}" Margin="0,0,0,12" Background="#121A2A" BorderBrush="#2B3750">
+                            <StackPanel>
+                                <TextBlock Text="AKTIVES KONTO" FontSize="10" FontWeight="SemiBold" Foreground="#6E7F97" Margin="0,0,0,12"/>
+                                <TextBlock Text="Dirk" FontSize="15" FontWeight="SemiBold" Foreground="White"/>
+                                <TextBlock Text="dirk.lindner74@gmail.com" Margin="0,4,0,0" FontSize="11.5" Foreground="#AAB8CE"/>
+                                <WrapPanel Margin="0,12,0,0">
+                                    <Border Style="{StaticResource ChipBorder}" Background="#0F1624" BorderBrush="#36425A"><TextBlock Text="imap.gmail.com" FontSize="10.5" Foreground="#D9E6FF"/></Border>
+                                    <Border Style="{StaticResource ChipBorder}" Background="#0F1624" BorderBrush="#36425A"><TextBlock Text="INBOX" FontSize="10.5" Foreground="#D9E6FF"/></Border>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource SurfaceCard}" Background="#121A2A" BorderBrush="#2B3750">
+                            <StackPanel>
+                                <TextBlock Text="PINNED ACTIONS" FontSize="10" FontWeight="SemiBold" Foreground="#6E7F97" Margin="0,0,0,12"/>
+                                <TextBlock Text="Scan starten" FontSize="12.5" Foreground="#DDE8F9" Margin="0,0,0,8"/>
+                                <TextBlock Text="Treffer öffnen" FontSize="12.5" Foreground="#DDE8F9" Margin="0,0,0,8"/>
+                                <TextBlock Text="Konten testen" FontSize="12.5" Foreground="#DDE8F9"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Border Grid.Row="3" Background="#0E1420" BorderBrush="#2B3750" BorderThickness="1" CornerRadius="12" Padding="12" Margin="0,14,0,0">
+                    <StackPanel>
+                        <TextBlock Text="STATUS" FontSize="10" FontWeight="SemiBold" Foreground="#6E7F97"/>
+                        <TextBlock Text="1 Konto aktiv" Margin="0,10,0,0" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+                        <TextBlock Text="Letzter Scan: 13 Treffer" Margin="0,4,0,0" FontSize="11" Foreground="#AAB8CE"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="#111826" BorderBrush="#2A3447" BorderThickness="1" CornerRadius="18" Padding="14,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <WrapPanel VerticalAlignment="Center">
+                        <Border Style="{StaticResource ChipBorder}" Background="#0E1522" BorderBrush="#33415A"><TextBlock Text="Scan" FontSize="10.5" Foreground="#E0EAFF"/></Border>
+                        <Border Style="{StaticResource ChipBorder}" Background="#0E1522" BorderBrush="#33415A"><TextBlock Text="Dirk / Gmail" FontSize="10.5" Foreground="#E0EAFF"/></Border>
+                        <Border Style="{StaticResource ChipBorder}" Background="#142131" BorderBrush="#3D6FD9"><TextBlock Text="IMAP-Scan läuft" FontSize="10.5" Foreground="#9CC2FF"/></Border>
+                    </WrapPanel>
+
+                    <WrapPanel Grid.Column="1" VerticalAlignment="Center">
+                        <Border Style="{StaticResource ChipBorder}" Background="#0E1522" BorderBrush="#33415A"><TextBlock Text="letzte 10 Tage" FontSize="10.5" Foreground="#DDE8F9"/></Border>
+                        <Border Style="{StaticResource ChipBorder}" Background="#0E1522" BorderBrush="#33415A"><TextBlock Text="v0.4.0" FontSize="10.5" Foreground="#DDE8F9"/></Border>
+                        <Border Style="{StaticResource ChipBorder}" Background="#10231B" BorderBrush="#2D6E55"><TextBlock Text="Release aktuell" FontSize="10.5" Foreground="#8BE0B7"/></Border>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.65*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="1.1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="#0F1725" BorderBrush="#2A3447" BorderThickness="1" CornerRadius="18" Padding="18">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="SCAN WORKSPACE" FontSize="10" FontWeight="SemiBold" Foreground="#7C92B6"/>
+                                <TextBlock Text="Inbox Monitoring &amp; Dokumenterkennung" Margin="0,10,0,0" FontSize="28" FontWeight="SemiBold" Foreground="White"/>
+                                <TextBlock Text="Schneller Überblick über Scan, Nachverarbeitung und Treffer ohne große Kartenstapel." Margin="0,8,0,0" FontSize="12.5" Foreground="#B9C7DA" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+                                <Button Content="Stoppen" Style="{StaticResource ToolDangerButton}" Width="100" Margin="0,0,10,0"/>
+                                <Button Content="Treffer" Style="{StaticResource ToolPrimaryButton}" Width="100"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="#121B2B" BorderBrush="#2F3C55" BorderThickness="1" CornerRadius="16" Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="SCAN" FontSize="10" FontWeight="SemiBold" Foreground="#71839D"/>
+                                <TextBlock Text="31 / 35 Ordner" Margin="0,10,0,0" FontSize="22" FontWeight="SemiBold" Foreground="White"/>
+                                <TextBlock Text="Aktuell: INBOX/Schule" Margin="0,6,0,0" FontSize="11.5" Foreground="#AAB8CE"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Background="#121B2B" BorderBrush="#325543" BorderThickness="1" CornerRadius="16" Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="ANHÄNGE" FontSize="10" FontWeight="SemiBold" Foreground="#71839D"/>
+                                <TextBlock Text="5 Mails mit Anhang" Margin="0,10,0,0" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource GreenBrush}"/>
+                                <TextBlock Text="2 PDFs, 3 Rechnungen" Margin="0,6,0,0" FontSize="11.5" Foreground="#AAB8CE"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="4" Background="#121B2B" BorderBrush="#6A5A30" BorderThickness="1" CornerRadius="16" Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="NÄCHSTER SCHRITT" FontSize="10" FontWeight="SemiBold" Foreground="#71839D"/>
+                                <TextBlock Text="Auto-Download aktiv" Margin="0,10,0,0" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource AmberBrush}"/>
+                                <TextBlock Text="Treffer direkt herunterladen" Margin="0,6,0,0" FontSize="11.5" Foreground="#AAB8CE"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Grid Grid.Row="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.15*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="0.95*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="#0F1725" BorderBrush="#2A3447" BorderThickness="1" CornerRadius="18" Padding="16">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="12"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Live Pipeline" Style="{StaticResource SectionTitle}"/>
+                                    <Border Grid.Column="1" Style="{StaticResource ChipBorder}" Background="#142131" BorderBrush="#3D6FD9"><TextBlock Text="IMAP-Scan" FontSize="10.5" Foreground="#9CC2FF"/></Border>
+                                </Grid>
+                                <ProgressBar Grid.Row="1" Margin="0,12,0,0" Height="8" Value="72" Maximum="100" Foreground="{StaticResource BlueBrush}"/>
+                                <Grid Grid.Row="3">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Border Grid.Row="0" Background="#121B2B" BorderBrush="#2F3C55" BorderThickness="1" CornerRadius="14" Padding="14" Margin="0,0,0,10">
+                                        <StackPanel>
+                                            <TextBlock Text="1. IMAP scannt Ordner und UIDs" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+                                            <TextBlock Text="INBOX/Schule, 121 Mails, 5 Anhang-Mails" Margin="0,6,0,0" FontSize="11.5" Foreground="#AAB8CE"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Grid.Row="1" Background="#121B2B" BorderBrush="#6A5A30" BorderThickness="1" CornerRadius="14" Padding="14" Margin="0,0,0,10">
+                                        <StackPanel>
+                                            <TextBlock Text="2. Treffer werden in SQLite geschrieben" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+                                            <TextBlock Text="DocumentCandidates, MailboxScanStates" Margin="0,6,0,0" FontSize="11.5" Foreground="#AAB8CE"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Grid.Row="2" Background="#121B2B" BorderBrush="#325543" BorderThickness="1" CornerRadius="14" Padding="14">
+                                        <StackPanel>
+                                            <TextBlock Text="3. Vorschau und Downloads aktualisieren" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+                                            <TextBlock Text="Dateistatus, Preview, Aktionen" Margin="0,6,0,0" FontSize="11.5" Foreground="#AAB8CE"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="2" Background="#0F1725" BorderBrush="#2A3447" BorderThickness="1" CornerRadius="18" Padding="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Border Grid.Row="0" Background="#121B2B" BorderBrush="#2F3C55" BorderThickness="0,0,0,1" CornerRadius="18,18,0,0" Padding="14,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Live Log" FontSize="14" FontWeight="SemiBold" Foreground="White"/>
+                                        <Button Grid.Column="1" Content="Kopieren" Style="{StaticResource ToolButton}" Width="90"/>
+                                    </Grid>
+                                </Border>
+                                <TextBox Grid.Row="1" Background="#0B1018" BorderThickness="0" Padding="14" FontFamily="Consolas" FontSize="11" Foreground="#D7E3F5" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" Text="[21:59:34] [INFO] IMAP-Scan gestartet&#x0a;[21:59:35] [PROGRESS] Ordner 31/35 INBOX/Schule&#x0a;[21:59:35] [LIVE-DB] 43 Kandidaten aus DB geladen&#x0a;[21:59:35] [LIVE-FILTER] Nur DOC/PDF: 43 -&gt; 4&#x0a;[21:59:36] [AUTO-DOWNLOAD] 2 Dokumente werden gespeichert&#x0a;[21:59:36] [REPLACE] UI Refresh erzwungen"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+
+                <Border Grid.Column="2" Background="#0F1725" BorderBrush="#2A3447" BorderThickness="1" CornerRadius="18" Padding="14">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="12"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="12"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="INSIGHT PANEL" FontSize="10" FontWeight="SemiBold" Foreground="#7C92B6"/>
+                                <TextBlock Text="Rechnung vom 30.03.2026" Margin="0,10,0,0" FontSize="22" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap"/>
+                                <TextBlock Text="no-reply@hd-plus.de" Margin="0,6,0,0" FontSize="12" Foreground="#B9C7DA"/>
+                            </StackPanel>
+                            <Border Grid.Column="1" Style="{StaticResource ChipBorder}" Background="#10231B" BorderBrush="#2D6E55"><TextBlock Text="Heruntergeladen" FontSize="10.5" Foreground="#8BE0B7"/></Border>
+                        </Grid>
+
+                        <Border Grid.Row="2" Background="#121B2B" BorderBrush="#2F3C55" BorderThickness="1" CornerRadius="14" Padding="14">
+                            <StackPanel>
+                                <TextBlock Text="Kontextaktionen" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+                                <Button Content="Datei öffnen" Style="{StaticResource ToolPrimaryButton}" Margin="0,14,0,8" Height="38"/>
+                                <Button Content="Ordner zeigen" Style="{StaticResource ToolButton}" Margin="0,0,0,8" Height="38"/>
+                                <Button Content="Mail-Vorschau" Style="{StaticResource ToolButton}" Height="38"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="4" Background="#121B2B" BorderBrush="#2F3C55" BorderThickness="1" CornerRadius="14" Padding="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Border Grid.Row="0" Background="#161F31" BorderBrush="#2F3C55" BorderThickness="0,0,0,1" CornerRadius="14,14,0,0" Padding="14,12">
+                                    <TextBlock Text="Treffer-Vorschau" FontSize="14" FontWeight="SemiBold" Foreground="White"/>
+                                </Border>
+                                <TextBlock Grid.Row="1" Margin="14,12,14,0" Text="Kategorie: Invoice | Score: 230 | Datei: 2026-03-30_Rechnung.pdf" FontSize="11.5" Foreground="#B9C7DA" TextWrapping="Wrap"/>
+                                <TextBox Grid.Row="2" Background="#0B1018" BorderThickness="0" Padding="14" Margin="0,12,0,0" FontFamily="Consolas" FontSize="11" Foreground="#D7E3F5" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Text="Betreff: Ihre HD+ Rechnung vom 30.03.2026&#x0a;Absender: no-reply@hd-plus.de&#x0a;Ordner: INBOX&#x0a;Empfangen: 30.03.2026 05:54&#x0a;&#x0a;Warum gefunden: Rechnung, Rechnungs-Keyword, Rechnungs-Dateiname, PDF-Dokument, Aktuell&#x0a;&#x0a;Diese Mockup-Spalte würde im JetBrains-/Toolbox-Stil als permanentes Insight-Panel rechts stehen. Sie bleibt erhalten, während links zwischen Scan, Treffer und Konten gewechselt wird."/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

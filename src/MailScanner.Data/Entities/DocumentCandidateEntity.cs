@@ -11,6 +11,7 @@ public sealed class DocumentCandidateEntity
     public string Sender { get; set; } = string.Empty;
     public string Subject { get; set; } = string.Empty;
     public DateTimeOffset ReceivedAt { get; set; }
+    public int AttachmentIndex { get; set; } = -1;
     public string AttachmentName { get; set; } = string.Empty;
     public long AttachmentSizeInBytes { get; set; }
     public int SuggestedCategory { get; set; }

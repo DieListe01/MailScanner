@@ -67,20 +67,22 @@ public sealed class CandidateListItem
     };
     public string StatusBadgeBackground => Candidate.Status switch
     {
-        DocumentCandidateStatus.Downloaded => "#DBF3E5",
-        DocumentCandidateStatus.Failed => "#FFE0E0",
-        DocumentCandidateStatus.Ignored => "#ECEFF4",
-        _ => "#E3EEFF"
+        DocumentCandidateStatus.Downloaded => "#16261F",
+        DocumentCandidateStatus.Failed => "#2B1820",
+        DocumentCandidateStatus.Ignored => "#1B2230",
+        _ => "#1A2233"
     };
     public string StatusBadgeForeground => Candidate.Status switch
     {
-        DocumentCandidateStatus.Downloaded => "#25673B",
-        DocumentCandidateStatus.Failed => "#B54040",
-        DocumentCandidateStatus.Ignored => "#58697A",
-        _ => "#245D9B"
+        DocumentCandidateStatus.Downloaded => "#7FD5A4",
+        DocumentCandidateStatus.Failed => "#F2A3A3",
+        DocumentCandidateStatus.Ignored => "#9BA9BB",
+        _ => "#8FB8FF"
     };
-    public string PriorityBadgeBackground => PriorityScore >= 120 ? "#CFE5FF" : PriorityScore >= 80 ? "#DBECFF" : PriorityScore >= 45 ? "#EAF3FF" : "#EDF2F7";
-    public string PriorityBadgeForeground => PriorityScore >= 120 ? "#124D93" : PriorityScore >= 80 ? "#2669B6" : PriorityScore >= 45 ? "#3E6D98" : "#627284";
+    public string StatusBadgeLabel => FileAvailabilityLabel;
+    public string PriorityBadgeBackground => PriorityScore >= 120 ? "#172338" : PriorityScore >= 80 ? "#1A2535" : PriorityScore >= 45 ? "#1D2430" : "#202733";
+    public string PriorityBadgeForeground => PriorityScore >= 120 ? "#8CC2FF" : PriorityScore >= 80 ? "#9FC8FF" : PriorityScore >= 45 ? "#B3CAE6" : "#98A8BA";
+    public string PriorityBadgeLabel => PriorityScore.ToString();
 
     public static CandidateListItem FromCandidate(DocumentCandidate candidate)
     {

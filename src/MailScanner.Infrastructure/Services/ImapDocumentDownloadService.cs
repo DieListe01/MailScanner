@@ -11,17 +11,20 @@ namespace MailScanner.Infrastructure.Services;
 public sealed class ImapDocumentDownloadService(
     IAppSettingsProvider settingsProvider,
     IDocumentCandidateStore documentCandidateStore,
-    IDocumentRecordStore documentRecordStore) : IDocumentDownloadService
+    IDocumentRecordStore documentRecordStore,
+    ScanLogger logger) : IDocumentDownloadService
 {
     private const int ImapTimeoutMilliseconds = 15000;
 
-    public async Task<DownloadDocumentsResult> DownloadAsync(IEnumerable<DocumentCandidate> candidates, CancellationToken cancellationToken = default)
+    public async Task<DownloadDocumentsResult> DownloadAsync(IEnumerable<DocumentCandidate> candidates, IProgress<DocumentDownloadProgress>? progress = null, CancellationToken cancellationToken = default)
     {
+        var pendingCandidates = candidates.Where(x => x.Status != DocumentCandidateStatus.Downloaded).ToArray();
         var downloaded = new List<DocumentRecord>();
         var updatedCandidates = new List<DocumentCandidate>();
         var errors = new List<string>();
+        var completedCount = 0;
 
-        foreach (var candidate in candidates.Where(x => x.Status != DocumentCandidateStatus.Downloaded))
+        foreach (var candidate in pendingCandidates)
         {
             try
             {
@@ -32,8 +35,18 @@ public sealed class ImapDocumentDownloadService(
             catch (Exception ex)
             {
                 updatedCandidates.Add(candidate.WithStatus(DocumentCandidateStatus.Failed, candidate.StoredFilePath));
+                logger.LogError($"[DOWNLOAD] {candidate.AccountName} | {candidate.FolderName} | UID {candidate.ImapUid} | Index {candidate.AttachmentIndex} | {candidate.AttachmentName}: {ex.Message}", ex);
                 errors.Add($"{candidate.AttachmentName}: {ex.Message}");
             }
+
+            completedCount++;
+            progress?.Report(new DocumentDownloadProgress
+            {
+                CompletedCount = completedCount,
+                TotalCount = pendingCandidates.Length,
+                CurrentFileName = candidate.AttachmentName,
+                HasError = updatedCandidates[^1].Status == DocumentCandidateStatus.Failed
+            });
         }
 
         if (downloaded.Count > 0)
@@ -72,18 +85,37 @@ public sealed class ImapDocumentDownloadService(
         await folder.OpenAsync(MailKit.FolderAccess.ReadOnly, cancellationToken);
 
         var message = await folder.GetMessageAsync(new MailKit.UniqueId(candidate.ImapUid), cancellationToken);
-        var attachment = message.Attachments
+        var attachments = message.Attachments
             .OfType<MimePart>()
-            .FirstOrDefault(x => string.Equals(x.FileName, candidate.AttachmentName, StringComparison.OrdinalIgnoreCase) && IsPdfAttachment(x));
+            .Where(x => !string.IsNullOrWhiteSpace(x.FileName))
+            .ToArray();
+        var availableAttachmentNames = attachments
+            .Select((part, index) => $"[{index}] {part.FileName}")
+            .ToArray();
+
+        MimePart? attachment = null;
+        if (candidate.AttachmentIndex >= 0 && candidate.AttachmentIndex < attachments.Length)
+        {
+            var indexedAttachment = attachments[candidate.AttachmentIndex];
+            if (string.Equals(indexedAttachment.FileName, candidate.AttachmentName, StringComparison.OrdinalIgnoreCase))
+            {
+                attachment = indexedAttachment;
+            }
+        }
+
+        attachment ??= attachments.FirstOrDefault(x => string.Equals(x.FileName, candidate.AttachmentName, StringComparison.OrdinalIgnoreCase));
 
         if (attachment is null)
         {
-            throw new InvalidOperationException("PDF-Anhang wurde in der Mail nicht gefunden.");
+            logger.LogInfo($"[DOWNLOAD] Anhang nicht gefunden fuer {candidate.AttachmentName} (Index {candidate.AttachmentIndex}) in UID {candidate.ImapUid}. Verfuegbar: {(availableAttachmentNames.Length == 0 ? "keine benannten Anhaenge" : string.Join(", ", availableAttachmentNames))}");
+            throw new InvalidOperationException("Anhang wurde in der Mail nicht gefunden.");
         }
 
-        if (attachment.Content is null)
+        var resolvedAttachment = attachment!;
+
+        if (resolvedAttachment.Content is null)
         {
-            throw new InvalidOperationException("PDF-Anhang enthaelt keinen lesbaren Inhalt.");
+            throw new InvalidOperationException("Anhang enthaelt keinen lesbaren Inhalt.");
         }
 
         var targetPath = BuildTargetPath(candidate, settings.Storage);
@@ -91,7 +123,7 @@ public sealed class ImapDocumentDownloadService(
 
         await using (var fileStream = File.Create(targetPath))
         {
-            await attachment.Content.DecodeToAsync(fileStream, cancellationToken);
+            await resolvedAttachment.Content.DecodeToAsync(fileStream, cancellationToken);
         }
 
         var fileHash = await ComputeSha256Async(targetPath, cancellationToken);
@@ -148,15 +180,6 @@ public sealed class ImapDocumentDownloadService(
         var fallback = string.IsNullOrWhiteSpace(value) ? "document.pdf" : value;
         return SanitizeSegment(fallback);
     }
-
-    private static bool IsPdfAttachment(MimePart part)
-    {
-        var fileName = part.FileName ?? string.Empty;
-        var mediaType = part.ContentType?.MimeType ?? string.Empty;
-
-        return fileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase)
-            || mediaType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase);
-    }
 }
 
 file static class DocumentCandidateExtensions
@@ -174,6 +197,7 @@ file static class DocumentCandidateExtensions
             Sender = candidate.Sender,
             Subject = candidate.Subject,
             ReceivedAt = candidate.ReceivedAt,
+            AttachmentIndex = candidate.AttachmentIndex,
             AttachmentName = candidate.AttachmentName,
             AttachmentSizeInBytes = candidate.AttachmentSizeInBytes,
             SuggestedCategory = candidate.SuggestedCategory,

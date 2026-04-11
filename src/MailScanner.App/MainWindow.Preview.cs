@@ -1,6 +1,7 @@
 using System.Linq;
 using MailScanner.App.Models;
 using MailScanner.Core.Models;
+using System.Windows;
 
 namespace MailScanner.App;
 
@@ -17,6 +18,7 @@ public partial class MainWindow
     private string previewStatusLabel = string.Empty;
     private string previewCategoryLabel = string.Empty;
     private string previewContentText = "Waehle einen Treffer fuer die Vorschau aus.";
+    private Visibility previewMetaVisibility = Visibility.Collapsed;
 
     public string PreviewSubject { get => previewSubject; set { previewSubject = value; OnPropertyChanged(); } }
     public string PreviewSender { get => previewSender; set { previewSender = value; OnPropertyChanged(); } }
@@ -28,9 +30,26 @@ public partial class MainWindow
     public string PreviewStatusLabel { get => previewStatusLabel; set { previewStatusLabel = value; OnPropertyChanged(); } }
     public string PreviewCategoryLabel { get => previewCategoryLabel; set { previewCategoryLabel = value; OnPropertyChanged(); } }
     public string PreviewContentText { get => previewContentText; set { previewContentText = value; OnPropertyChanged(); } }
-
-    private void ShowPreview(DocumentCandidate candidate, bool updateStatus = true)
+    public Visibility PreviewMetaVisibility
     {
+        get => previewMetaVisibility;
+        set
+        {
+            previewMetaVisibility = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ResultsSupportPanelVisibility));
+            OnPropertyChanged(nameof(ResultsPreviewSummaryVisibility));
+            OnPropertyChanged(nameof(ResultsRightColumnWidth));
+        }
+    }
+    public bool CanOpenPreviewAttachment => previewCandidate is not null && HasLocalAttachment(previewCandidate);
+    public bool CanDownloadPreviewAttachment => previewCandidate is not null
+        && !previewCandidate.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase)
+        && !HasLocalAttachment(previewCandidate);
+
+    private async Task ShowPreviewAsync(DocumentCandidate candidate, bool updateStatus = true)
+    {
+        var currentVersion = ++previewLoadVersion;
         previewCandidate = candidate;
         var listItem = CandidateListItem.FromCandidate(candidate);
 
@@ -43,6 +62,7 @@ public partial class MainWindow
         PreviewMatchReason = listItem.MatchReason;
         PreviewStatusLabel = candidate.Status.ToString();
         PreviewCategoryLabel = $"Kategorie: {candidate.SuggestedCategory}";
+        PreviewMetaVisibility = Visibility.Visible;
         PreviewContentText = $@"Mail-Inhalt wird geladen...
 
 Betreff: {candidate.Subject}
@@ -54,16 +74,38 @@ Anhang: {candidate.AttachmentName} ({candidate.AttachmentSizeInBytes} Bytes)
 
 Status: {candidate.Status}
 Kategorie: {candidate.SuggestedCategory}
-Datei: {CandidateListItem.FromCandidate(candidate).FileAvailabilityLabel}
-
-Hinweis: Der vollstaendige Mail-Text wird in einer spaeteren Ausbaustufe direkt aus dem Import geladen.
-Derzeit werden die lokal verfuegbaren Metadaten angezeigt.";
+Datei: {CandidateListItem.FromCandidate(candidate).FileAvailabilityLabel}";
 
         PreviewTabVisibility = System.Windows.Visibility.Visible;
         SetCurrentPage(WorkspacePage.Results);
+        OnPropertyChanged(nameof(CanOpenPreviewAttachment));
+        OnPropertyChanged(nameof(CanDownloadPreviewAttachment));
         if (updateStatus)
         {
             StatusMessage = $"Vorschau geladen: {candidate.Subject}";
+        }
+
+        try
+        {
+            var previewText = await mailPreviewService.GetPlainTextPreviewAsync(candidate);
+            if (currentVersion == previewLoadVersion && previewCandidate?.Id == candidate.Id)
+            {
+                PreviewContentText = previewText;
+            }
+        }
+        catch (Exception ex)
+        {
+            if (currentVersion == previewLoadVersion && previewCandidate?.Id == candidate.Id)
+            {
+                PreviewContentText = $@"Mail-Vorschau konnte nicht geladen werden.
+
+Betreff: {candidate.Subject}
+Absender: {candidate.Sender}
+Konto: {candidate.AccountName}
+Ordner: {candidate.FolderName}
+
+Fehler: {ex.Message}";
+            }
         }
     }
 
@@ -93,7 +135,7 @@ Derzeit werden die lokal verfuegbaren Metadaten angezeigt.";
         {
             if (candidate.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase))
             {
-                ShowPreview(candidate);
+                _ = ShowPreviewAsync(candidate);
                 return;
             }
 
@@ -155,5 +197,10 @@ Derzeit werden die lokal verfuegbaren Metadaten angezeigt.";
         };
 
         return possiblePaths.FirstOrDefault(path => !string.IsNullOrEmpty(path) && System.IO.File.Exists(path));
+    }
+
+    private static bool HasLocalAttachment(DocumentCandidate candidate)
+    {
+        return ResolveCandidateAttachmentPath(candidate) is not null;
     }
 }

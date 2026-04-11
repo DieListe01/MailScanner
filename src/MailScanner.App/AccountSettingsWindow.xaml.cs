@@ -24,7 +24,6 @@ namespace MailScanner
         private readonly IMailConnectionTestService mailConnectionTestService;
         private readonly AppSettings currentSettings;
         private EditableMailAccount? selectedAccount;
-        private bool _isUpdating = false;
         private bool _isBusy = false;
         private string _statusMessage = "";
         private Visibility _statusMessageVisibility = Visibility.Collapsed;
@@ -42,7 +41,7 @@ namespace MailScanner
             
             InitializeComponent();
             DataContext = this;
-            SettingsStorageSummary = AppDataPaths.GetUserSettingsFilePath();
+            SettingsStorageSummary = AppDataPaths.GetUserJsonSettingsFilePath();
             
             // Load settings after UI is initialized
             LoadSettings();

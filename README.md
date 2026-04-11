@@ -20,7 +20,7 @@ dotnet build MailScanner.slnx
 ## Einstellungen
 
 - Benutzer-Einstellungen liegen unter `%LocalAppData%\MailScanner\appsettings.json`.
-- Beim ersten Start kopiert die App die mitgelieferte Vorlage in dieses Benutzerprofil und verwendet danach nur noch diese Datei.
+- Darin werden insbesondere IMAP-Konten, Filter und Speicherpfade dateibasiert statt in der Registry gespeichert.
 - Updates und neue Installer-Versionen ueberschreiben die Benutzer-Einstellungen damit nicht mehr.
 
 ## Versionen und Releases
@@ -30,9 +30,11 @@ dotnet build MailScanner.slnx
 - Der Workflow in `.github/workflows/release.yml` baut ein Windows-x64-Paket und einen Installer.
 - Der Installer wird ueber `installer/MailScanner.iss` erstellt.
 - Fuer den kompletten Release-Ablauf gibt es `scripts/New-Release.ps1`.
+- Fuer mehrere Projekte unter `W:\_Dirk\Projekte` gibt es die C#-CLI `tools/ProjectReleaseManager`.
 
 ```powershell
 pwsh ./scripts/New-Release.ps1 -Version 0.1.6 -PublishRelease
+dotnet run --project tools/ProjectReleaseManager -- release MailScanner patch
 ```
 
 ## Icons

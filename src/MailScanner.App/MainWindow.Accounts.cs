@@ -117,10 +117,8 @@ public partial class MainWindow
 
     private void InitializeAccountEditor()
     {
-        SettingsStorageSummary = AppDataPaths.GetUserSettingsFilePath();
-        SettingsProviderSummary = settingsProvider is RegistryAppSettingsStore registryStore
-            ? $"Geladen aus: {registryStore.GetLoadSourceSummary()}"
-            : "Geladen ueber konfigurierten Einstellungsanbieter";
+        SettingsStorageSummary = AppDataPaths.GetUserJsonSettingsFilePath();
+        SettingsProviderSummary = $"Geladen aus: {SettingsStorageSummary}";
         LoadAccountEditorSettings();
     }
 
@@ -129,10 +127,7 @@ public partial class MainWindow
         try
         {
             var currentSettings = settingsProvider.GetCurrentSettings();
-            if (settingsProvider is RegistryAppSettingsStore registryStore)
-            {
-                SettingsProviderSummary = $"Geladen aus: {registryStore.GetLoadSourceSummary()}";
-            }
+            SettingsProviderSummary = $"Geladen aus: {SettingsStorageSummary}";
             EditorAccounts.Clear();
 
             EditorInitialLookbackDays = currentSettings.MailImport.InitialLookbackDays;

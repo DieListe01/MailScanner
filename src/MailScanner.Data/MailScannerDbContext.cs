@@ -21,9 +21,10 @@ public sealed class MailScannerDbContext(DbContextOptions<MailScannerDbContext> 
             entity.Property(x => x.MessageId).HasMaxLength(500);
             entity.Property(x => x.Sender).HasMaxLength(500);
             entity.Property(x => x.Subject).HasMaxLength(500);
+            entity.Property(x => x.AttachmentIndex).HasDefaultValue(-1);
             entity.Property(x => x.AttachmentName).HasMaxLength(260);
             entity.Property(x => x.StoredFilePath).HasMaxLength(500);
-            entity.HasIndex(x => new { x.AccountAddress, x.FolderName, x.ImapUid, x.AttachmentName }).IsUnique();
+            entity.HasIndex(x => new { x.AccountAddress, x.FolderName, x.ImapUid, x.AttachmentIndex, x.AttachmentName }).IsUnique();
         });
 
         modelBuilder.Entity<DocumentRecordEntity>(entity =>

@@ -1,5 +1,6 @@
 using System.Windows;
 using MailScanner.App.Services;
+using System.Windows.Controls;
 
 namespace MailScanner.App;
 
@@ -22,6 +23,17 @@ public partial class MainWindow
     public Visibility AccountsPageVisibility => currentPage == WorkspacePage.Accounts ? Visibility.Visible : Visibility.Collapsed;
     public Visibility UpdatePageVisibility => currentPage == WorkspacePage.Update ? Visibility.Visible : Visibility.Collapsed;
     public Visibility DebugPageVisibility => currentPage == WorkspacePage.Debug ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility ResultsHeaderVisibility => BusyVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+    public Visibility ResultsScanStatusVisibility => BusyVisibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility ResultsSupportPanelVisibility => BusyVisibility == Visibility.Visible
+        ? Visibility.Collapsed
+        : PreviewMetaVisibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility ResultsPreviewSummaryVisibility => BusyVisibility == Visibility.Visible
+        ? Visibility.Collapsed
+        : PreviewMetaVisibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
+    public GridLength ResultsRightColumnWidth => BusyVisibility == Visibility.Visible || PreviewMetaVisibility != Visibility.Visible
+        ? new GridLength(0)
+        : new GridLength(360);
 
     public Visibility PreviewTabVisibility
     {
@@ -32,6 +44,9 @@ public partial class MainWindow
             OnPropertyChanged();
             OnPropertyChanged(nameof(ResultsListVisibility));
             OnPropertyChanged(nameof(ResultsPreviewVisibility));
+            OnPropertyChanged(nameof(ResultsSupportPanelVisibility));
+            OnPropertyChanged(nameof(ResultsPreviewSummaryVisibility));
+            OnPropertyChanged(nameof(ResultsRightColumnWidth));
         }
     }
 
@@ -39,6 +54,11 @@ public partial class MainWindow
     public Visibility ResultsPreviewVisibility => PreviewTabVisibility;
 
     private void OnScannerNavClicked(object sender, RoutedEventArgs e)
+    {
+        SetCurrentPage(WorkspacePage.Scanner);
+    }
+
+    private void OnDashboardNavClicked(object sender, RoutedEventArgs e)
     {
         SetCurrentPage(WorkspacePage.Scanner);
     }
@@ -67,7 +87,7 @@ public partial class MainWindow
 
     private void UpdateNavigationVisualState()
     {
-        SetNavigationButtonStyle(RefreshButton, currentPage == WorkspacePage.Scanner);
+        SetNavigationButtonStyle(DashboardButton, currentPage == WorkspacePage.Scanner);
         SetNavigationButtonStyle(ResultsButton, currentPage == WorkspacePage.Results);
         SetNavigationButtonStyle(AccountButton, currentPage == WorkspacePage.Accounts);
         SetNavigationButtonStyle(UpdateButton, currentPage == WorkspacePage.Update);

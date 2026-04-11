@@ -13,6 +13,7 @@ public sealed class DocumentCandidate
     public string Sender { get; init; } = string.Empty;
     public string Subject { get; init; } = string.Empty;
     public DateTimeOffset ReceivedAt { get; init; }
+    public int AttachmentIndex { get; init; } = -1;
     public string AttachmentName { get; init; } = string.Empty;
     public long AttachmentSizeInBytes { get; init; }
     public DocumentCategory SuggestedCategory { get; init; } = DocumentCategory.Unknown;

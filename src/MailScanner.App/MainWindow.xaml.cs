@@ -20,6 +20,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 {
     private readonly IAppSettingsProvider settingsProvider;
     private readonly IMailImportService mailImportService;
+    private readonly IMailPreviewService mailPreviewService;
     private readonly IMailConnectionTestService mailConnectionTestService;
     private readonly IDocumentCandidateStore documentCandidateStore;
     private readonly IDocumentDownloadService documentDownloadService;
@@ -28,9 +29,12 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private string accountCountSummary = "0 Konten";
     private string busyMessage = string.Empty;
     private Visibility busyVisibility = Visibility.Collapsed;
+    private Visibility stopScanVisibility = Visibility.Collapsed;
     private string currentVersionSummary = string.Empty;
     private string currentScanTarget = string.Empty;
+    private System.Windows.Media.Brush scanProgressBrush = System.Windows.Media.Brushes.DodgerBlue;
     private string liveScanInfo = "Bereit zum Scannen...";
+    private string scanPhaseLabel = "Bereit";
     private string accountSettingsInfo = "Konfigurierte Konten werden geladen...";
     private string excludedFoldersSummary = "Ausgeschlossene Ordner: keine";
     private string invoiceMatchSummary = "0 Rechnungs-Treffer";
@@ -52,6 +56,13 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private bool onlyWithAttachments = true; // Default: nur mit Anhang
     private bool onlyDocPdf = true;
     private bool onlyInvoices = true;
+    private bool onlyDownloaded;
+    private bool onlyMissingFiles;
+    private string senderFilterText = string.Empty;
+    private string accountFilterText = string.Empty;
+    private string dashboardSearchText = string.Empty;
+    private string scannedMailCountSummary = "Noch keine Mails gescannt";
+    private string downloadActionLabel = "Herunterladen";
     private string updateStatusSummary = "Pruefe GitHub-Releases nach dem Start...";
     private ScanLogger scanLogger = new();
     private CancellationTokenSource? cancellationTokenSource;
@@ -65,10 +76,12 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private Visibility scanNotificationVisibility = Visibility.Collapsed;
     private string scanNotificationText = string.Empty;
     private DispatcherTimer? notificationTimer;
+    private int previewLoadVersion;
 
     public MainWindow(
         IAppSettingsProvider settingsProvider,
         IMailImportService mailImportService,
+        IMailPreviewService mailPreviewService,
         IMailConnectionTestService mailConnectionTestService,
         IDocumentCandidateStore documentCandidateStore,
         IDocumentDownloadService documentDownloadService,
@@ -78,6 +91,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     {
         this.settingsProvider = settingsProvider;
         this.mailImportService = mailImportService;
+        this.mailPreviewService = mailPreviewService;
         this.mailConnectionTestService = mailConnectionTestService;
         this.documentCandidateStore = documentCandidateStore;
         this.documentDownloadService = documentDownloadService;
@@ -86,6 +100,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         this.appVersionService = appVersionService;
         this.releaseUpdateService = releaseUpdateService;
 
+        
         InitializeComponent();
         DataContext = this;
         InitializeUpdatePanel();
@@ -107,6 +122,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             OnPropertyChanged(nameof(LogText));
             OnPropertyChanged(nameof(CompactLogText));
+            OnPropertyChanged(nameof(DashboardRecentLogText));
         });
     }
 
@@ -149,6 +165,20 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             busyVisibility = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(ResultsHeaderVisibility));
+            OnPropertyChanged(nameof(ResultsScanStatusVisibility));
+            OnPropertyChanged(nameof(ResultsSupportPanelVisibility));
+            OnPropertyChanged(nameof(ResultsRightColumnWidth));
+        }
+    }
+
+    public Visibility StopScanVisibility
+    {
+        get => stopScanVisibility;
+        set
+        {
+            stopScanVisibility = value;
+            OnPropertyChanged();
         }
     }
 
@@ -158,6 +188,26 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         set
         {
             scanProgressSummary = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string ScanPhaseLabel
+    {
+        get => scanPhaseLabel;
+        set
+        {
+            scanPhaseLabel = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public System.Windows.Media.Brush ScanProgressBrush
+    {
+        get => scanProgressBrush;
+        set
+        {
+            scanProgressBrush = value;
             OnPropertyChanged();
         }
     }
@@ -239,8 +289,13 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             oldestMailSummary = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(OldestMailValue));
         }
     }
+
+    public string OldestMailValue => OldestMailSummary.StartsWith("Aelteste gescannte Mail: ", StringComparison.Ordinal)
+        ? OldestMailSummary["Aelteste gescannte Mail: ".Length..]
+        : OldestMailSummary;
 
     public string UpdateStatusSummary
     {
@@ -289,8 +344,13 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             lookbackScopeSummary = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(LookbackScopeValue));
         }
     }
+
+    public string LookbackScopeValue => LookbackScopeSummary.StartsWith("Scanbereich: ", StringComparison.Ordinal)
+        ? LookbackScopeSummary["Scanbereich: ".Length..]
+        : LookbackScopeSummary;
 
     public string ExcludedFoldersSummary
     {
@@ -299,8 +359,13 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             excludedFoldersSummary = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(ExcludedFoldersValue));
         }
     }
+
+    public string ExcludedFoldersValue => ExcludedFoldersSummary.StartsWith("Ausgeschlossene Ordner: ", StringComparison.Ordinal)
+        ? ExcludedFoldersSummary["Ausgeschlossene Ordner: ".Length..]
+        : ExcludedFoldersSummary;
 
     public string StatusMessage
     {
@@ -345,6 +410,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             onlyWithAttachments = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(CurrentResultsFilterLabel));
             _ = ApplySearchAsync();
         }
     }
@@ -356,6 +422,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             onlyDocPdf = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(CurrentResultsFilterLabel));
             _ = ApplySearchAsync();
         }
     }
@@ -367,7 +434,154 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             onlyInvoices = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(CurrentResultsFilterLabel));
             _ = ApplySearchAsync();
+        }
+    }
+
+    public bool OnlyDownloaded
+    {
+        get => onlyDownloaded;
+        set
+        {
+            onlyDownloaded = value;
+            if (value)
+            {
+                OnlyMissingFiles = false;
+            }
+
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(CurrentResultsFilterLabel));
+            _ = ApplySearchAsync();
+        }
+    }
+
+    public bool OnlyMissingFiles
+    {
+        get => onlyMissingFiles;
+        set
+        {
+            onlyMissingFiles = value;
+            if (value)
+            {
+                OnlyDownloaded = false;
+            }
+
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(CurrentResultsFilterLabel));
+            _ = ApplySearchAsync();
+        }
+    }
+
+    public string SenderFilterText
+    {
+        get => senderFilterText;
+        set
+        {
+            if (senderFilterText == value)
+            {
+                return;
+            }
+
+            senderFilterText = value;
+            OnPropertyChanged();
+            _ = ApplySearchAsync();
+        }
+    }
+
+    public string AccountFilterText
+    {
+        get => accountFilterText;
+        set
+        {
+            if (accountFilterText == value)
+            {
+                return;
+            }
+
+            accountFilterText = value;
+            OnPropertyChanged();
+            _ = ApplySearchAsync();
+        }
+    }
+
+    public string DashboardSearchText
+    {
+        get => dashboardSearchText;
+        set
+        {
+            if (dashboardSearchText == value)
+            {
+                return;
+            }
+
+            dashboardSearchText = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string DashboardDocumentCountLabel => Candidates.Count(item => !item.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase)) switch
+    {
+        1 => "1 Dokument",
+        var count => $"{count} Dokumente"
+    };
+
+    public string DashboardInvoiceCountLabel => Candidates.Count(item =>
+        !item.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase)
+        && item.Candidate.SuggestedCategory == DocumentCategory.Invoice) switch
+    {
+        1 => "1 Rechnung",
+        var count => $"{count} Rechnungen"
+    };
+
+    public string DashboardMissingCountLabel => Candidates.Count(item =>
+        !item.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase)
+        && item.FileAvailabilityLabel == "Datei fehlt") switch
+    {
+        1 => "1 fehlende Datei",
+        var count => $"{count} fehlende Dateien"
+    };
+
+    public string ScannedMailCountSummary
+    {
+        get => scannedMailCountSummary;
+        set
+        {
+            scannedMailCountSummary = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string CurrentResultsFilterLabel
+    {
+        get
+        {
+            if (OnlyMissingFiles)
+            {
+                return "Aktiver Filter: Datei fehlt";
+            }
+
+            if (resultsQuickFilter == ResultsQuickFilter.Downloaded || OnlyDownloaded)
+            {
+                return "Aktiver Filter: Downloads";
+            }
+
+            if (resultsQuickFilter == ResultsQuickFilter.Invoices || OnlyInvoices)
+            {
+                return "Aktiver Filter: Rechnungen";
+            }
+
+            if (OnlyWithAttachments && !OnlyDocPdf)
+            {
+                return "Aktiver Filter: Mit Anhang";
+            }
+
+            if (OnlyDocPdf)
+            {
+                return "Aktiver Filter: Dokumente";
+            }
+
+            return "Aktiver Filter: Alle Treffer";
         }
     }
 
@@ -381,6 +595,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     }
 
     public string CompactLogText => scanLogger.GetRecentLogText(10);
+    public IEnumerable<CandidateListItem> DashboardRecentCandidates => Candidates.Take(5);
+    public string DashboardRecentLogText => scanLogger.GetRecentLogText(6);
 
     public string LastConnectionTestSummary
     {
@@ -398,6 +614,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     public bool CanOpenSelectedFile { get => canOpenSelectedFile; set { canOpenSelectedFile = value; OnPropertyChanged(); } }
     public bool CanDownloadSelection { get => canDownloadSelection; set { canDownloadSelection = value; OnPropertyChanged(); } }
     public bool CanDeleteSelection { get => canDeleteSelection; set { canDeleteSelection = value; OnPropertyChanged(); } }
+    public string DownloadActionLabel { get => downloadActionLabel; set { downloadActionLabel = value; OnPropertyChanged(); } }
     public bool AutoDownloadAfterScan { get => autoDownloadAfterScan; set { autoDownloadAfterScan = value; OnPropertyChanged(); } }
     public Visibility ScanNotificationVisibility { get => scanNotificationVisibility; set { scanNotificationVisibility = value; OnPropertyChanged(); } }
     public string ScanNotificationText { get => scanNotificationText; set { scanNotificationText = value; OnPropertyChanged(); } }
@@ -794,20 +1011,29 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private async void OnDownloadSelectionClicked(object sender, RoutedEventArgs e)
     {
-        var selectedCandidates = CandidatesGrid.SelectedItems.Cast<CandidateListItem>().Select(item => item.Candidate).ToArray();
+        var selectedCandidates = CandidatesGrid.SelectedItems.Cast<CandidateListItem>()
+            .Select(item => item.Candidate)
+            .Where(candidate => !candidate.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase) && !IsCandidateLocallyAvailable(candidate))
+            .ToArray();
 
         if (selectedCandidates.Length == 0)
         {
-            StatusMessage = "Bitte zuerst eine oder mehrere Zeilen auswaehlen.";
+            StatusMessage = "Die Auswahl ist bereits lokal vorhanden oder enthaelt keine herunterladbaren Dateien.";
             return;
         }
 
-        SetBusyState(true, $"Speichere {selectedCandidates.Length} ausgewaehlte PDF-Anhaenge...");
+        SetBusyState(true, $"Speichere {selectedCandidates.Length} ausgewaehlte Dokumente...");
 
         try
         {
-            StatusMessage = $"Lade {selectedCandidates.Length} PDF-Anhaenge herunter...";
-            var result = await documentDownloadService.DownloadAsync(selectedCandidates);
+            StatusMessage = $"Lade {selectedCandidates.Length} Dokumente herunter...";
+            var manualDownloadProgress = new Progress<DocumentDownloadProgress>(downloadProgress =>
+            {
+                StatusMessage = downloadProgress.HasError
+                    ? $"Download {downloadProgress.CompletedCount} / {downloadProgress.TotalCount}: Fehler bei {downloadProgress.CurrentFileName}"
+                    : $"Download {downloadProgress.CompletedCount} / {downloadProgress.TotalCount}: {downloadProgress.CurrentFileName}";
+            });
+            var result = await documentDownloadService.DownloadAsync(selectedCandidates, manualDownloadProgress);
             var currentCandidates = await documentCandidateStore.SearchAsync(SearchText);
             ReplaceCandidates(currentCandidates);
 
@@ -855,7 +1081,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         var candidate = selectedCandidates[0];
         try
         {
-            ShowPreview(candidate);
+            _ = ShowPreviewAsync(candidate);
         }
         catch (Exception ex)
         {
@@ -943,27 +1169,42 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void OnCandidatesSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        var selectedCount = CandidatesGrid.SelectedItems.Count;
+        var selectedItems = CandidatesGrid.SelectedItems.Cast<CandidateListItem>().ToArray();
+        var selectedCount = selectedItems.Length;
         CanPreviewSelection = selectedCount == 1;
-        CanOpenSelectedFile = selectedCount == 1;
-        CanDownloadSelection = selectedCount >= 1;
+        CanOpenSelectedFile = false;
+        CanDownloadSelection = false;
         CanDeleteSelection = selectedCount >= 1;
+        DownloadActionLabel = "Herunterladen";
 
         if (selectedCount == 0)
         {
             SelectionInfo = "";
+            OnPropertyChanged(nameof(CanOpenPreviewAttachment));
+            OnPropertyChanged(nameof(CanDownloadPreviewAttachment));
         }
         else if (selectedCount == 1)
         {
-            SelectionInfo = $"1 Dokument ausgewählt";
-            if (CandidatesGrid.SelectedItem is CandidateListItem selectedItem)
+            var selectedItem = selectedItems[0];
+            var hasLocalFile = IsCandidateLocallyAvailable(selectedItem.Candidate);
+            SelectionInfo = hasLocalFile ? "1 Dokument ausgewählt, lokal verfügbar" : "1 Dokument ausgewählt, Datei fehlt lokal";
+            if (CandidatesGrid.SelectedItem is CandidateListItem)
             {
-                ShowPreview(selectedItem.Candidate, false);
+                CanOpenSelectedFile = hasLocalFile;
+                CanDownloadSelection = !selectedItem.Candidate.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase) && !hasLocalFile;
+                DownloadActionLabel = CanDownloadSelection ? "Herunterladen" : "Bereits lokal";
+                _ = ShowPreviewAsync(selectedItem.Candidate, false);
             }
         }
         else
         {
-            SelectionInfo = $"{selectedCount} Dokumente ausgewählt";
+            var downloadableCount = selectedItems.Count(item => !item.Candidate.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase) && !IsCandidateLocallyAvailable(item.Candidate));
+            var localCount = selectedItems.Count(item => IsCandidateLocallyAvailable(item.Candidate));
+            CanDownloadSelection = downloadableCount > 0;
+            DownloadActionLabel = downloadableCount == 0 ? "Bereits lokal" : localCount > 0 ? "Fehlende laden" : "Herunterladen";
+            SelectionInfo = $"{selectedCount} Dokumente ausgewählt, {downloadableCount} downloadbar";
+            OnPropertyChanged(nameof(CanOpenPreviewAttachment));
+            OnPropertyChanged(nameof(CanDownloadPreviewAttachment));
         }
     }
 
@@ -974,7 +1215,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
         try
         {
-            ShowPreview(selectedCandidate.Candidate);
+            _ = ShowPreviewAsync(selectedCandidate.Candidate);
             OpenCandidateAttachment(selectedCandidate.Candidate);
         }
         catch (Exception ex)
@@ -990,22 +1231,30 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         cancellationTokenSource = new CancellationTokenSource();
         
         SetBusyState(true, "Suche nach neuen E-Mails mit Anhängen. Das kann je nach Postfach kurz dauern...");
+        PreviewTabVisibility = Visibility.Collapsed;
+        SetCurrentPage(WorkspacePage.Results);
         var progress = new Progress<MailImportProgress>(UpdateImportProgress);
         scanLogger.LogInfo("=== NEUER SCAN GESTARTET ===");
 
         try
         {
             StatusMessage = "Pruefe IMAP-Konten und gleiche mit SQLite ab...";
+            ScanPhaseLabel = "IMAP-Scan";
+            ScanProgressBrush = (System.Windows.Media.Brush)FindResource("AccentBrush");
             LiveScanInfo = "Lade Konto-Einstellungen...";
             AccountSettingsInfo = LoadAccountSettingsInfo();
             
             scanLogger.LogInfo("Starte Import aller E-Mails...");
             
             var candidates = await mailImportService.ImportNewCandidatesAsync(progress, cancellationTokenSource.Token);
-            
-            // Update progress to 100% when complete
-            ScanProgressPercentage = 100;
-            LiveScanInfo = "Speichere Ergebnisse...";
+
+            StopLiveUpdateTimer();
+            StopScanVisibility = Visibility.Collapsed;
+            ScanPhaseLabel = "Nachverarbeitung";
+            ScanProgressBrush = (System.Windows.Media.Brush)FindResource("AmberBrush");
+            ScanProgressPercentage = Math.Max(ScanProgressPercentage, 96);
+            LiveScanInfo = "IMAP-Scan abgeschlossen. Speichere Ergebnisse...";
+            ScanProgressSummary = "Nachverarbeitung: Treffer werden gespeichert und aktualisiert";
             
             // Store candidates and update UI
             await documentCandidateStore.UpsertAsync(candidates, cancellationTokenSource.Token);
@@ -1018,14 +1267,51 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
             if (AutoDownloadAfterScan && filteredCandidateList.Count > 0)
             {
+                LiveScanInfo = $"IMAP-Scan abgeschlossen. Lade {filteredCandidateList.Count} Treffer herunter...";
+                ScanProgressSummary = "Nachverarbeitung: Auto-Download laeuft";
                 scanLogger.LogInfo($"[AUTO-DOWNLOAD] Lade {filteredCandidateList.Count} Treffer direkt herunter...");
-                await documentDownloadService.DownloadAsync(filteredCandidateList, cancellationTokenSource.Token);
+                var autoDownloadProgress = new Progress<DocumentDownloadProgress>(downloadProgress =>
+                {
+                    LiveScanInfo = $"Auto-Download: {downloadProgress.CompletedCount} / {downloadProgress.TotalCount} - {downloadProgress.CurrentFileName}";
+                    ScanProgressSummary = downloadProgress.HasError
+                        ? $"Nachverarbeitung: {downloadProgress.CompletedCount} / {downloadProgress.TotalCount} mit Fehlern"
+                        : $"Nachverarbeitung: {downloadProgress.CompletedCount} / {downloadProgress.TotalCount} geladen";
+
+                    if (downloadProgress.TotalCount > 0)
+                    {
+                        ScanProgressPercentage = 96 + (downloadProgress.CompletedCount * 4.0 / downloadProgress.TotalCount);
+                    }
+                });
+                var autoDownloadResult = await documentDownloadService.DownloadAsync(filteredCandidateList, autoDownloadProgress, cancellationTokenSource.Token);
+                if (autoDownloadResult.Errors.Count > 0)
+                {
+                    foreach (var error in autoDownloadResult.Errors)
+                    {
+                        scanLogger.LogError($"[AUTO-DOWNLOAD] {error}");
+                    }
+                }
+
                 var refreshedCandidates = await documentCandidateStore.SearchAsync(SearchText);
                 ReplaceCandidates(ApplyCandidateFilters(refreshedCandidates).ToList());
+
+                StatusMessage = autoDownloadResult.Errors.Count == 0
+                    ? $"Scan abgeschlossen! {filteredCandidateList.Count} Dokumente gefunden, {autoDownloadResult.DownloadedDocuments.Count} direkt heruntergeladen."
+                    : $"Scan abgeschlossen! {filteredCandidateList.Count} Dokumente gefunden, {autoDownloadResult.DownloadedDocuments.Count} heruntergeladen, {autoDownloadResult.Errors.Count} Fehler.";
             }
-            
-            StatusMessage = $"Scan abgeschlossen! {filteredCandidateList.Count} Dokumente gefunden.";
+            else
+            {
+                StatusMessage = $"Scan abgeschlossen! {filteredCandidateList.Count} Dokumente gefunden.";
+            }
+
+            ScanProgressPercentage = 100;
+            ScanPhaseLabel = "Abgeschlossen";
+            ScanProgressBrush = (System.Windows.Media.Brush)FindResource("GreenBrush");
             LiveScanInfo = $"Fertig! {filteredCandidateList.Count} Treffer gefunden";
+            ScanProgressSummary = $"Abgeschlossen: {filteredCandidateList.Count} Treffer bereit";
+            if (!string.IsNullOrWhiteSpace(CurrentScanTarget))
+            {
+                ScannedMailCountSummary = CurrentScanTarget.Replace("Scanne ", string.Empty, StringComparison.Ordinal);
+            }
             scanLogger.LogInfo($"=== SCAN ABGESCHLOSSEN: {filteredCandidateList.Count} Dokumente gefunden ===");
             SetCurrentPage(WorkspacePage.Results);
             PreviewTabVisibility = Visibility.Collapsed;
@@ -1034,12 +1320,16 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         catch (OperationCanceledException)
         {
             StatusMessage = "Scan wurde abgebrochen.";
+            ScanPhaseLabel = "Abgebrochen";
+            ScanProgressBrush = (System.Windows.Media.Brush)FindResource("RedBrush");
             LiveScanInfo = "⏹️ Scan abgebrochen";
             scanLogger.LogInfo("=== SCAN ABGEBROCHEN ===");
         }
         catch (Exception ex)
         {
             StatusMessage = $"Scan fehlgeschlagen: {SimplifyErrorMessage(ex.Message)}";
+            ScanPhaseLabel = "Fehler";
+            ScanProgressBrush = (System.Windows.Media.Brush)FindResource("RedBrush");
             LiveScanInfo = "❌ Scan fehlgeschlagen";
             scanLogger.LogError($"Scan-Fehler: {ex.Message}", ex);
         }
@@ -1103,18 +1393,44 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             filteredCandidates = filteredCandidates.Where(c => c.SuggestedCategory == DocumentCategory.Invoice);
         }
 
-        if (resultsQuickFilter == ResultsQuickFilter.Downloaded)
+        if (OnlyDownloaded || resultsQuickFilter == ResultsQuickFilter.Downloaded)
         {
-            filteredCandidates = filteredCandidates.Where(c => c.AlreadyDownloaded || !string.IsNullOrWhiteSpace(c.StoredFilePath));
+            filteredCandidates = filteredCandidates.Where(IsCandidateLocallyAvailable);
+        }
+
+        if (OnlyMissingFiles)
+        {
+            filteredCandidates = filteredCandidates.Where(c => !c.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase) && !IsCandidateLocallyAvailable(c));
+        }
+
+        if (!string.IsNullOrWhiteSpace(AccountFilterText))
+        {
+            var accountTerm = AccountFilterText.Trim();
+            filteredCandidates = filteredCandidates.Where(c =>
+                c.AccountName.Contains(accountTerm, StringComparison.OrdinalIgnoreCase)
+                || c.AccountAddress.Contains(accountTerm, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(SenderFilterText))
+        {
+            var senderTerm = SenderFilterText.Trim();
+            filteredCandidates = filteredCandidates.Where(c => c.Sender.Contains(senderTerm, StringComparison.OrdinalIgnoreCase));
         }
 
         return filteredCandidates;
+    }
+
+    private static bool IsCandidateLocallyAvailable(DocumentCandidate candidate)
+    {
+        return !candidate.AttachmentName.Equals("[Email-Text]", StringComparison.OrdinalIgnoreCase)
+            && (candidate.AlreadyDownloaded || ResolveCandidateAttachmentPath(candidate) is not null);
     }
 
     private void OnShowAllResultsClicked(object sender, RoutedEventArgs e)
     {
         resultsQuickFilter = ResultsQuickFilter.All;
         OnlyInvoices = false;
+        OnlyDownloaded = false;
         UpdateResultsFilterButtons();
         _ = ApplySearchAsync();
     }
@@ -1123,6 +1439,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     {
         resultsQuickFilter = ResultsQuickFilter.Invoices;
         OnlyInvoices = true;
+        OnlyDownloaded = false;
         UpdateResultsFilterButtons();
         _ = ApplySearchAsync();
     }
@@ -1131,8 +1448,84 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     {
         resultsQuickFilter = ResultsQuickFilter.Downloaded;
         OnlyInvoices = false;
+        OnlyDownloaded = true;
         UpdateResultsFilterButtons();
         _ = ApplySearchAsync();
+    }
+
+    private void NavigateToResultsWithFilters(bool invoices = false, bool downloaded = false, bool missing = false, string? search = null)
+    {
+        PreviewTabVisibility = Visibility.Collapsed;
+        resultsQuickFilter = downloaded ? ResultsQuickFilter.Downloaded : invoices ? ResultsQuickFilter.Invoices : ResultsQuickFilter.All;
+        OnlyInvoices = invoices;
+        OnlyDownloaded = downloaded;
+        OnlyMissingFiles = missing;
+        SearchText = search ?? string.Empty;
+        SetCurrentPage(WorkspacePage.Results);
+        UpdateResultsFilterButtons();
+        _ = ApplySearchAsync();
+    }
+
+    private void OnDashboardInvoicesClicked(object sender, RoutedEventArgs e)
+    {
+        NavigateToResultsWithFilters(invoices: true);
+    }
+
+    private void OnDashboardAccountsClicked(object sender, RoutedEventArgs e)
+    {
+        SetCurrentPage(WorkspacePage.Accounts);
+    }
+
+    private void OnDashboardDocumentsClicked(object sender, RoutedEventArgs e)
+    {
+        NavigateToResultsWithFilters();
+    }
+
+    private void OnDashboardAttachmentsClicked(object sender, RoutedEventArgs e)
+    {
+        PreviewTabVisibility = Visibility.Collapsed;
+        resultsQuickFilter = ResultsQuickFilter.All;
+        OnlyInvoices = false;
+        OnlyDownloaded = false;
+        OnlyMissingFiles = false;
+        OnlyWithAttachments = true;
+        SetCurrentPage(WorkspacePage.Results);
+        UpdateResultsFilterButtons();
+        _ = ApplySearchAsync();
+    }
+
+    private void OnDashboardDownloadedClicked(object sender, RoutedEventArgs e)
+    {
+        NavigateToResultsWithFilters(downloaded: true);
+    }
+
+    private void OnDashboardMissingClicked(object sender, RoutedEventArgs e)
+    {
+        NavigateToResultsWithFilters(missing: true);
+    }
+
+    private void OnDashboardSearchClicked(object sender, RoutedEventArgs e)
+    {
+        NavigateToResultsWithFilters(search: DashboardSearchText?.Trim());
+    }
+
+    private void OnDashboardSearchKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            NavigateToResultsWithFilters(search: DashboardSearchText?.Trim());
+        }
+    }
+
+    private async void OnDashboardRecentCandidateClicked(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.DataContext is not CandidateListItem item)
+        {
+            return;
+        }
+
+        SetCurrentPage(WorkspacePage.Results);
+        await ShowPreviewAsync(item.Candidate);
     }
 
     private void UpdateResultsFilterButtons()
@@ -1185,6 +1578,11 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             Candidates.Add(candidate);
         }
+
+        OnPropertyChanged(nameof(DashboardRecentCandidates));
+        OnPropertyChanged(nameof(DashboardDocumentCountLabel));
+        OnPropertyChanged(nameof(DashboardInvoiceCountLabel));
+        OnPropertyChanged(nameof(DashboardMissingCountLabel));
         
         // Force immediate UI refresh
         Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () => {
@@ -1198,7 +1596,10 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     {
         BusyVisibility = isBusy ? Visibility.Visible : Visibility.Collapsed;
         BusyMessage = message ?? string.Empty;
-        RefreshButton.IsEnabled = !isBusy;
+        if (FindName("DashboardButton") is System.Windows.Controls.Button dashboardButton)
+        {
+            dashboardButton.IsEnabled = !isBusy;
+        }
         ScanStartButton.IsEnabled = !isBusy;
         AccountButton.IsEnabled = !isBusy;
         ConnectionsButton.IsEnabled = !isBusy;
@@ -1211,10 +1612,14 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         // Reset live scan info when starting/stopping
         if (isBusy)
         {
+            StopScanVisibility = Visibility.Visible;
+            ScanPhaseLabel = "Initialisierung";
+            ScanProgressBrush = (System.Windows.Media.Brush)FindResource("BlueBrush");
             LiveScanInfo = "Starte Scan...";
         }
         else
         {
+            StopScanVisibility = Visibility.Collapsed;
             LiveScanInfo = "Scan abgeschlossen.";
         }
         
@@ -1232,17 +1637,21 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
         else
         {
-            // Stop timer when scan completes
-            if (liveUpdateTimer != null)
-            {
-                liveUpdateTimer.Stop();
-                liveUpdateTimer = null;
-                scanLogger.LogInfo("[TIMER] Live-Update Timer gestoppt");
-            }
+            StopLiveUpdateTimer();
         }
         
         // Log state changes
         scanLogger.LogInfo($"[STATE] Busy={isBusy}, BusyVisibility={BusyVisibility}, StopButton should be {(isBusy ? "VISIBLE" : "HIDDEN")}");
+    }
+
+    private void StopLiveUpdateTimer()
+    {
+        if (liveUpdateTimer != null)
+        {
+            liveUpdateTimer.Stop();
+            liveUpdateTimer = null;
+            scanLogger.LogInfo("[TIMER] Live-Update Timer gestoppt");
+        }
     }
 
     private void UpdateImportProgress(MailImportProgress progress)
@@ -1258,6 +1667,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
         ScanProgressPercentage = overallPercentage;
         CurrentScanTarget = $"Scanne {progress.AccountName}/{progress.FolderName}: {progress.MessagesScanned} Mails gescannt";
+        ScannedMailCountSummary = $"{progress.AccountName}: {progress.MessagesScanned} Mails gescannt";
         
         // Enhanced live scan info
         var oldestAge = progress.OldestScannedMessageAgeDays;
@@ -1338,7 +1748,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                 scanLogger.LogInfo($"[LIVE-IMMEDIATE] Zeige {finalCount} Treffer an (sofort)");
                 
                 // Force UI refresh with higher priority
-                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () => {
+                _ = Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () => {
                     scanLogger.LogInfo($"[LIVE-RENDER] UI Refresh erzwungen");
                 });
             }

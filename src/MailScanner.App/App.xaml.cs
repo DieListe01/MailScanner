@@ -31,7 +31,7 @@ public partial class App : System.Windows.Application
             startupWindow = new StartupWindow($"Version {appVersionService.GetCurrentVersion()}");
             startupWindow.Show();
 
-            settingsStore = new RegistryAppSettingsStore();
+            settingsStore = new JsonAppSettingsStore(AppDataPaths.GetUserJsonSettingsFilePath());
             var settings = settingsStore.GetCurrentSettings();
 
             Directory.CreateDirectory(Path.GetDirectoryName(settings.Storage.DatabasePath) ?? AppContext.BaseDirectory);
@@ -50,13 +50,15 @@ public partial class App : System.Windows.Application
             IDocumentCandidateStore documentCandidateStore = new DocumentCandidateStore(dbContext);
             IDocumentRecordStore documentRecordStore = new DocumentRecordStore(dbContext);
             IMailImportService mailImportService = new ImapMailImportService(settingsProvider, mailboxScanStateStore, documentCandidateStore, scanLogger);
+            IMailPreviewService mailPreviewService = new ImapMailPreviewService(settingsProvider);
             IMailConnectionTestService mailConnectionTestService = new ImapConnectionTestService(settingsProvider);
-            IDocumentDownloadService documentDownloadService = new ImapDocumentDownloadService(settingsProvider, documentCandidateStore, documentRecordStore);
+            IDocumentDownloadService documentDownloadService = new ImapDocumentDownloadService(settingsProvider, documentCandidateStore, documentRecordStore, scanLogger);
             var releaseUpdateService = new GitHubReleaseUpdateService("DieListe01", "MailScanner");
 
             var mainWindow = new MainWindow(
                 settingsProvider,
                 mailImportService,
+                mailPreviewService,
                 mailConnectionTestService,
                 documentCandidateStore,
                 documentDownloadService,

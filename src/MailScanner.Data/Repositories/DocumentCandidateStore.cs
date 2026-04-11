@@ -16,8 +16,19 @@ public sealed class DocumentCandidateStore(MailScannerDbContext dbContext) : IDo
                 x => x.AccountAddress == candidate.AccountAddress
                     && x.FolderName == candidate.FolderName
                     && x.ImapUid == candidate.ImapUid
-                    && x.AttachmentName == candidate.AttachmentName,
+                    && x.AttachmentIndex == candidate.AttachmentIndex,
                 cancellationToken);
+
+            if (existing is null)
+            {
+                existing = await dbContext.DocumentCandidates.FirstOrDefaultAsync(
+                    x => x.AccountAddress == candidate.AccountAddress
+                        && x.FolderName == candidate.FolderName
+                        && x.ImapUid == candidate.ImapUid
+                        && x.AttachmentName == candidate.AttachmentName
+                        && x.AttachmentIndex < 0,
+                    cancellationToken);
+            }
 
             if (existing is null)
             {
@@ -30,6 +41,7 @@ public sealed class DocumentCandidateStore(MailScannerDbContext dbContext) : IDo
             existing.Sender = candidate.Sender;
             existing.Subject = candidate.Subject;
             existing.ReceivedAt = candidate.ReceivedAt;
+            existing.AttachmentIndex = candidate.AttachmentIndex;
             existing.AttachmentSizeInBytes = candidate.AttachmentSizeInBytes;
             existing.SuggestedCategory = (int)candidate.SuggestedCategory;
             existing.Status = (int)candidate.Status;
@@ -46,6 +58,7 @@ public sealed class DocumentCandidateStore(MailScannerDbContext dbContext) : IDo
 
         return entities
             .OrderByDescending(x => x.ReceivedAt)
+            .ThenBy(x => x.AttachmentIndex)
             .ThenBy(x => x.AttachmentName)
             .Select(ToModel)
             .ToArray();
@@ -58,6 +71,7 @@ public sealed class DocumentCandidateStore(MailScannerDbContext dbContext) : IDo
 
         return entities
             .OrderByDescending(x => x.ReceivedAt)
+            .ThenBy(x => x.AttachmentIndex)
             .ThenBy(x => x.AttachmentName)
             .Select(ToModel)
             .ToArray();
@@ -107,6 +121,7 @@ public sealed class DocumentCandidateStore(MailScannerDbContext dbContext) : IDo
             Sender = candidate.Sender,
             Subject = candidate.Subject,
             ReceivedAt = candidate.ReceivedAt,
+            AttachmentIndex = candidate.AttachmentIndex,
             AttachmentName = candidate.AttachmentName,
             AttachmentSizeInBytes = candidate.AttachmentSizeInBytes,
             SuggestedCategory = (int)candidate.SuggestedCategory,
@@ -128,6 +143,7 @@ public sealed class DocumentCandidateStore(MailScannerDbContext dbContext) : IDo
             Sender = entity.Sender,
             Subject = entity.Subject,
             ReceivedAt = entity.ReceivedAt,
+            AttachmentIndex = entity.AttachmentIndex,
             AttachmentName = entity.AttachmentName,
             AttachmentSizeInBytes = entity.AttachmentSizeInBytes,
             SuggestedCategory = (DocumentCategory)entity.SuggestedCategory,

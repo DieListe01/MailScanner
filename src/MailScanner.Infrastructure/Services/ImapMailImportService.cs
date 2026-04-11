@@ -265,9 +265,10 @@ public sealed class ImapMailImportService(
 
                         // Add ALL attachments - apply account-specific file type filters
                         var filteredAttachments = ApplyFileTypeFilters(allAttachments, account);
-                        
-                        foreach (var attachment in filteredAttachments)
+
+                        foreach (var attachmentMatch in filteredAttachments)
                         {
+                            var attachment = attachmentMatch.Attachment;
                             var isPdf = IsPdfAttachment(attachment);
                             candidates.Add(new DocumentCandidate
                             {
@@ -279,6 +280,7 @@ public sealed class ImapMailImportService(
                                 Sender = sender,
                                 Subject = subject,
                                 ReceivedAt = message.Date,
+                                AttachmentIndex = attachmentMatch.AttachmentIndex,
                                 AttachmentName = attachment.FileName ?? "attachment",
                                 AttachmentSizeInBytes = GetAttachmentSize(attachment),
                                 SuggestedCategory = isPdf ? SuggestCategory(message, attachment) : DocumentCategory.Other,
@@ -480,16 +482,18 @@ public sealed class ImapMailImportService(
         return keywords.Any(haystack.Contains);
     }
 
-    private static MimePart[] ApplyFileTypeFilters(MimePart[] attachments, ImapAccountSettings account)
+    private static AttachmentMatch[] ApplyFileTypeFilters(MimePart[] attachments, ImapAccountSettings account)
     {
         var ignoredPatterns = account.IgnoredAttachmentNamePatterns
             .Where(pattern => !string.IsNullOrWhiteSpace(pattern))
             .Select(pattern => pattern.Trim())
             .ToArray();
 
-        return attachments.Where(attachment => 
+        return attachments
+            .Select((attachment, index) => new AttachmentMatch(index, attachment))
+            .Where(match =>
         {
-            var fileName = (attachment.FileName ?? string.Empty).ToLowerInvariant();
+            var fileName = (match.Attachment.FileName ?? string.Empty).ToLowerInvariant();
             var extension = Path.GetExtension(fileName);
 
             if (ignoredPatterns.Any(pattern => fileName.Contains(pattern, StringComparison.OrdinalIgnoreCase)))
@@ -546,4 +550,6 @@ public sealed class ImapMailImportService(
         var imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp" };
         return imageExtensions.Contains(extension);
     }
+
+    private readonly record struct AttachmentMatch(int AttachmentIndex, MimePart Attachment);
 }

@@ -19,6 +19,11 @@ public static class AppDataPaths
         return Path.Combine(GetUserDataDirectory(), "settings.ini");
     }
 
+    public static string GetUserJsonSettingsFilePath()
+    {
+        return Path.Combine(GetUserDataDirectory(), "appsettings.json");
+    }
+
     public static string GetBundledSettingsFilePath()
     {
         return Path.Combine(AppContext.BaseDirectory, "settings.ini");
