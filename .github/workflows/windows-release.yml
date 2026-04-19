@@ -1,0 +1,35 @@
+name: windows-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version
+        required: false
+      bump:
+        description: major/minor/patch
+        required: false
+        default: patch
+      prerelease:
+        description: prerelease
+        required: false
+        default: false
+      draft:
+        description: draft
+        required: false
+        default: false
+      create_installer:
+        description: create setup exe
+        required: false
+        default: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Placeholder
+        run: echo Release workflow placeholder
+      - name: Installer flag
+        run: echo create_installer=${{ inputs.create_installer }}

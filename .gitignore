@@ -4,5 +4,7 @@
 storage/
 artifacts/
 publish/
+.tmp-local-backup/
+mailscanner-script.log
 *.user
 *.suo

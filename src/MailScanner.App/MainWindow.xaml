@@ -699,8 +699,11 @@
                                             <TextBlock Text="{Binding LookbackScopeSummary}" FontSize="11" Foreground="#D9E6FF"/>
                                         </Border>
                                     </WrapPanel>
-                                    <Border Background="#10231B" BorderBrush="#2D6E55" BorderThickness="1" CornerRadius="10" Padding="10,4" Margin="0,6,0,0" HorizontalAlignment="Left">
-                                        <TextBlock Text="{Binding CurrentResultsFilterLabel}" FontSize="10.5" FontWeight="SemiBold" Foreground="#8BE0B7"/>
+                                    <Border Background="#10231B" BorderBrush="#2D6E55" BorderThickness="1" CornerRadius="12" Padding="12,6" Margin="0,6,0,0" HorizontalAlignment="Left">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="AKTIV" FontSize="10" FontWeight="SemiBold" Foreground="#8BE0B7" Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding CurrentResultsFilterLabel}" FontSize="11" FontWeight="SemiBold" Foreground="#DDF9E8"/>
+                                        </StackPanel>
                                     </Border>
                                 </StackPanel>
 
@@ -991,7 +994,7 @@
                             </Grid>
                         </Border>
 
-                        <Border Grid.Row="1" Grid.Column="0" Background="#1B2028" BorderBrush="#313846" BorderThickness="1" CornerRadius="14" Padding="14" VerticalAlignment="Top">
+                        <Border Grid.Row="1" Grid.Column="0" Background="#161D29" BorderBrush="#334155" BorderThickness="1" CornerRadius="16" Padding="12" VerticalAlignment="Top">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -1002,10 +1005,10 @@
 
                                 <StackPanel Margin="0,0,0,10">
                                     <TextBlock Text="Konto-Explorer" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0"/>
-                                    <TextBlock Text="Bestehende Eintraege waehlen oder neue Konten vorbereiten" Margin="0,4,0,0" FontSize="10.5" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Bestehende Eintraege waehlen oder neue Konten vorbereiten" Margin="0,4,0,0" FontSize="10" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
                                 </StackPanel>
 
-                                <Border Grid.Row="1" Background="#161B23" BorderBrush="#2F3642" BorderThickness="1" CornerRadius="10" Padding="10,8" Margin="0,0,0,10">
+                                <Border Grid.Row="1" Background="#0F1725" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="10,8" Margin="0,0,0,10">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -1054,7 +1057,7 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ListBoxItem">
-                                                        <Border x:Name="ItemBorder" Background="#1D2028" BorderBrush="{StaticResource BorderBrushSoft}" BorderThickness="1" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                                        <Border x:Name="ItemBorder" Background="#1A2230" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="{TemplateBinding Padding}">
                                                             <Grid>
                                                                 <Grid.ColumnDefinitions>
                                                                     <ColumnDefinition Width="3"/>
@@ -1066,11 +1069,11 @@
                                                         </Border>
                                                         <ControlTemplate.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="{StaticResource BorderBrushStrong}"/>
-                                                                <Setter TargetName="ItemBorder" Property="Background" Value="#232833"/>
+                                                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#4A607A"/>
+                                                                <Setter TargetName="ItemBorder" Property="Background" Value="#213047"/>
                                                             </Trigger>
                                                             <Trigger Property="IsSelected" Value="True">
-                                                                <Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource SelectionBrush}"/>
+                                                                <Setter TargetName="ItemBorder" Property="Background" Value="#1E3A56"/>
                                                                 <Setter TargetName="ItemBorder" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
                                                                 <Setter TargetName="SelectionIndicator" Property="Opacity" Value="1"/>
                                                             </Trigger>
@@ -1092,21 +1095,22 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <Border Grid.Row="0" Background="#1B2028" BorderBrush="#313846" BorderThickness="1" CornerRadius="14" Padding="14,12" Margin="0,0,0,12">
+                            <Border Grid.Row="0" Background="#111827" BorderBrush="#334155" BorderThickness="1" CornerRadius="14" Padding="12,10" Margin="0,0,0,10">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="Kontenansicht geoeffnet" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" TextWrapping="Wrap"/>
-                                        <TextBlock Text="{Binding SelectedEditorAccountSummary}" Margin="0,6,0,0" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                        <TextBlock Text="AKTIVES KONTO" FontSize="10" FontWeight="SemiBold" Foreground="#9DB6E6"/>
+                                        <TextBlock Text="{Binding SelectedEditorAccount.DisplayName}" Margin="0,3,0,0" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding SelectedEditorAccountSummary}" Margin="0,4,0,0" FontSize="10.5" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                     <Button Grid.Column="1" Content="Debug" Style="{StaticResource ToolButton}" Width="92" HorizontalAlignment="Right" Click="OnOpenDebugClicked"/>
                                 </Grid>
                             </Border>
 
-                            <Border Grid.Row="1" Background="#1F242D" BorderBrush="#313846" BorderThickness="1" CornerRadius="14" Padding="18,16" VerticalAlignment="Top">
+                            <Border Grid.Row="1" Background="#161D29" BorderBrush="#334155" BorderThickness="1" CornerRadius="16" Padding="16,14" VerticalAlignment="Top">
                                 <TabControl>
                                     <TabItem Header="Konto">
                                         <Grid Margin="0,6,0,0">
@@ -1139,7 +1143,7 @@
                                                 <PasswordBox x:Name="EmbeddedPasswordBox" Grid.Row="4" Grid.Column="1" Margin="0,10,0,0" Style="{StaticResource InputPasswordBox}" PasswordChanged="OnEmbeddedPasswordChanged"/>
                                             </Grid>
 
-                                            <Border Grid.Column="2" Background="#171C24" BorderBrush="#2E3646" BorderThickness="1" CornerRadius="12" Padding="14,12">
+                                            <Border Grid.Column="2" Background="#0F1725" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="14,12">
                                                 <StackPanel>
                                                     <TextBlock Text="Schnellinfo" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
                                                     <TextBlock Text="Name, Mailadresse, Benutzername und Passwort gelten fuer das aktuell links gewaehlte Konto." Margin="0,6,0,0" FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
@@ -1180,7 +1184,7 @@
                                                 </StackPanel>
                                             </Grid>
 
-                                            <Border Grid.Column="2" Background="#171C24" BorderBrush="#2E3646" BorderThickness="1" CornerRadius="12" Padding="14,12">
+                                            <Border Grid.Column="2" Background="#0F1725" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="14,12">
                                                 <StackPanel>
                                                     <TextBlock Text="Best Practice" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
                                                     <TextBlock Text="Fuer produktive Postfaecher empfehlen sich IMAP ueber 993, SSL und ein dedizierter Zielordner wie INBOX." Margin="0,8,0,0" FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
@@ -1272,7 +1276,7 @@
                                                 </Grid>
                                             </StackPanel>
 
-                                            <Border Grid.Column="2" Background="#171C24" BorderBrush="#2E3646" BorderThickness="1" CornerRadius="12" Padding="14,12">
+                                            <Border Grid.Column="2" Background="#0F1725" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="14,12">
                                                 <StackPanel>
                                                     <TextBlock Text="Tipp" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
                                                     <TextBlock Text="Verwende kurze, stabile Speicherpfade, damit Downloads und Vorschauen zuverlaessig funktionieren." Margin="0,8,0,0" FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
@@ -1284,20 +1288,20 @@
                             </Border>
                         </Grid>
 
-                        <Border Grid.Row="4" Grid.ColumnSpan="3" Background="#1B2028" BorderBrush="#313846" BorderThickness="1" CornerRadius="14" Padding="14,10" Margin="0,10,0,0" VerticalAlignment="Bottom">
+                        <Border Grid.Row="4" Grid.ColumnSpan="3" Background="#111827" BorderBrush="#334155" BorderThickness="1" CornerRadius="14" Padding="12,9" Margin="0,10,0,0" VerticalAlignment="Bottom">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
-                                    <TextBlock Text="Aenderungen zuerst testen, danach speichern." FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
-                                    <TextBlock Text="Die Einstellungen werden direkt in deinen lokalen App-Daten abgelegt." Margin="0,3,0,0" FontSize="10.5" Foreground="{StaticResource MutedBrush}"/>
+                                    <TextBlock Text="Aenderungen zuerst testen, danach speichern." FontSize="10.5" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="Lokale Konfiguration wird direkt aktualisiert." Margin="0,3,0,0" FontSize="9.8" Foreground="{StaticResource MutedBrush}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Button Content="Scanner" Style="{StaticResource ToolButton}" Margin="0,0,10,0" Click="OnScannerNavClicked"/>
-                                    <Button Content="Dieses Konto testen" Style="{StaticResource ToolButton}" Margin="0,0,10,0" Click="OnEmbeddedTestSelectedClicked" IsEnabled="{Binding CanSaveAccountSettings}"/>
-                                    <Button Content="Alle testen" Style="{StaticResource ToolButton}" Margin="0,0,10,0" Click="OnEmbeddedTestAllClicked" IsEnabled="{Binding CanSaveAccountSettings}"/>
+                                    <Button Content="Scanner" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnScannerNavClicked"/>
+                                    <Button Content="Dieses Konto testen" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnEmbeddedTestSelectedClicked" IsEnabled="{Binding CanSaveAccountSettings}"/>
+                                    <Button Content="Alle testen" Style="{StaticResource ToolButton}" Margin="0,0,8,0" Click="OnEmbeddedTestAllClicked" IsEnabled="{Binding CanSaveAccountSettings}"/>
                                     <Button Content="Speichern" Style="{StaticResource ToolPrimaryButton}" Click="OnEmbeddedSaveClicked" IsEnabled="{Binding CanSaveAccountSettings}"/>
                                 </StackPanel>
                             </Grid>

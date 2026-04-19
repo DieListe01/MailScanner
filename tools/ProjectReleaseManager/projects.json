@@ -1,0 +1,17 @@
+{
+  "projectsRoot": "W:\\_Dirk\\Projekte",
+  "projects": [
+    {
+      "name": "MailScanner",
+      "repositoryRoot": "MailScanner",
+      "versionFile": "Directory.Build.props",
+      "versionScheme": "DirectoryBuildProps",
+      "buildCommand": "dotnet build \"src/MailScanner.App/MailScanner.App.csproj\" -c Release",
+      "releaseBranch": "main",
+      "releaseWorkflow": "release.yml",
+      "releaseStrategy": "GitHubRelease",
+      "releaseTitleTemplate": "MailScanner {Version}",
+      "waitForWorkflow": true
+    }
+  ]
+}
